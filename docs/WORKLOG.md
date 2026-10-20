@@ -5,6 +5,7 @@
 - 實際瀏覽器測試：街道圖載入、2D／3D 切換、STR 局部模型載入／線框／重設／點選、手動位置加入地圖、切回 2D、GeoJSON 匯入／移除及 GLB 替換，未觀測到 console error。點選模型回報混凝土矩形梁／IFCBEAM。
 - 初次 sandbox 內啟動的 loopback server 無法被 IAB 存取，停止後改為經允許的 sandbox 外 loopback server，瀏覽器成功連線；無對外綁定。
 - 10 項單元測試與 app.js 語法檢查通過。新增靜態目錄邊界／路徑穿越／明確 asset 路由保護；現有模型與原始來源均未修改。幀率與精確定位尚未驗收。
+- 最後窄視窗檢查發現模型構圖裁切，改依視窗長寬與包圍球距離自動適配；重新載入並在實際窄視窗確認完整入鏡，無 console error。
 
 ## 2026-10-20：實際執行 rvt-rs 0.6.0 STR 試驗
 - Python wheel（約 2.6 MB）與 Windows CLI（約 22.3 MB）下載到 artifacts/tools/rvt-rs；CLI 發行壓縮包雜湊與 GitHub 官方 release digest 一致。最初 pip 安裝遇系統 Temp 權限，改用專案 artifacts/tool-tmp 後成功，未修改全域 Python。
