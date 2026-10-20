@@ -13,6 +13,9 @@
 ```powershell
 python skills/bim-maplibre-preprocess/scripts/audit_rvt.py --source 'C:\Users\benhs\OneDrive\文件\三維圖台\references\A18-1' --output reports/rvt-inventory-NEW.json
 python -m unittest discover -s tests -v
+python skills/bim-maplibre-preprocess/scripts/prepare_revit_export.py --source 'C:\Users\benhs\OneDrive\文件\三維圖台\references\A18-1\A18A-CO-STR-60_.rvt' --inventory reports/rvt-inventory-2026-10-20.json --packet reports/revit-export-NEW
 ```
+
+已執行的 STR 匯出交接包：[HANDOFF.md](reports/revit-export-str-2026-10-20/HANDOFF.md)。準備工具未找到 Revit 時 exit code 3 表示 awaiting_tool，不代表來源損壞，也不代表 IFC 已產生；不要重跑至同一交接目錄。
 
 原始 RVT 保留在主工作區 references/，不納入 Git。工作樹請以絕對路徑存取；產物放各自的 artifacts/。沒有 Revit／IfcConvert 的機器仍可完成唯讀盤點，其他階段保持待驗證。

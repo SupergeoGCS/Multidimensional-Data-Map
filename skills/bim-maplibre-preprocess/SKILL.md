@@ -26,6 +26,8 @@ description: Audit Revit RVT sources and prepare georeferenced IFC and GLB asset
 
 優先以 STR 單檔驗證，再加 AR；專業別只是檔名推測，須以實際開啟結果確認。Revit 在副本匯出可見三維模型為 IFC，保存版本、視圖、匯出設定、連結處理與座標證據。
 
+使用 `python scripts/prepare_revit_export.py --source <STR.rvt絕對路徑> --inventory <既有盤點.json> --packet <新的交接目錄>` 建立並執行匯出準備。工具只重算選定來源雜湊，核對既有盤點，檢查 PATH／標準安裝目錄／Revit 登錄項目；自訂安裝可加 `--revit-exe`。輸出 export-job.json、placement.json 與 HANDOFF.md。未找到候選工具時狀態 awaiting_tool、exit code 3；找到候選也只表示 awaiting_native_export，不代表可用授權、相容性或已執行匯出。此腳本不啟動 Revit、不建立來源副本、不解碼幾何；沒有原生環境就將交接包交由有 Revit 的模型提供者執行。座標未知維持 null，不能自動填入單位矩陣或猜 anchor。
+
 使用 `python scripts/convert_ifc.py --input <model.ifc> --output <新目錄/model.glb> --ifcconvert <執行檔> --report <轉換紀錄.json>`。此腳本僅執行基礎 IFC→GLB，驗證 GLB 容器／JSON；不自動修正座標、不抽取完整屬性、不代表視覺驗收。失敗保留日誌並記錄原因；產物路徑不可覆寫。確認所用版本的 `IfcConvert --help` 後再選額外旗標，不假設所有版本支援相同選項。
 
 ## 品質閘門

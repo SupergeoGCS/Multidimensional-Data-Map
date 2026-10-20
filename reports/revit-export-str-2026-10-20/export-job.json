@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "created_at_utc": "2026-10-20T01:17:44.367058+00:00",
+  "stage": "rvt_to_ifc",
+  "status": "awaiting_tool",
+  "execution_mode": "native_revit_operator",
+  "source": {
+    "path": "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\references\\A18-1\\A18A-CO-STR-60_.rvt",
+    "sha256": "7b5e3f023db9803b8e3fa90bb64405189abab20bcf4a9c444e24884fce929bb9",
+    "bytes": 120655872,
+    "revit_format": "2021",
+    "inventory": "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\reports\\rvt-inventory-2026-10-20.json"
+  },
+  "environment": {
+    "candidates": [],
+    "checks": [
+      {
+        "method": "PATH",
+        "found": false
+      },
+      {
+        "method": "standard_install_directory",
+        "path": "C:\\Program Files\\Autodesk",
+        "candidates": 0
+      },
+      {
+        "method": "standard_install_directory",
+        "path": "C:\\Program Files (x86)\\Autodesk",
+        "candidates": 0
+      },
+      {
+        "method": "revit_registry",
+        "hive": "HKEY_LOCAL_MACHINE",
+        "view": 256,
+        "status": "key_absent"
+      },
+      {
+        "method": "revit_registry",
+        "hive": "HKEY_LOCAL_MACHINE",
+        "view": 512,
+        "status": "key_absent"
+      },
+      {
+        "method": "revit_registry",
+        "hive": "HKEY_CURRENT_USER",
+        "view": 256,
+        "status": "key_absent"
+      },
+      {
+        "method": "revit_registry",
+        "hive": "HKEY_CURRENT_USER",
+        "view": 512,
+        "status": "key_absent"
+      }
+    ],
+    "compatibility": "not_verified",
+    "license": "not_verified",
+    "limitation": "Discovery only; custom installations may require --revit-exe. A candidate is not a verified usable installation."
+  },
+  "execution": {
+    "revit_open": "not_run",
+    "geometry_export": "not_run",
+    "geometry_verified": false
+  },
+  "export_record": {
+    "revit_version_build": null,
+    "ifc_exporter_version": null,
+    "working_copy_path": null,
+    "working_copy_sha256_before_open": null,
+    "ifc_schema_view": null,
+    "export_settings_file": null,
+    "view_id_name": null,
+    "section_box": null,
+    "phase": null,
+    "design_option": null,
+    "worksets": null,
+    "category_visibility": null,
+    "detail_level": null,
+    "coordinate_base": null,
+    "host_only": true,
+    "actual_link_export_setting": null,
+    "source_file_untouched_verified": null,
+    "ifc_path": null,
+    "ifc_sha256": null,
+    "completed_at_utc": null
+  },
+  "native_checks": {
+    "opened_successfully": null,
+    "discipline_confirmed": null,
+    "warnings_reviewed": null,
+    "links_reviewed": null,
+    "representative_elements": [],
+    "units_confirmed": null
+  },
+  "links_review": [
+    {
+      "element_id": "6",
+      "type": "Keynote Table",
+      "last_saved_path": "",
+      "last_saved_absolute_path": "",
+      "last_saved_load_state": "Not Found",
+      "current_availability": "not_verified",
+      "review_result": null,
+      "resolved_path": null,
+      "included_in_export": null,
+      "review_evidence": null
+    },
+    {
+      "element_id": "2162",
+      "type": "Assembly Code Table",
+      "last_saved_path": "",
+      "last_saved_absolute_path": "",
+      "last_saved_load_state": "Not Found",
+      "current_availability": "not_verified",
+      "review_result": null,
+      "resolved_path": null,
+      "included_in_export": null,
+      "review_evidence": null
+    },
+    {
+      "element_id": "454597",
+      "type": "CAD Link",
+      "last_saved_path": "E:\\事務\\建築師事務所\\陳章安建築師事務所\\A2015桃園航空城A11 基地及A18 基地新建安置住宅統包工程\\3.BIM模型\\●01_模型\\03_CAD_link\\03_結構圖說\\XS-PLANALL_1110617.dwg",
+      "last_saved_absolute_path": "E:\\事務\\建築師事務所\\陳章安建築師事務所\\A2015桃園航空城A11 基地及A18 基地新建安置住宅統包工程\\3.BIM模型\\●01_模型\\03_CAD_link\\03_結構圖說\\XS-PLANALL_1110617.dwg",
+      "last_saved_load_state": "Not Found",
+      "current_availability": "not_verified",
+      "review_result": null,
+      "resolved_path": null,
+      "included_in_export": null,
+      "review_evidence": null
+    },
+    {
+      "element_id": "509779",
+      "type": "CAD Link",
+      "last_saved_path": "E:\\事務\\建築師事務所\\陳章安建築師事務所\\A2015桃園航空城A11 基地及A18 基地新建安置住宅統包工程\\3.BIM模型\\●01_模型\\03_CAD_link\\02_建築圖說\\航空城A18-1_1120530.dwg",
+      "last_saved_absolute_path": "E:\\事務\\建築師事務所\\陳章安建築師事務所\\A2015桃園航空城A11 基地及A18 基地新建安置住宅統包工程\\3.BIM模型\\●01_模型\\03_CAD_link\\02_建築圖說\\航空城A18-1_1120530.dwg",
+      "last_saved_load_state": "Not Found",
+      "current_availability": "not_verified",
+      "review_result": null,
+      "resolved_path": null,
+      "included_in_export": null,
+      "review_evidence": null
+    },
+    {
+      "element_id": "689042",
+      "type": "Revit Link",
+      "last_saved_path": "A18A-DD-AR-ALL.0961.rvt",
+      "last_saved_absolute_path": "C:\\Users\\榕棻\\Desktop\\temp\\模型\\A18A-DD-AR-ALL.0961.rvt",
+      "last_saved_load_state": "Unloaded",
+      "current_availability": "not_verified",
+      "review_result": null,
+      "resolved_path": null,
+      "included_in_export": null,
+      "review_evidence": null
+    },
+    {
+      "element_id": "1289423",
+      "type": "CAD Link",
+      "last_saved_path": "@施工圖核對用\\A18-1-2F見上軀體圖(1120923)-模型核對用(含文字標註).dwg",
+      "last_saved_absolute_path": "C:\\Users\\榕棻\\Desktop\\temp\\模型\\@施工圖核對用\\A18-1-2F見上軀體圖(1120923)-模型核對用(含文字標註).dwg",
+      "last_saved_load_state": "Not Found",
+      "current_availability": "not_verified",
+      "review_result": null,
+      "resolved_path": null,
+      "included_in_export": null,
+      "review_evidence": null
+    },
+    {
+      "element_id": "1294880",
+      "type": "CAD Link",
+      "last_saved_path": "@施工圖核對用\\A18-1-B2F見上層軀體圖-核定版修正二版-改機電MP盤(1120516)-1121129.dwg",
+      "last_saved_absolute_path": "C:\\Users\\榕棻\\Desktop\\temp\\模型\\@施工圖核對用\\A18-1-B2F見上層軀體圖-核定版修正二版-改機電MP盤(1120516)-1121129.dwg",
+      "last_saved_load_state": "Not Found",
+      "current_availability": "not_verified",
+      "review_result": null,
+      "resolved_path": null,
+      "included_in_export": null,
+      "review_evidence": null
+    },
+    {
+      "element_id": "1304922",
+      "type": "CAD Link",
+      "last_saved_path": "@施工圖核對用\\A18-1-B1F見上層軀體圖(1120628)-1121129軀體核對用.dwg",
+      "last_saved_absolute_path": "C:\\Users\\榕棻\\Desktop\\temp\\模型\\@施工圖核對用\\A18-1-B1F見上層軀體圖(1120628)-1121129軀體核對用.dwg",
+      "last_saved_load_state": "Not Found",
+      "current_availability": "not_verified",
+      "review_result": null,
+      "resolved_path": null,
+      "included_in_export": null,
+      "review_evidence": null
+    },
+    {
+      "element_id": "1319594",
+      "type": "CAD Link",
+      "last_saved_path": "@施工圖核對用\\A18-1-2F見上層軀體圖(1120926)-1121205模型核對用.dwg",
+      "last_saved_absolute_path": "C:\\Users\\榕棻\\Desktop\\temp\\模型\\@施工圖核對用\\A18-1-2F見上層軀體圖(1120926)-1121205模型核對用.dwg",
+      "last_saved_load_state": "Not Found",
+      "current_availability": "not_verified",
+      "review_result": null,
+      "resolved_path": null,
+      "included_in_export": null,
+      "review_evidence": null
+    },
+    {
+      "element_id": "1327317",
+      "type": "CAD Link",
+      "last_saved_path": "@施工圖核對用\\A18-1-3F見上層軀體圖(1121008)-1121207模型核對用.dwg",
+      "last_saved_absolute_path": "C:\\Users\\榕棻\\Desktop\\temp\\模型\\@施工圖核對用\\A18-1-3F見上層軀體圖(1121008)-1121207模型核對用.dwg",
+      "last_saved_load_state": "Not Found",
+      "current_availability": "not_verified",
+      "review_result": null,
+      "resolved_path": null,
+      "included_in_export": null,
+      "review_evidence": null
+    },
+    {
+      "element_id": "1378251",
+      "type": "CAD Link",
+      "last_saved_path": "@施工圖核對用\\A18-1-4F~6F見上層軀體圖(1121030)-1121214軀體核對用.dwg",
+      "last_saved_absolute_path": "C:\\Users\\榕棻\\Desktop\\temp\\模型\\@施工圖核對用\\A18-1-4F~6F見上層軀體圖(1121030)-1121214軀體核對用.dwg",
+      "last_saved_load_state": "Not Found",
+      "current_availability": "not_verified",
+      "review_result": null,
+      "resolved_path": null,
+      "included_in_export": null,
+      "review_evidence": null
+    },
+    {
+      "element_id": "1385905",
+      "type": "CAD Link",
+      "last_saved_path": "@施工圖核對用\\A18-1-1F見上層軀體圖(1120923)-模型核對用.dwg",
+      "last_saved_absolute_path": "C:\\Users\\榕棻\\Desktop\\temp\\模型\\@施工圖核對用\\A18-1-1F見上層軀體圖(1120923)-模型核對用.dwg",
+      "last_saved_load_state": "Not Found",
+      "current_availability": "not_verified",
+      "review_result": null,
+      "resolved_path": null,
+      "included_in_export": null,
+      "review_evidence": null
+    }
+  ],
+  "acceptance": {
+    "native_open": "not_run",
+    "ifc_export": "not_run",
+    "ifc_geometry_review": "not_run",
+    "map_placement": "not_run"
+  },
+  "limitations": [
+    "This packet is not an IFC export.",
+    "Historical link state does not prove current availability.",
+    "Material assets and external server resources require separate native review."
+  ]
+}
