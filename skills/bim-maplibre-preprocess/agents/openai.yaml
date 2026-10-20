@@ -1,0 +1,4 @@
+interface:
+  display_name: "BIM 前處理與 MapLibre 展示"
+  short_description: "盤點 RVT、交接 Revit 匯出，追蹤 IFC 與 GLB 轉換及地圖驗收"
+  default_prompt: "使用 $bim-maplibre-preprocess 接續本專案的 RVT 前處理，先讀狀態與來源盤點，再執行目前可驗證的下一階段。"

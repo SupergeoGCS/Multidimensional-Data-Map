@@ -1,0 +1,16 @@
+/references/
+/data/
+/artifacts/
+/.worktrees/
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+*.rvt
+*.rfa
+*.ifc
+*.ifczip
+*.glb
+*.gltf
+*.bin
+*.log
