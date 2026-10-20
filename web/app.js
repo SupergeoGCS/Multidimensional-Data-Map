@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from './vendor/GLTFLoader.js';
 import {OrbitControls} from './vendor/OrbitControls.js';
+import {createBasemapStyle, applyBasemapVisibility, BUILDING_LAYER_ID} from './map-basemaps.js';
 
 const $ = id => document.getElementById(id);
 const home = {center:[121.0,23.8],zoom:6.8,pitch:0,bearing:0};
@@ -10,16 +11,33 @@ const imported=new Map();
 function toast(text){$('toast').textContent=text;$('toast').style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').style.display='none',5000);}
 function showProperties(title,properties){$('feature-title').textContent=title;const dl=$('feature-properties');dl.replaceChildren();for(const [key,value] of Object.entries(properties).slice(0,40)){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=key;dd.textContent=typeof value==='object'?JSON.stringify(value):String(value??'—');dl.append(dt,dd);}$('feature-panel').hidden=false;}
 $('close-feature').onclick=()=>$('feature-panel').hidden=true;
-const map=new maplibregl.Map({container:'map',style:{version:8,sources:{street:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',maxzoom:19}},layers:[{id:'background',type:'background',paint:{'background-color':'#dfe9ed'}},{id:'street',type:'raster',source:'street',paint:{'raster-saturation':-.65,'raster-contrast':-.12,'raster-opacity':.82}}]},...home,maxPitch:80,canvasContextAttributes:{antialias:true},attributionControl:{compact:true}});
+let vectorStyle=null, basemapFailure=false;
+try {const response=await fetch('./map-styles/openfreemap-liberty.json');if(!response.ok)throw new Error('style unavailable');vectorStyle=await response.json();}catch{toast('向量樣式無法載入，先使用街道圖。');$('basemap').value='street';$('basemap').querySelector('[value="vector"]').disabled=true;}
+const basemapConfig=createBasemapStyle(vectorStyle);
+const map=new maplibregl.Map({container:'map',style:basemapConfig.style,...home,maxPitch:80,canvasContextAttributes:{antialias:true},attributionControl:{compact:true}});
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
-map.on('load',()=>{$('network-status').textContent='地圖已就緒';map.resize();});
-map.on('error',e=>{if(e.sourceId==='street'){$('network-status').textContent='街道底圖連線失敗，可切換無底圖';}else{console.error(e.error);toast('地圖載入遇到問題，請檢查瀏覽器 WebGL 支援。');}});
+map.on('style.load',()=>{$('basemap').disabled=false;syncBasemap();});
+map.on('load',()=>map.resize());
+map.on('error',e=>{const message=e.error?.message||'';if(e.sourceId==='street'||basemapConfig.vectorSourceIds.includes(e.sourceId)||message.includes('tiles.openfreemap.org')){basemapFailure=true;$('network-status').textContent='底圖連線異常，可切換其他底圖';}else{console.error(e.error);toast('圖層載入遇到問題，請檢查資料與瀏覽器 WebGL 支援。');}});
 map.on('mousemove',e=>{$('cursor-coordinate').textContent=`${e.lngLat.lng.toFixed(5)}° E / ${e.lngLat.lat.toFixed(5)}° N`;});
 map.on('move',()=>{$('camera-state').textContent=`縮放 ${map.getZoom().toFixed(1)} · 傾角 ${map.getPitch().toFixed(0)}°`;});
-function setMode(next){mode=next;for(const m of ['2d','3d']){$(`mode-${m}`).classList.toggle('active',m===mode);$(`mode-${m}`).setAttribute('aria-pressed',String(m===mode));}map.easeTo({pitch:mode==='3d'?60:0,bearing:mode==='3d'?map.getBearing():0,duration:650});$('view-subtitle').textContent=mode==='3d'?'立體視角 · 拖曳旋轉檢視':'平面視角';if(customLayer)map.setLayoutProperty('bim-preview','visibility',mode==='3d'&&$('show-model').checked?'visible':'none');updateGeojsonMode();}
+function setMode(next){mode=next;for(const m of ['2d','3d']){$(`mode-${m}`).classList.toggle('active',m===mode);$(`mode-${m}`).setAttribute('aria-pressed',String(m===mode));}map.easeTo({pitch:mode==='3d'?60:0,bearing:mode==='3d'?map.getBearing():0,duration:650});$('view-subtitle').textContent=mode==='3d'?'立體視角 · 拖曳旋轉檢視':'平面視角';if(customLayer)map.setLayoutProperty('bim-preview','visibility',mode==='3d'&&$('show-model').checked?'visible':'none');updateGeojsonMode();syncBasemap();}
 $('mode-2d').onclick=()=>setMode('2d');$('mode-3d').onclick=()=>setMode('3d');
 $('home').onclick=()=>{map.flyTo({...home,pitch:mode==='3d'?60:0});};
-$('basemap').onchange=()=>{map.setLayoutProperty('street','visibility',$('basemap').value==='none'?'none':'visible');$('network-status').textContent=$('basemap').value==='none'?'無底圖 · 不請求圖磚':'OpenStreetMap 街道底圖';};
+function updateBuildingHint(){
+  const available=$('basemap').value==='vector'&&mode==='3d'&&basemapConfig.available;
+  $('show-buildings').disabled=!available;
+  $('buildings-hint').textContent=!basemapConfig.available?'向量樣式無法使用':$('basemap').value!=='vector'?'周邊建物需使用 OpenFreeMap 向量底圖':mode!=='3d'?'切換至 3D 模式以顯示周邊建物':!$('show-buildings').checked?'已關閉周邊立體建物':map.getZoom()<14?'放大至街區尺度（縮放 14 以上）即可查看':'已開啟；依目前範圍的 OSM 建物資料顯示';
+}
+function syncBasemap(){
+  applyBasemapVisibility(map,basemapConfig,$('basemap').value,mode,$('show-buildings').checked);
+  if(!basemapFailure)$('network-status').textContent={vector:'OpenFreeMap 向量底圖',street:'OpenStreetMap 街道圖',none:'無底圖 · 不新增圖磚請求'}[$('basemap').value];
+  updateBuildingHint();
+}
+$('basemap').onchange=()=>{basemapFailure=false;syncBasemap();};
+$('show-buildings').onchange=syncBasemap;
+map.on('zoomend',updateBuildingHint);
+map.on('idle',updateBuildingHint);
 function clearSelection(){if(selectedMesh&&selectedMaterials){selectedMesh.material=selectedMaterials;selectedMesh=null;selectedMaterials=null;selectedHighlight?.dispose();selectedHighlight=null;}}
 function disposeRoot(root){const geometries=new Set(),materials=new Set(),textures=new Set();root?.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of o.material?(Array.isArray(o.material)?o.material:[o.material]):[]){materials.add(m);for(const value of Object.values(m))if(value?.isTexture)textures.add(value);}});for(const x of [...geometries,...textures,...materials])x.dispose();}
 function ensureModel(){if(!modelPromise){modelPromise=new GLTFLoader().loadAsync('/assets/str.glb').then(gltf=>{sourceModel=gltf.scene;sourceModel.updateMatrixWorld(true);sourceModel.traverse(o=>{if(o.isMesh){o.frustumCulled=false;if(!o.geometry.attributes.normal)o.geometry.computeVertexNormals();}});return sourceModel;}).catch(e=>{modelPromise=null;$('model-dot').style.background='#ce8065';throw new Error('模型無法載入：'+e.message);});}return modelPromise;}

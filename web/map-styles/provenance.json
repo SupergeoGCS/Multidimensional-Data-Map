@@ -1,0 +1,16 @@
+{
+  "retrieved_on": "2026-10-20",
+  "source": "https://tiles.openfreemap.org/styles/liberty",
+  "sha256": "6010998863b4876911ac9a2d62c9a28d97c8877f6d20cd158b74808572257b60",
+  "bytes": 43079,
+  "local_changes": "None in snapshot; map-basemaps.js namespaces layers, omits optional Natural Earth raster, retains flat building footprints, and controls building extrusion separately.",
+  "attribution": [
+    "OpenFreeMap",
+    "OpenMapTiles",
+    "OpenStreetMap contributors"
+  ],
+  "references": [
+    "https://openfreemap.org/quick_start/",
+    "https://openfreemap.org/"
+  ]
+}

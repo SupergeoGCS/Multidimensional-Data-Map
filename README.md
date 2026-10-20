@@ -2,7 +2,9 @@
 
 目標：將 Revit 模型前處理成可定位、可驗證的資產，於 MapLibre GL JS 展示建築與結構。已完成本機地圖站台、2D／3D 切換與 STR 概略模型的瀏覽器預覽；原生模型開啟／匯出與精確幾何、地理定位驗證仍待完成。
 
-**啟動站台：**雙擊 `啟動地圖.cmd`，或執行 `python tools/serve_map.py --open-browser`。操作說明見 [docs/MAP_SITE.md](docs/MAP_SITE.md)。程式庫與模型由本機載入，僅街道底圖連線 OpenStreetMap，不部署或上傳私有模型。
+**啟動站台：**雙擊 `啟動地圖.cmd`，或執行 `python tools/serve_map.py --open-browser`。操作說明見 [docs/MAP_SITE.md](docs/MAP_SITE.md)。程式庫與模型由本機載入，底圖依選擇連線 OpenFreeMap／OpenStreetMap，不部署或上傳私有模型。
+
+底圖預設為 OpenFreeMap 向量，可切換點陣街道或無底圖。向量底圖的周邊立體建物與 BIM 可分別控制；向量字形、圖示與圖磚連線 OpenFreeMap，點陣圖磚連線 OpenStreetMap。底圖切換保留匯入圖層及模型位置。
 
 已完成 [rvt-rs 0.6.0 的 STR 開源試驗](reports/rvt-rs-str-0.6.0/RESULT.md)：成功輸出試驗 IFC／GLB 與本機預覽，但約 71.2% 構件 body 為包圍盒近似，尚未取代正式原生匯出流程。
 

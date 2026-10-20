@@ -1,5 +1,12 @@
 # 決策紀錄
 
+## 2026-10-20：向量底圖與周邊立體建物
+- 使用者要求實作 OpenFreeMap 向量底圖＋可切換周邊立體建物＋獨立 BIM，同時保留點陣街道與無底圖。
+- 下載 Liberty 官方樣式 JSON 快照至本機，字形、圖示與圖磚仍按視野從 OpenFreeMap 取得。保留 OpenFreeMap／OpenMapTiles／OSM attribution；省略 Liberty 可選的 Natural Earth 點陣裝飾，避免額外背景影像請求。樣式來源與雜湊另存 provenance.json。
+- 所有底圖放在同一 MapLibre style，以 namespaced layer visibility 切換，避免 setStyle 清除本機資料與 custom BIM layer。UI 選擇獨立於 BIM／GeoJSON 狀態。
+- 周邊建物只在向量 3D 顯示，高度使用 provider 的 render_height／render_min_height，缺值為零；不自行假設樓層高度。2D 或關閉周邊建物時仍保留平面輪廓。
+- 無底圖模式隱藏所有向量及點陣底圖；周邊建物不在此模式發出新的向量圖磚請求。保留既有快取與已發出請求，不承諾取消所有進行中的網路活動。
+
 ## 2026-10-20：先建立本機 2D／3D 資料檢視站台
 - 使用者希望先檢視資料。採 buildless HTML／ES modules、固定本機 MapLibre／Three.js、標準函式庫 Python HTTP server，避免額外框架與編譯依賴。延續模型不上傳的約束，不使用雲端 Sites 註冊或部署。
 - 不猜測模型位置：初始只顯示臺灣地圖；模型可在獨立局部座標視窗檢視，使用者另指定「手動暫放」位置後才加入地圖。2D 隱藏 BIM，自動俯仰／朝北回復；3D 用 custom layer 畫 GLB。

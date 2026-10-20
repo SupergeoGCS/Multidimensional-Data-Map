@@ -19,10 +19,14 @@ python tools/serve_map.py --data-root 'C:\Users\benhs\OneDrive\文件\三維圖�
 - 「在地圖上指定位置」或經緯度表單：由使用者手動暫放模型，顯示／隱藏、旋轉、高度與清除。模型底部指包圍盒最低處，非測量高程原點；位置始終標記未驗證。切回 2D 時隱藏三維模型，保留暫放參數。
 - 匯入 GeoJSON：WGS84 經緯度資料，支援面／線／點、圖層顯示移除、點選屬性與自動縮放。多邊形的數值 height 屬性用公尺顯示三維高度，缺值為 0。最大 25 MB；不直接支援 TWD97 平面座標。
 - 匯入 GLB：替換目前模型，最大 150 MB，使用 GLB 2.0 內嵌資源。沒有配置額外 decoder 的 Draco／KTX 等資產需先轉成相容格式；外部資源 URI 會拒絕載入。模型品質及樓層資訊不沿用 STR 的已知數字。
-- 地圖底圖可切換街道圖與無底圖。MapLibre 5.6.0、Three.js 0.169.0 與 loader 均本機供應；來源與下載 SHA-256 位於 web/vendor/manifest.json。
+- 預設 OpenFreeMap 向量底圖，可切換「街道圖（點陣）」與「無底圖（離線）」。底圖只切換圖層可見性，不重建樣式，因此已匯入資料、BIM 模型與暫放參數都保留。MapLibre 5.6.0、Three.js 0.169.0 與 loader 均本機供應；來源與下載 SHA-256 位於 web/vendor/manifest.json。
+- 周邊立體建物使用 OpenFreeMap／OpenMapTiles 的 building 圖層，與 BIM 分開控制。只有向量底圖＋3D 模式可開關，縮放 14 以上顯示；關閉後保留平面建物輪廓。2D、點陣或無底圖時不顯示周邊立體建物，返回向量 3D 時保留開關選擇。
+- 周邊高度取 render_height／render_min_height；可能是 OSM 推估值，不是精確測量或 BIM。沒有高度時不另造高度；不同地區覆蓋與資料完整度可能不同。若遮住 BIM，可獨立關閉周邊立體建物。
 
 ## 資料與限制
-模型與使用者匯入檔案不會上傳；街道底圖會向 OpenStreetMap 請求視野範圍圖磚。若需完全離線，切換無底圖；不做大量圖磚預抓。底圖 attribution 與程式庫授權保留。
+模型與使用者匯入檔案不會上傳。向量底圖、字形與圖示向 OpenFreeMap 請求，點陣街道圖向 OpenStreetMap 請求視野範圍圖磚。切換無底圖後不新增底圖圖磚請求，已發出的請求可能繼續完成；本機模型與匯入資料仍可使用。不做大量圖磚預抓。底圖 attribution 與程式庫授權保留。
+
+Liberty 樣式快照保存於 web/map-styles/openfreemap-liberty.json，來源／SHA-256 見 provenance.json；快照僅為樣式設定，不含圖磚資料。可在有需要時更新，不自行下載全臺或全球底圖。OpenFreeMap 是第三方公開服務，不保證 SLA；載入問題時可切換點陣街道圖或無底圖。沒有新增 DEM 或地形服務。
 
 初始模型為 rvt-rs 試驗產物，71.2% bodies 使用包圍盒近似。沒有預設模型經緯度，也沒有自動推斷真實基地。所有手動暫放與匯入狀態只保留於目前分頁記憶體，重新載入即清除；沒有後端資料庫或跨分頁儲存。
 
