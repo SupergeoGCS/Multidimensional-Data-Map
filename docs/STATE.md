@@ -16,6 +16,7 @@ MapLibre GL JS 三維模式展示 RVT 建築與結構。技術路線可行；本
 | MapLibre 畫面與效能驗收 | pending | 尚無應用程式；無實際畫面、幀率或載入測試 |
 
 ## 已完成
+- 已確立本機 Python CLI 優先、Rust 依效能量測評估的原則，寫入 AGENTS／skill／DECISIONS。大型資料不上傳對話；沿用既有報告避免重複掃描。本次未重跑 RVT，也未新增自動快取／斷點工具。
 - 建立專案 Git main、來源排除規則、前處理 skill、唯讀盤點及基礎轉換腳本。
 - 原始檔 4 個合計 1,528,389,632 bytes；所有檔案格式欄位為 2021。
 - 建築檔的 STR 連結 `A18A-CO-STR-ALL.rvt` 與現有 `A18A-CO-STR-60_.rvt` 名稱不同，不能自動視為同檔。
