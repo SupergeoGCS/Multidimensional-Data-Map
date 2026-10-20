@@ -2,6 +2,8 @@
 
 主工作區：`C:/Users/benhs/OneDrive/文件/三維圖台`，分支 main，保存 references/ 來源。獨立工作樹的實際路徑以 `git worktree list` 為準。
 
+已建立並附加於本聊天的受管工作樹：`C:/Users/benhs/.codex/worktrees/bim-preprocess/三維圖台`，開發分支 `codex/bim-preprocess`。建置時從 main 的基線提交建立；目前任務執行目錄仍是主工作區，未自動切換。後續開發請明確使用開發工作樹，或在主工作區修改完成並提交後，於乾淨的開發工作樹 fast-forward 同步。
+
 新對話貼上：
 > 請接續本專案；先讀 AGENTS.md、docs/STATE.md、docs/DECISIONS.md，執行 git status、git diff 與 git worktree list，依紀錄進行下一步。來源位於主工作區 references/A18-1，不要把前處理腳本測試當成實際 BIM 轉檔完成。
 

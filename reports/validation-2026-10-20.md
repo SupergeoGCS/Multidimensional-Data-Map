@@ -5,6 +5,7 @@
 | 檢查 | 結果 | 範圍 |
 |---|---|---|
 | 真實 RVT 唯讀盤點 | passed | 四檔皆成功讀取 BasicFileInfo 與 TransmissionData、產生 SHA-256；source_stable_during_audit 全部 true |
+| 內嵌預覽擷取 | passed | 四檔 RevitPreview4.0 的 PNG 保存於 reports/previews/；STR、AR 目視可見建築群三維畫面；僅快取畫面，不是本次原生開啟或構件驗收 |
 | skill-creator quick_validate.py | passed | Skill is valid!；UTF-8 模式 |
 | unittest discover -s tests -v | passed | 5 測試：損壞 RVT、循環 FAT、GLB 截斷／區塊越界、重複 JSON、轉換紀錄／覆寫拒絕／執行失敗 |
 | 獨立 Luna 審查 | completed | 已修正材質盤點範圍與 GLB JSON／BIN 數量順序；審查時狀態文件尚在建立，現已補齊 |
