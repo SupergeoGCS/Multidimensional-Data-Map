@@ -1,0 +1,2 @@
+rvt-gltf: saved graphics not read, bodies unchanged: native record framing is unvalidated for Revit 2021
+rvt-gltf: wrote 5268112 bytes (8373 building elements) to C:\Users\benhs\OneDrive\文件\三維圖台\artifacts\rvt-rs-str-0.6.0\str-preview-only.glb

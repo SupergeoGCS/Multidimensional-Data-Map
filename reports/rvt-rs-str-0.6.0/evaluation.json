@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "evaluated_on": "2026-10-20",
+  "tool": {
+    "project": "https://github.com/DrunkOnJava/rvt-rs",
+    "version": "0.6.0",
+    "license": "Apache-2.0",
+    "python_wheel_bytes": 2559864,
+    "python_wheel_sha256": "bb569bd6f2c7b3be9988ce694935a045ca53206d0cf46b357df63e339a987c7a",
+    "cli_archive_bytes": 22322926,
+    "cli_archive_sha256": "fbad670e4d893fe2861e34a796f9418fad45b1b127d475cda225f67fc379fb0f",
+    "cli_archive_expected_digest": "sha256:fbad670e4d893fe2861e34a796f9418fad45b1b127d475cda225f67fc379fb0f",
+    "cli_archive_hash_verified": true,
+    "executables": {
+      "rvt-ifc.exe": "5cc9cc1d9a7dd1f8b2aedba9247f0565dbf4ef83f328487320f850853ec03cce",
+      "rvt-gltf.exe": "1fe1ce364dbda0d0186fe6c91c6da74d4610276db100a1033839c1955c6009e4"
+    }
+  },
+  "source": {
+    "path": "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\references\\A18-1\\A18A-CO-STR-60_.rvt",
+    "bytes": 120655872,
+    "revit_version": 2021,
+    "sha256": "7b5e3f023db9803b8e3fa90bb64405189abab20bcf4a9c444e24884fce929bb9",
+    "matches_original_inventory": true
+  },
+  "trial": {
+    "baseline": "Python export_diagnostics_json default",
+    "saved_meshes_requested": true,
+    "saved_meshes_used": false,
+    "saved_meshes_limitation": "native record framing is unvalidated for Revit 2021",
+    "baseline_bounding_box_bodies": 5962,
+    "saved_meshes_bounding_box_bodies": 5962,
+    "exported_building_elements": 8373,
+    "bounding_box_fraction": 0.7120506389585572,
+    "by_ifc_type": {
+      "IFCBEAM": 3737,
+      "IFCBUILDINGELEMENTPROXY": 369,
+      "IFCCOLUMN": 1231,
+      "IFCFOOTING": 20,
+      "IFCSLAB": 2659,
+      "IFCWALL": 357
+    },
+    "body_sources": {
+      "partition_element_record_bbox": 5962,
+      "partition_element_record_column_cut": 2056,
+      "partition_element_record_join_trimmed": 355
+    },
+    "storeys": 16,
+    "missing_level_diagnostic_count": 178,
+    "warning_count": 6,
+    "tool_confidence_score": 1.0,
+    "tool_confidence_does_not_measure_fidelity": true
+  },
+  "artifacts": {
+    "ifc": {
+      "path": "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\artifacts\\rvt-rs-str-0.6.0\\str-saved-meshes.ifc",
+      "bytes": 28699029,
+      "sha256": "bc158774abbd4db6a081238d5f88f10d01a2631c4a48e956c5c380e85c4c086d"
+    },
+    "glb": {
+      "path": "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\artifacts\\rvt-rs-str-0.6.0\\str-preview-only.glb",
+      "bytes": 5268112,
+      "sha256": "b9f5bbbed105d38d942bc96d0c37bced406e2c2381c4733395242ef30e5ce98f"
+    }
+  },
+  "execution": {
+    "ifc": {
+      "command": [
+        "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\artifacts\\tools\\rvt-rs\\bin\\rvt-ifc.exe",
+        "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\references\\A18-1\\A18A-CO-STR-60_.rvt",
+        "-o",
+        "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\artifacts\\rvt-rs-str-0.6.0\\str-saved-meshes.ifc",
+        "--saved-meshes",
+        "--mode",
+        "geometry",
+        "--diagnostics",
+        "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\artifacts\\rvt-rs-str-0.6.0\\saved-meshes-diagnostics.json"
+      ],
+      "started_at": 1792459421.1716845,
+      "exit_code": 0,
+      "elapsed_seconds": 17.291
+    },
+    "glb": {
+      "command": [
+        "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\artifacts\\tools\\rvt-rs\\bin\\rvt-gltf.exe",
+        "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\references\\A18-1\\A18A-CO-STR-60_.rvt",
+        "-o",
+        "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\artifacts\\rvt-rs-str-0.6.0\\str-preview-only.glb",
+        "--saved-meshes",
+        "--verbose"
+      ],
+      "quality": "preview_only_not_accepted",
+      "exit_code": 0,
+      "elapsed_seconds": 8.518
+    }
+  },
+  "validation": {
+    "glb_basic": {
+      "check": "container_and_json_only",
+      "nodes": 8374,
+      "meshes": 8373,
+      "full_gltf_validation": "not_run",
+      "visual_acceptance": "not_run",
+      "placement_acceptance": "not_run"
+    },
+    "independent_native_ifc_reference": "not_available",
+    "georeferencing": "not_verified",
+    "browser_rendering": "not_run",
+    "local_static_preview": "generated_and_inspected; not a map or browser acceptance test"
+  },
+  "decision": {
+    "preview_export_success": true,
+    "accepted_as_revit_replacement": false,
+    "skill_default_replaced": false,
+    "reasons": [
+      "5962 of 8373 building bodies are bounding-box approximations; exact shape not decoded",
+      "Saved mesh option does not support this Revit 2021 record framing",
+      "178 missing-level diagnostics and 6 warnings need investigation",
+      "No independent native reference, coordinate validation or full glTF validation"
+    ]
+  }
+}

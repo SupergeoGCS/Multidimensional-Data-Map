@@ -1,0 +1,50 @@
+[
+  {
+    "file": "maplibre-gl.js",
+    "source": "https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.0/dist/maplibre-gl.js",
+    "bytes": 939269,
+    "sha256": "07e6ca71a5b6d835a7c3803fb484f0a6e5f0dcbfa131407666edb9e9316564f9"
+  },
+  {
+    "file": "maplibre-gl.css",
+    "source": "https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.0/dist/maplibre-gl.css",
+    "bytes": 69422,
+    "sha256": "792ac997dcf6ae6f643eb4e2dee4630c85e7056526bd8fb85ffe83c67d6c41b4"
+  },
+  {
+    "file": "three.module.js",
+    "source": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+    "bytes": 1304820,
+    "sha256": "0a3368c165eea773490aec7b77c22de70e3eac288503409256fdbf4d12578416"
+  },
+  {
+    "file": "GLTFLoader.js",
+    "source": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js",
+    "bytes": 114747,
+    "sha256": "8ffe46da2aae0fff4a1e44b574f3fd06d681f1f6f36490e7871874f24a880b7a"
+  },
+  {
+    "file": "BufferGeometryUtils.js",
+    "source": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/utils/BufferGeometryUtils.js",
+    "bytes": 31768,
+    "sha256": "c25b7930e570e9ec56173cd3b866ec8d2e10016630db3937efb439daf1cedbf6"
+  },
+  {
+    "file": "OrbitControls.js",
+    "source": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js",
+    "bytes": 32134,
+    "sha256": "80efaadea4f8a636a65fb0bd08bfef62f3d93a0bb94e2e7500f23176c5c07f4e"
+  },
+  {
+    "file": "maplibre-LICENSE.txt",
+    "source": "https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.0/LICENSE.txt",
+    "bytes": 5984,
+    "sha256": "ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2"
+  },
+  {
+    "file": "three-LICENSE.txt",
+    "source": "https://cdn.jsdelivr.net/npm/three@0.169.0/LICENSE",
+    "bytes": 1081,
+    "sha256": "4c40a1ef62450b857c3b2aaf294936304cd552d965fbcd9d32d4c5bcf4ba4454"
+  }
+]

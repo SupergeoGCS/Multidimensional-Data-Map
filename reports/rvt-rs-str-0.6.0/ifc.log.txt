@@ -1,0 +1,7 @@
+rvt-ifc: saved graphics not read, bodies unchanged: native record framing is unvalidated for Revit 2021
+rvt-ifc: wrote 28699029 bytes to C:\Users\benhs\OneDrive\文件\三維圖台\artifacts\rvt-rs-str-0.6.0\str-saved-meshes.ifc
+rvt-ifc: 8373 building element(s), 8373 with geometry, on 16 storey(s)
+  3737 IfcBeam, 2659 IfcSlab, 1231 IfcColumn, 369 IfcBuildingElementProxy, 357 IfcWall, 20 IfcFooting
+  5962 of the bodies are their element record's bounding box: placed and sized, shape not decoded
+rvt-ifc: readiness geometry (score 1.00)
+rvt-ifc: wrote diagnostics 14976 bytes to C:\Users\benhs\OneDrive\文件\三維圖台\artifacts\rvt-rs-str-0.6.0\saved-meshes-diagnostics.json

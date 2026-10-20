@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"name":"操作測試範圍（示意，非實際基地）","height":25},"geometry":{"type":"Polygon","coordinates":[[[121.25,25.01],[121.2504,25.01],[121.2504,25.0103],[121.25,25.0103],[121.25,25.01]]]}},{"type":"Feature","properties":{"name":"測試點（示意）"},"geometry":{"type":"Point","coordinates":[121.2502,25.01015]}}]}

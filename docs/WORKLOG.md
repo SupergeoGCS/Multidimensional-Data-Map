@@ -1,5 +1,18 @@
 # 工作紀錄
 
+## 2026-10-20：建立本機地圖資料檢視站台
+- 新增 web/（MapLibre、Three.js 與本機 vendor）、tools/serve_map.py、啟動地圖.cmd、GeoJSON 操作示意與 MAP_SITE.md。
+- 實際瀏覽器測試：街道圖載入、2D／3D 切換、STR 局部模型載入／線框／重設／點選、手動位置加入地圖、切回 2D、GeoJSON 匯入／移除及 GLB 替換，未觀測到 console error。點選模型回報混凝土矩形梁／IFCBEAM。
+- 初次 sandbox 內啟動的 loopback server 無法被 IAB 存取，停止後改為經允許的 sandbox 外 loopback server，瀏覽器成功連線；無對外綁定。
+- 10 項單元測試與 app.js 語法檢查通過。新增靜態目錄邊界／路徑穿越／明確 asset 路由保護；現有模型與原始來源均未修改。幀率與精確定位尚未驗收。
+
+## 2026-10-20：實際執行 rvt-rs 0.6.0 STR 試驗
+- Python wheel（約 2.6 MB）與 Windows CLI（約 22.3 MB）下載到 artifacts/tools/rvt-rs；CLI 發行壓縮包雜湊與 GitHub 官方 release digest 一致。最初 pip 安裝遇系統 Temp 權限，改用專案 artifacts/tool-tmp 後成功，未修改全域 Python。
+- Python 診斷成功；接著針對包圍盒問題提出讀取 saved meshes 的第二條件，實際執行 rvt-ifc --mode geometry --saved-meshes 與 rvt-gltf --saved-meshes。兩項 exit code=0，耗時約 17.29／8.52 秒。
+- IFC 28,699,029 bytes；GLB 5,268,112 bytes，基本 GLB 結構驗證通過。依 GLB 產生並檢視本機靜態預覽；不是瀏覽器或地圖測試。
+- 結構配置可辨識，但 5,962／8,373 bodies 是包圍盒；saved meshes 在此 2021 檔未生效。保存兩組 diagnostics、日誌、工具與產物雜湊及命令至 reports/rvt-rs-str-0.6.0。
+- 原始 STR SHA-256 與原盤點一致。依條件未更換正式 skill，保留 preview-only 產物與正式 IFC 交接路線；禁止把試驗成功或工具 score=1.0 寫成正式幾何通過。
+
 ## 2026-10-20：執行 STR 原生匯出準備
 - 使用者要求建立並執行下一階段，並確認目前沒有 Revit。
 - 先查 Windows 安裝清單、執行程序、常見路徑、Revit 登錄項目與 PATH，未找到可用候選；新增可重現的 prepare_revit_export.py（PATH／標準目錄／Revit 登錄／明確指定路徑）。

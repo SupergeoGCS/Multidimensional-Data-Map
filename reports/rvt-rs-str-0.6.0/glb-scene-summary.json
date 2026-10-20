@@ -1,0 +1,17 @@
+{
+  "triangles": 100476,
+  "scene_bounds_meters_y_up": [
+    [
+      -3.3500019360000053,
+      -11.7700002852,
+      -66.35000332534057
+    ],
+    [
+      101.15000415120001,
+      36.40000104288,
+      1.8500000421405762
+    ]
+  ],
+  "renderer": "local diagnostic painter; may have occlusion artifacts",
+  "map_visual_acceptance": "not_run"
+}
