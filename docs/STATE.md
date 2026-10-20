@@ -18,6 +18,7 @@ MapLibre GL JS 三維模式展示 RVT 建築與結構。先 STR，再 AR，MEP�
 | 精確地理套合與效能驗收 | pending | 手動暫放僅為預覽；真實位置、測量誤差、目標硬體幀率／記憶體未量測；不把站台可用等同正式 BIM 驗收 |
 
 ## 已完成
+- 依使用者頁面註解，站台頁首與瀏覽器分頁名稱改為「多維度空間資料檢視圖台」。
 - 本機資料檢視站台：MapLibre 5.6.0／Three.js 0.169.0 固定版本與授權檔保存在 web/vendor/；本機 Python 靜態伺服器只綁 127.0.0.1。啟動地圖.cmd 可啟動並開瀏覽器。模型未預設經緯度，使用者手動暫放會持續標示未驗證。
 - 本次新增 HTTP 路徑與目錄清單保護測試，合計 10 項 unittest 通過，app.js Node 語法檢查通過。UI 已於實際瀏覽器載入模型並點選到 IFCBEAM；屬性不宣稱完整 BIM 語意。手動測試位置與示意 GeoJSON 不會寫成真實基地資料。
 - rvt-rs 0.6.0 僅安裝於主工作區 artifacts/tools/rvt-rs，無全域安裝；官方 CLI 壓縮包雜湊已核對。實際 STR 產物在 artifacts/rvt-rs-str-0.6.0（IFC 約 28.7 MB、GLB 約 5.27 MB），小型證據、預覽與雜湊在 reports/rvt-rs-str-0.6.0。來源雜湊仍與原盤點相同。無模型上傳。
