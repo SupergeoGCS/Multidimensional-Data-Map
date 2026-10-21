@@ -1,0 +1,161 @@
+{
+  "schema": "IFC4",
+  "units_to_m": 0.01,
+  "elements": {
+    "IfcBeam": 3737,
+    "IfcBuildingElementProxy": 180,
+    "IfcColumn": 1231,
+    "IfcSlab": 2679,
+    "IfcWall": 355,
+    "IfcBuildingElementPart": 125,
+    "IfcOpeningElement": 229
+  },
+  "storeys": [
+    {
+      "name": "FS",
+      "elevation": -987.0
+    },
+    {
+      "name": "B2F",
+      "elevation": -797.0000000000001
+    },
+    {
+      "name": "B1F",
+      "elevation": -477.0
+    },
+    {
+      "name": "GL",
+      "elevation": -116.99999999999999
+    },
+    {
+      "name": "1FL",
+      "elevation": 0.0
+    },
+    {
+      "name": "2FL",
+      "elevation": 450.0
+    },
+    {
+      "name": "3FL",
+      "elevation": 790.0
+    },
+    {
+      "name": "4FL",
+      "elevation": 1130.0
+    },
+    {
+      "name": "5FL",
+      "elevation": 1469.9999999999998
+    },
+    {
+      "name": "6FL",
+      "elevation": 1809.9999999999995
+    },
+    {
+      "name": "7FL",
+      "elevation": 2149.9999999999995
+    },
+    {
+      "name": "8FL",
+      "elevation": 2489.999999999999
+    },
+    {
+      "name": "R1F",
+      "elevation": 2829.9999999999995
+    },
+    {
+      "name": "R2F",
+      "elevation": 3160.0
+    },
+    {
+      "name": "R3F",
+      "elevation": 3380.0000000000005
+    },
+    {
+      "name": "RF",
+      "elevation": 3640.0
+    }
+  ],
+  "sites": [
+    {
+      "id": 92,
+      "name": "Default",
+      "matrix": [
+        [
+          0.7509343566077379,
+          -0.6603768560951564,
+          0.0,
+          27101530.20411354
+        ],
+        [
+          0.6603768560951564,
+          0.7509343566077379,
+          0.0,
+          276815833.777001
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -85.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "latitude": [
+        42,
+        24,
+        53,
+        508911
+      ],
+      "longitude": [
+        -71,
+        -15,
+        -29,
+        -58837
+      ],
+      "elevation": 0.0
+    }
+  ],
+  "buildings": [
+    {
+      "id": 23,
+      "name": "",
+      "matrix": [
+        [
+          0.7509343566077379,
+          -0.6603768560951564,
+          0.0,
+          27101530.20411354
+        ],
+        [
+          0.6603768560951564,
+          0.7509343566077379,
+          0.0,
+          276815833.777001
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -85.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "latitude": null,
+      "longitude": null,
+      "elevation": null
+    }
+  ],
+  "map_conversion": [],
+  "crs": []
+}

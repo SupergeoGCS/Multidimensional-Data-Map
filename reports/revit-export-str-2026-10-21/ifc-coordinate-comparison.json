@@ -1,0 +1,47 @@
+{
+  "a_count": 8536,
+  "b_count": 8536,
+  "shared_guids": 8536,
+  "only_a_count": 0,
+  "only_b_count": 0,
+  "b_units_to_m": 0.01,
+  "b_types": {
+    "IfcBeam": 3737,
+    "IfcBuildingElementProxy": 180,
+    "IfcColumn": 1231,
+    "IfcSlab": 2679,
+    "IfcWall": 355,
+    "IfcBuildingElementPart": 125,
+    "IfcOpeningElement": 229
+  },
+  "b_site_matrices": [
+    [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  ],
+  "b_header": "<ifcopenshell.file.file_header object at 0x000001C567E60CB0>",
+  "a_error_slab_in_b": true
+}

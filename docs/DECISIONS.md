@@ -1,5 +1,19 @@
 # 決策紀錄
 
+## 2026-10-21：地籍基地與自訂住宅量體
+- RVT 定位核對依使用者要求暫緩。新增與 BIM 獨立的 MapLibre 自訂圖層：地籍多邊形是基地，建築另以包含於基地的矩形產生，分戶與代表點明示自動配置示意。
+- 不下載新依賴，以本機 JavaScript 解析 GeoJSON／ZIP SHP 與指定 TWD97 TM2 轉換；不猜未知 CRS。面積為估算，保留來源屬性；不作登記面積或真實室內格局承諾。
+- MapLibre extrusion 地下負高程不作隱含處理，使用獨立樓層抬升示意；模型參數及宗地寫入版本化 JSON，本機儲存由使用者明確觸發。單棟更新維持 ID，分戶 ID 對應樓層／戶序，不作住戶身份依據。
+
+## 2026-10-21：屬性配套納入 IFC 資產流程
+- 使用者要求完整前處理包含屬性。新增 package_ifc.py 統一編排轉換或經雜湊驗證的既有 GLB 重用、IfcOpenShell 屬性擷取、GUID 對應與摘要報告；完整元素字典留 artifacts/。
+- 圖台以 GLB SHA-256 綁定 sidecar，成功後按 GUID 呈現 IFC 中文名稱／類別／Revit Tag／容器／材料／屬性集；失配或缺檔只停用額外屬性並明示，不讓幾何或另一來源資訊冒充 IFC 屬性。單位維持來源值，不猜轉換。
+
+## 2026-10-21：兩種 BIM 來源同頁對照
+- 依使用者要求同時保留 rvt-rs 與 Revit IFC 來源，各自快取、檢視、顯示控制與品質說明。原本 model=native 只決定初次開啟哪一個檢視，不再取代整張資料卡。
+- 地圖共用既有 custom layer，內含兩個具來源 ID 的 group，個別 visibility；底圖切換不重建 BIM。局部 viewer 每次切換釋放渲染資源，來源幾何留在快取。
+- 原始共同定位契約未驗證，暫放沿用各自 bbox 置中與底部對齊，只供視覺對照並明示限制，不把疊合外觀當成精確幾何比較。
+
 ## 2026-10-20：向量底圖與周邊立體建物
 - 使用者要求實作 OpenFreeMap 向量底圖＋可切換周邊立體建物＋獨立 BIM，同時保留點陣街道與無底圖。
 - 下載 Liberty 官方樣式 JSON 快照至本機，字形、圖示與圖磚仍按視野從 OpenFreeMap 取得。保留 OpenFreeMap／OpenMapTiles／OSM attribution；省略 Liberty 可選的 Natural Earth 點陣裝飾，避免額外背景影像請求。樣式來源與雜湊另存 provenance.json。

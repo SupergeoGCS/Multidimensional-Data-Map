@@ -1,0 +1,100 @@
+[
+  {
+    "guid": "3_h01_B617Du0GXgCl2F9Z",
+    "name": "混凝土-矩形梁:WB1-50X70cm(WXH):143094",
+    "tag": "143094",
+    "representations": [
+      [
+        "Axis",
+        "MappedRepresentation"
+      ]
+    ],
+    "error": "Failed to process shape. Product: #65917=IfcBeam('3_h01_B617Du0GXgCl2F9Z',#6,'混凝土-矩形梁:WB1-50X70cm(WXH):143094',$,$,#65916,#65913,'143094',$), representation: #65912=IfcShapeRepresentation(#15,'Axis','MappedRepresentation',(#65911))"
+  },
+  {
+    "guid": "3nVM_F7Yz2QgwCoalX2XfM",
+    "name": "混凝土-矩形梁:施工-樑側增築-17.5X70cm(WXH):1332573",
+    "tag": "1332573",
+    "representations": [
+      [
+        "Axis",
+        "MappedRepresentation"
+      ]
+    ],
+    "error": "Failed to process shape. Product: #290709=IfcBeam('3nVM_F7Yz2QgwCoalX2XfM',#6,'混凝土-矩形梁:施工-樑側增築-17.5X70cm(WXH):1332573',$,$,#290708,#290705,'1332573',$), representation: #290704=IfcShapeRepresentation(#15,'Axis','MappedRepresentation',(#290703))"
+  },
+  {
+    "guid": "0y9f6otx1BnR5t1rVxGma0",
+    "name": "混凝土-矩形梁:施工-樑側增築-17.5X70cm(WXH):1382791",
+    "tag": "1382791",
+    "representations": [
+      [
+        "Axis",
+        "MappedRepresentation"
+      ]
+    ],
+    "error": "Failed to process shape. Product: #339364=IfcBeam('0y9f6otx1BnR5t1rVxGma0',#6,'混凝土-矩形梁:施工-樑側增築-17.5X70cm(WXH):1382791',$,$,#339363,#339360,'1382791',$), representation: #339359=IfcShapeRepresentation(#15,'Axis','MappedRepresentation',(#339358))"
+  },
+  {
+    "guid": "0y9f6otx1BnR5t1rVxGmqn",
+    "name": "混凝土-矩形梁:施工-樑側增築-17.5X70cm(WXH):1383862",
+    "tag": "1383862",
+    "representations": [
+      [
+        "Axis",
+        "MappedRepresentation"
+      ]
+    ],
+    "error": "Failed to process shape. Product: #340248=IfcBeam('0y9f6otx1BnR5t1rVxGmqn',#6,'混凝土-矩形梁:施工-樑側增築-17.5X70cm(WXH):1383862',$,$,#340247,#340244,'1383862',$), representation: #340243=IfcShapeRepresentation(#15,'Axis','MappedRepresentation',(#340242))"
+  },
+  {
+    "guid": "0y9f6otx1BnR5t1rVxGmrg",
+    "name": "混凝土-矩形梁:施工-樑側增築-17.5X70cm(WXH):1383917",
+    "tag": "1383917",
+    "representations": [
+      [
+        "Axis",
+        "MappedRepresentation"
+      ]
+    ],
+    "error": "Failed to process shape. Product: #341132=IfcBeam('0y9f6otx1BnR5t1rVxGmrg',#6,'混凝土-矩形梁:施工-樑側增築-17.5X70cm(WXH):1383917',$,$,#341131,#341128,'1383917',$), representation: #341127=IfcShapeRepresentation(#15,'Axis','MappedRepresentation',(#341126))"
+  },
+  {
+    "guid": "27pmlAIzn4pBwguSdhgpx1",
+    "name": "模型線:754941",
+    "tag": "754941",
+    "representations": [
+      [
+        "Annotation",
+        "GeometricSet"
+      ]
+    ],
+    "error": "Failed to process shape. Product: #269074=IfcBuildingElementProxy('27pmlAIzn4pBwguSdhgpx1',#6,'模型線:754941',$,$,#269063,#269073,'754941',$), representation: #269072=IfcShapeRepresentation(#269071,'Annotation','GeometricSet',(#269066))"
+  },
+  {
+    "guid": "1EjltuNSvCWQxA9G9hu1zr",
+    "name": "模型線:1221765",
+    "tag": "1221765",
+    "representations": [
+      [
+        "Annotation",
+        "GeometricSet"
+      ]
+    ],
+    "error": "Failed to process shape. Product: #283653=IfcBuildingElementProxy('1EjltuNSvCWQxA9G9hu1zr',#6,'模型線:1221765',$,$,#283646,#283652,'1221765',$), representation: #283651=IfcShapeRepresentation(#269071,'Annotation','GeometricSet',(#283649))"
+  },
+  {
+    "guid": "1wj3$2YBX81ubIDkAMUbiG",
+    "name": "樓板:BS1-R20:92848",
+    "tag": "92848",
+    "representations": [
+      [
+        "Body",
+        "SweptSolid"
+      ]
+    ],
+    "vertices": 120,
+    "triangles": 240,
+    "edges": 126
+  }
+]

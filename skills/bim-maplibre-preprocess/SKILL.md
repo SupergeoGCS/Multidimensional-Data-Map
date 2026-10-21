@@ -31,6 +31,8 @@ description: Audit Revit RVT sources and prepare georeferenced IFC and GLB asset
 使用 `python scripts/convert_ifc.py --input <model.ifc> --output <新目錄/model.glb> --ifcconvert <執行檔> --report <轉換紀錄.json>`。此腳本僅執行基礎 IFC→GLB，驗證 GLB 容器／JSON；不自動修正座標、不抽取完整屬性、不代表視覺驗收。失敗保留日誌並記錄原因；產物路徑不可覆寫。確認所用版本的 `IfcConvert --help` 後再選額外旗標，不假設所有版本支援相同選項。
 
 ## 品質閘門
+正式圖台資產以 [references/attributes.md](references/attributes.md) 的 `scripts/package_ifc.py` 為完整入口：IFC→GLB→IFC 屬性包→GUID 對應查核→報告。`convert_ifc.py` 僅為低階幾何轉換工具；只有 GLB 不代表可查詢 BIM 屬性。既有 GLB 可用匹配來源／產物 SHA-256 的成功轉換報告重用，不必重轉幾何。屬性包與 GLB 一起交付；圖台先核對 GLB 雜湊再按 GUID 讀取，失配時停用 sidecar 並標示原因，不顯示其他版本的屬性。
+
 依 pipeline.md 完成構件與屬性、座標、材質、效能、MapLibre 驗收。未通過或未執行的閘門明確標記。GLB 未保留的 BIM 語意另做 sidecar，至少保留來源雜湊與唯一構件識別；幾何節點無法對應 IFC GUID 時不能宣稱可查詢構件屬性。
 
 在 docs/STATE.md 記錄階段（pending / awaiting_tool / in_progress / passed / failed）、證據檔、工具版本、阻礙、下一個可執行動作。追加工作紀錄。原始檔與大型產物不加入 Git；報告不得包含密碼、token，外部分享前檢查原始路徑等專案資訊。

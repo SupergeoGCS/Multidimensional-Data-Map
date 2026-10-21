@@ -1,5 +1,7 @@
 # 本機多維度空間資料檢視圖台
 
+自訂建築第一版已加入：左側「＋ 建立自訂建築」可匯入地籍、設定量體與住宅、篩選樓層及本機存檔。操作與限制見 [CUSTOM_BUILDINGS.md](CUSTOM_BUILDINGS.md)。
+
 ## 啟動
 在主工作區雙擊 `啟動地圖.cmd`，或執行：
 ```powershell
@@ -11,7 +13,7 @@ python tools/serve_map.py --open-browser
 ```powershell
 python tools/serve_map.py --data-root 'C:\Users\benhs\OneDrive\文件\三維圖台' --open-browser
 ```
-伺服器只監聽本機 127.0.0.1，只提供 web/ 靜態檔與兩個明確允許的模型／預覽路由，不提供專案根目錄、RVT、Git 或資料夾清單。
+伺服器只監聽本機 127.0.0.1，只提供 web/ 靜態檔與明確允許的模型／預覽／屬性路由，不提供專案根目錄、RVT、Git 或資料夾清單。
 
 ## 功能
 - 2D：平面地圖。3D：60 度俯仰，可拖曳旋轉；切回 2D 恢復俯角與正北。
@@ -33,3 +35,16 @@ Liberty 樣式快照保存於 web/map-styles/openfreemap-liberty.json，來源�
 檢視台已可用，不代表正式幾何、實地位置、原生 IFC 比對或大型資料集效能驗收已通過。原生 Revit 匯出流程仍獨立進行。
 
 測試資料 `web/examples/sample.geojson` 是操作示意，不是真實基地，不預設載入。
+# 原生 IFC 成果測試入口（2026-10-21）
+
+啟動本機站台後開啟 `http://127.0.0.1:8765/?model=native`，會載入 `artifacts/revit-str-2026-10-21/native-internal.glb` 並自動開啟三維視窗。標示為「原生 IFC 候選」，保留尚未地理定位與一處開口轉換警告；不使用舊模型的 71.2% 包圍盒標示。目前同頁提供兩張獨立資料卡，可分別檢視與控制地圖顯示；`?model=native` 僅在初次載入時自動開啟原生模型檢視。
+
+2026-10-21 實測：原生頁面 loading 隱藏、WebGL canvas 建立、原生模型名稱／標示正確，未觀測 console error；截圖 API 兩次失敗，因此尚未完成截圖目視驗收。Node 語法與 3 項伺服器路徑測試通過。瀏覽器匯入 chooser 未觸發，故改用固定 allowlist 模型路徑，不新增任意檔案服務。
+
+## IFC 配套屬性（2026-10-21）
+原生圖層會同時載入 `/assets/native-str.attributes.json`，以 GLB SHA-256 核對配套版本，再依節點 IFC GUID 查詢屬性。面板顯示中文名稱、類型、GUID、Revit 元素 ID、樓層／容器及材料；依使用者要求隱藏原始 Pset、Qto 與任意 GLB 技術欄位。完整屬性集與數量集仍保存在前處理產物，數值維持來源單位；未匯出的欄位不會自動補造。屬性檔缺失或雜湊不符時提示錯誤，只顯示 GLB 原有的基本資訊。
+
+完整產生／重用命令見 `skills/bim-maplibre-preprocess/references/attributes.md`。更換原生模型時，須將 GLB 與屬性檔成對發佈並調整來源設定。此流程目前用於內建 IFC 圖層；一般 GLB 匯入不會自動猜測或掛接其他模型的屬性檔。
+
+## 功能導覽
+最左側常駐資料、定位、環境、外部資料四個圖示，點選切換側欄內容。切換不清除輸入、模型顯示設定與卡片收折，並保留各區捲動位置。圖示附中文名稱，支援上下方向鍵與 Home／End；手機點選圖示會開啟對應面板。

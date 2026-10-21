@@ -1,0 +1,100 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {mountCustomBuildings} from '../web/custom-buildings.js';
+
+test('editor imports parcel, places floors at cumulative height, picks units and restores stable IDs',async()=>{
+  const elements=new Map();
+  class Element {
+    value='';checked=true;hidden=false;options=[];style={};textContent='';
+    add(option){this.options.push(option);}
+    replaceChildren(...children){this.options=children;}
+  }
+  const el=id=>{if(!elements.has(id))elements.set(id,new Element());return elements.get(id);};
+  const globals=['document','window','Option','localStorage','maplibregl'];
+  const previous=Object.fromEntries(globals.map(key=>[key,globalThis[key]]));
+  const storage=new Map(),sources=new Map(),layers=new Map(),messages=[];let picked=null,mode='2d',hit=[],catalog=[];
+  const map={isStyleLoaded:()=>true,getSource:id=>sources.get(id),addSource(id,options){sources.set(id,{data:options.data,setData(data){this.data=data;}});},addLayer(layer){layers.set(layer.id,layer);},getLayer:id=>layers.get(id),setLayoutProperty(id,key,value){layers.get(id)[key]=value;},fitBounds(bounds,options){this.camera=options;},getContainer:()=>({clientWidth:900}),getCanvas:()=>({style:{}}),queryRenderedFeatures:()=>hit};
+  try{
+    const handlers=new Map(),featureStates=new Map();let dragPanEnabled=true;
+    const originalAddSource=map.addSource;
+    map.addSource=function(id,options){originalAddSource.call(this,id,options);sources.get(id).promoteId=options.promoteId;};
+    map.setFeatureState=({source,id},state)=>{
+      const dataSource=sources.get(source);
+      assert.equal(dataSource.promoteId,'unitId','textual unit IDs must be explicitly promoted for rendered feature state');
+      assert.ok(dataSource.data.features.some(f=>f.properties[dataSource.promoteId]===id),'feature state must target a rendered unit');
+      featureStates.set(id,state);
+    };
+    map.removeFeatureState=({id})=>featureStates.delete(id);
+    map.on=(event,...args)=>{const key=args.length===2?`${event}:${args[0]}`:event;handlers.set(key,args.at(-1));};
+    map.dragPan={isEnabled:()=>dragPanEnabled,disable(){dragPanEnabled=false;},enable(){dragPanEnabled=true;}};
+    map.project=()=>({x:200,y:150});
+    globalThis.document={getElementById:el};globalThis.window={addEventListener(){}};
+    globalThis.Option=class{constructor(text,value){this.text=text;this.value=value;}};
+    globalThis.maplibregl={LngLatBounds:class{extend(){return this;}}};
+    globalThis.localStorage={setItem:(key,value)=>storage.set(key,value),getItem:key=>storage.get(key)};
+    const defaults={'building-name':'測試住宅','building-floors':'8','building-floor-height':'3.2','building-units':'4','building-basements':'2','building-basement-height':'3.5','building-rotation':'0','building-layout':'double','building-floor-filter':'above','parcel-crs':'auto'};
+    for(const [id,value]of Object.entries(defaults))el(id).value=value;
+    const dependencies={map,setMode(next){mode=next;editor?.setMode(next);},getMode:()=>mode,showProperties:(title,properties)=>picked={title,properties},toast:message=>messages.push(message),cancelBimPicking(){},onCatalogChange:items=>catalog=items};
+    let editor;editor=mountCustomBuildings(dependencies);
+    const bytes=await readFile(new URL('../web/examples/studio-parcel.geojson',import.meta.url));
+    const file={name:'studio-parcel.geojson',size:bytes.length,arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)};
+    await el('parcel-input').onchange({target:{files:[file],value:'x'}});
+    assert.match(el('parcel-info').textContent,/基地估算面積/);
+    el('custom-building-form').onsubmit({preventDefault(){}});
+    assert.match(el('building-result').textContent,/8 層／32 戶/);
+    assert.equal(catalog.length,1);assert.equal(catalog[0].type,'自訂建築');assert.equal(catalog[0].units,32);
+    const housing=()=>sources.get('studio-housing').data.features;
+    assert.equal(housing().length,32);assert.equal(map.camera.pitch,60);
+    const third=housing().find(f=>f.properties.floor===3);
+    assert.equal(third.properties.displayBase,6.4);assert.ok(Math.abs(third.properties.displayHeight-9.6)<1e-8);
+    assert.equal(third.id,third.properties.unitId);
+    hit=[third];handlers.get('mousemove')({point:{}});
+    assert.equal(featureStates.get(third.id).hovered,true);
+    const neighbor=housing().find(f=>f.properties.floor===3&&f.id!==third.id);
+    assert.equal(featureStates.get(neighbor.id).hoveredFloor,true);
+    assert.equal(featureStates.get(neighbor.id).hovered,false);
+    hit=[third];assert.equal(editor.onMapClick({point:{}}),true);assert.match(picked.properties['住宅 ID'],/-F3-U/);
+    assert.equal(featureStates.get(third.id).selected,true);
+    handlers.get('mouseout')();assert.equal(featureStates.get(third.id).hovered,false);
+    assert.equal(featureStates.get(third.id).selected,true);
+    assert.equal(featureStates.get(neighbor.id).selectedFloor,true);
+    assert.equal(picked.properties['類型'],'自訂建築');
+    const id=third.properties.unitId;
+    el('building-floor-filter').value='-1';el('building-floor-filter').onchange();
+    assert.equal(housing().length,1);assert.equal(housing()[0].properties.usage,'basement');assert.equal(housing()[0].properties.displayBase,0);
+    el('save-custom-buildings').onclick();el('delete-custom-building').onclick();assert.equal(housing().length,0);
+    el('restore-custom-buildings').onclick();el('building-floor-filter').value='above';el('building-floor-filter').onchange();
+    assert.ok(housing().some(f=>f.properties.unitId===id));
+    editor.setBuildingVisible(catalog[0].id,false);assert.equal(housing().length,0);
+    editor.focusBuilding(catalog[0].id);assert.equal(housing().length,32);
+    sources.clear();layers.clear();catalog=[];editor=mountCustomBuildings(dependencies);
+    assert.equal(catalog.length,1);assert.ok(housing().some(f=>f.properties.unitId===id));
+    editor.startNew();assert.equal(el('saved-building-select').value,'');assert.equal(catalog.length,1);
+    assert.match(el('building-result').textContent,/新增模式/);
+    el('demo-parcel').onclick();el('custom-building-form').onsubmit({preventDefault(){}});
+    assert.equal(catalog.length,2);assert.notEqual(catalog[0].id,catalog[1].id);
+    el('draw-parcel').onclick();assert.equal(el('drawing-measurement').hidden,false);
+    editor.onMapClick({lngLat:{lng:121.53,lat:25.04}});
+    assert.equal(sources.get('studio-drawing').data.features.filter(f=>f.geometry.type==='Point').length,1);
+    assert.match(el('drawing-measurement').textContent,/至少三點/);
+    editor.onMapClick({lngLat:{lng:121.5302,lat:25.04}});
+    editor.onMapClick({lngLat:{lng:121.5302,lat:25.0402}});
+    assert.match(el('drawing-measurement').textContent,/估算面積/);
+    assert.equal(el('drawing-measurement').style.left,'200px');assert.equal(el('drawing-measurement').style.top,'150px');
+    assert.equal(sources.get('studio-drawing').data.features.filter(f=>f.geometry.type==='Point').length,3);
+    assert.ok(sources.get('studio-drawing').data.features.some(f=>f.geometry.type==='Polygon'));
+    const oldArea=el('drawing-measurement').textContent;
+    handlers.get('mousedown:studio-drawing-vertices')({features:[{properties:{index:2}}],originalEvent:{button:0},preventDefault(){}});
+    assert.equal(dragPanEnabled,false);
+    handlers.get('mousemove')({lngLat:{lng:121.5304,lat:25.04},preventDefault(){}});
+    assert.notEqual(el('drawing-measurement').textContent,oldArea);
+    handlers.get('mouseup')();assert.equal(dragPanEnabled,true);
+    editor.onMapClick({lngLat:{lng:121.5304,lat:25.04}});
+    assert.equal(sources.get('studio-drawing').data.features.filter(f=>f.geometry.type==='Point').length,3);
+    el('finish-parcel').onclick();assert.equal(el('drawing-measurement').hidden,true);
+    assert.match(el('parcel-info').textContent,/^手繪區域面積：[\d.]+ m²$/);
+    assert.equal(sources.get('studio-drawing').data.features.length,0);
+    assert.equal(messages.some(message=>/錯誤|無效/.test(message)),false);
+  }finally{for(const key of globals)if(previous[key]===undefined)delete globalThis[key];else globalThis[key]=previous[key];}
+});

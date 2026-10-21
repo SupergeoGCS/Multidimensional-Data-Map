@@ -55,6 +55,8 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--ifcconvert', type=Path, required=True)
     parser.add_argument('--report', type=Path, required=True)
+    parser.add_argument('--tool-arg', action='append', default=[],
+                        help='Verified IfcConvert option; repeat and use --tool-arg=--flag for flags')
     args = parser.parse_args()
     src, out, exe, report = [p.resolve() for p in (args.input, args.output, args.ifcconvert, args.report)]
     log = report.with_suffix('.log')
@@ -66,7 +68,7 @@ def main():
         parser.error('Use distinct new output/report/log paths; overwriting is refused')
     out.parent.mkdir(parents=True, exist_ok=True)
     report.parent.mkdir(parents=True, exist_ok=True)
-    command = [str(exe), str(src), str(out)]
+    command = [str(exe), *args.tool_arg, str(src), str(out)]
     result = {'schema_version': 1, 'started_at_utc': datetime.now(timezone.utc).isoformat(),
               'command': command, 'input_sha256': sha256(src), 'tool_sha256': sha256(exe),
               'status': 'failed', 'log': str(log), 'output': str(out),

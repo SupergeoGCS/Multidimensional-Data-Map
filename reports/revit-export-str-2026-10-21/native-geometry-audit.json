@@ -1,0 +1,349 @@
+{
+  "ifc_sha256": "ba21ff9e5e6b6639ee67d5a6357dd05d73f662f036d54ecfdee10966e15a9bd8",
+  "glb_sha256": "75f45a16df42cfb721d9e7eba90b24d3fe0cd67382ecd84bd22dc8355ab3f533",
+  "ifcopenshell_version": "0.8.5",
+  "schema": "IFC4",
+  "source_units_to_m": 0.01,
+  "element_counts": {
+    "IfcBeam": 3737,
+    "IfcBuildingElementProxy": 180,
+    "IfcColumn": 1231,
+    "IfcSlab": 2679,
+    "IfcWall": 355,
+    "IfcBuildingElementPart": 125,
+    "IfcOpeningElement": 229
+  },
+  "storeys": [
+    {
+      "name": "FS",
+      "elevation_m": -9.870000000000001
+    },
+    {
+      "name": "B2F",
+      "elevation_m": -7.9700000000000015
+    },
+    {
+      "name": "B1F",
+      "elevation_m": -4.7700000000000005
+    },
+    {
+      "name": "GL",
+      "elevation_m": -1.17
+    },
+    {
+      "name": "1FL",
+      "elevation_m": 0.0
+    },
+    {
+      "name": "2FL",
+      "elevation_m": 4.5
+    },
+    {
+      "name": "3FL",
+      "elevation_m": 7.9
+    },
+    {
+      "name": "4FL",
+      "elevation_m": 11.3
+    },
+    {
+      "name": "5FL",
+      "elevation_m": 14.699999999999998
+    },
+    {
+      "name": "6FL",
+      "elevation_m": 18.099999999999994
+    },
+    {
+      "name": "7FL",
+      "elevation_m": 21.499999999999996
+    },
+    {
+      "name": "8FL",
+      "elevation_m": 24.89999999999999
+    },
+    {
+      "name": "R1F",
+      "elevation_m": 28.299999999999997
+    },
+    {
+      "name": "R2F",
+      "elevation_m": 31.6
+    },
+    {
+      "name": "R3F",
+      "elevation_m": 33.800000000000004
+    },
+    {
+      "name": "RF",
+      "elevation_m": 36.4
+    }
+  ],
+  "body_representation_types": {
+    "MappedRepresentation": 4963,
+    "SweptSolid": 3107,
+    "Tessellation": 173
+  },
+  "represented_nonopening_elements": 8250,
+  "glb_nodes": 8243,
+  "glb_meshes": 8113,
+  "glb_triangles_instanced": 172172,
+  "glb_guid_names_matched": 8243,
+  "glb_unmatched_names": [],
+  "missing_represented_counts": {
+    "IfcBeam": 5,
+    "IfcBuildingElementProxy": 2
+  },
+  "missing_represented_samples": [
+    {
+      "guid": "3_h01_B617Du0GXgCl2F9Z",
+      "step_id": 65918,
+      "tag": "143094",
+      "type": "IfcBeam"
+    },
+    {
+      "guid": "3nVM_F7Yz2QgwCoalX2XfM",
+      "step_id": 290710,
+      "tag": "1332573",
+      "type": "IfcBeam"
+    },
+    {
+      "guid": "0y9f6otx1BnR5t1rVxGma0",
+      "step_id": 339365,
+      "tag": "1382791",
+      "type": "IfcBeam"
+    },
+    {
+      "guid": "0y9f6otx1BnR5t1rVxGmqn",
+      "step_id": 340249,
+      "tag": "1383862",
+      "type": "IfcBeam"
+    },
+    {
+      "guid": "0y9f6otx1BnR5t1rVxGmrg",
+      "step_id": 341133,
+      "tag": "1383917",
+      "type": "IfcBeam"
+    },
+    {
+      "guid": "27pmlAIzn4pBwguSdhgpx1",
+      "step_id": 269075,
+      "tag": "754941",
+      "type": "IfcBuildingElementProxy"
+    },
+    {
+      "guid": "1EjltuNSvCWQxA9G9hu1zr",
+      "step_id": 283654,
+      "tag": "1221765",
+      "type": "IfcBuildingElementProxy"
+    }
+  ],
+  "site_local_bounds_zup_m": [
+    [
+      -3.3500000059604647,
+      -2.8375000950283202,
+      -11.770000457763672
+    ],
+    [
+      101.1500015258789,
+      66.3499984741211,
+      36.400001525878906
+    ]
+  ],
+  "site_local_to_ifc_world_m_row_major": [
+    [
+      0.7509343566077379,
+      -0.6603768560951564,
+      0.0,
+      271015.3020411354
+    ],
+    [
+      0.6603768560951564,
+      0.7509343566077379,
+      0.0,
+      2768158.3377700103
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      -0.85
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "samples": [
+    {
+      "category": "IfcBeam",
+      "guid": "1wj3$2YBX81ubIDkAMUb1T",
+      "step_id": 132,
+      "tag": "90621",
+      "glb_nodes": [
+        1
+      ],
+      "ifc_site_local_bounds_m": [
+        [
+          -3.3500000000000063,
+          -0.4499999999999998,
+          -9.870000000000001
+        ],
+        [
+          -2.749999999999995,
+          7.999999999999895,
+          -7.97
+        ]
+      ],
+      "ifc_triangles": 12,
+      "glb_site_local_bounds_m": [
+        [
+          -3.3499999046325684,
+          -0.44999998807907104,
+          -9.869999885559082
+        ],
+        [
+          -2.75,
+          8.0,
+          -7.96999979019165
+        ]
+      ],
+      "max_bounds_delta_m": 2.0980834936068504e-07
+    },
+    {
+      "category": "IfcColumn",
+      "guid": "03ErJR6kP8PP55cpCoBowx",
+      "step_id": 29949,
+      "tag": "133764",
+      "glb_nodes": [
+        647
+      ],
+      "ifc_site_local_bounds_m": [
+        [
+          -0.4500000000000075,
+          64.04999999999998,
+          -7.970000000000001
+        ],
+        [
+          0.44999999999999374,
+          64.94999999999999,
+          -4.7700000000000005
+        ]
+      ],
+      "ifc_triangles": 12,
+      "glb_site_local_bounds_m": [
+        [
+          -0.44999998807907104,
+          64.05000305175781,
+          -7.96999979019165
+        ],
+        [
+          0.44999998807907104,
+          64.94999694824219,
+          -4.769999980926514
+        ]
+      ],
+      "max_bounds_delta_m": 3.0517578295530257e-06
+    },
+    {
+      "category": "IfcSlab",
+      "guid": "1wj3$2YBX81ubIDkAMUbK2",
+      "step_id": 13064,
+      "tag": "91298",
+      "glb_nodes": [
+        287
+      ],
+      "ifc_site_local_bounds_m": [
+        [
+          66.45000000000151,
+          0.1499999999997888,
+          -9.87
+        ],
+        [
+          68.70000000000148,
+          7.999999999999494,
+          -9.370000000000001
+        ]
+      ],
+      "ifc_triangles": 12,
+      "glb_site_local_bounds_m": [
+        [
+          66.44999694824219,
+          0.15000000596046448,
+          -9.87
+        ],
+        [
+          68.69999694824219,
+          8.0,
+          -9.370000000000001
+        ]
+      ],
+      "max_bounds_delta_m": 3.0517593216927708e-06
+    },
+    {
+      "category": "IfcWall",
+      "guid": "1wj3$2YBX81ubIDkAMUbNV",
+      "step_id": 12031,
+      "tag": "91263",
+      "glb_nodes": [
+        258
+      ],
+      "ifc_site_local_bounds_m": [
+        [
+          -2.7500000000000004,
+          14.9,
+          -9.370000000000001
+        ],
+        [
+          -0.49999999999867883,
+          15.1,
+          -8.170000000000002
+        ]
+      ],
+      "ifc_triangles": 12,
+      "glb_site_local_bounds_m": [
+        [
+          -2.7500000000000004,
+          14.899999998509884,
+          -9.370000000000001
+        ],
+        [
+          -0.5,
+          15.100000001490116,
+          -8.169999952316285
+        ]
+      ],
+      "max_bounds_delta_m": 4.7683716530855236e-08
+    },
+    {
+      "category": "IfcOpeningElement",
+      "guid": "2AEozOzYSRTXfrngQdcMJb",
+      "step_id": 12605,
+      "tag": "1066553",
+      "glb_nodes": [],
+      "ifc_site_local_bounds_m": [
+        [
+          57.22504074245954,
+          57.25000097262673,
+          -9.370000000000001
+        ],
+        [
+          57.82504074245954,
+          57.450000972626725,
+          -8.770000000000001
+        ]
+      ],
+      "ifc_triangles": 12,
+      "note": "Openings are subtraction operands and normally have no rendered GLB node"
+    },
+    {
+      "category": "IfcStair",
+      "status": "not_present_in_ifc"
+    }
+  ],
+  "visual_acceptance": "not_run",
+  "geographic_acceptance": "pending",
+  "bounds_note": "Accessor AABBs transformed to site-local Z-up; sample IFC geometry uses 0.8.5, converter 0.9.0post1"
+}

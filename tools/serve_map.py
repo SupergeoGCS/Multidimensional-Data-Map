@@ -1,4 +1,4 @@
-"""Local-only map server. Exposes web assets and two explicitly allowed preview files."""
+"""Local-only map server. Exposes web assets and explicitly allowed model packages."""
 import argparse
 import threading
 import webbrowser
@@ -9,6 +9,8 @@ from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = {'/assets/str.glb': ROOT / 'artifacts/rvt-rs-str-0.6.0/str-preview-only.glb',
+          '/assets/native-str.glb': ROOT / 'artifacts/revit-str-2026-10-21/native-internal.glb',
+          '/assets/native-str.attributes.json': ROOT / 'artifacts/revit-str-2026-10-21/native-internal.attributes.json',
           '/assets/preview.png': ROOT / 'reports/rvt-rs-str-0.6.0/preview.png'}
 
 
@@ -41,6 +43,8 @@ def main():
     args = parser.parse_args()
     data_root = args.data_root.resolve()
     ASSETS.update({'/assets/str.glb': data_root / 'artifacts/rvt-rs-str-0.6.0/str-preview-only.glb',
+                   '/assets/native-str.glb': data_root / 'artifacts/revit-str-2026-10-21/native-internal.glb',
+                   '/assets/native-str.attributes.json': data_root / 'artifacts/revit-str-2026-10-21/native-internal.attributes.json',
                    '/assets/preview.png': data_root / 'reports/rvt-rs-str-0.6.0/preview.png'})
     server = ThreadingHTTPServer(('127.0.0.1', args.port), partial(Handler, directory=str(ROOT / 'web')))
     print(f'Local map: http://127.0.0.1:{args.port}', flush=True)

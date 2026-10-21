@@ -12,6 +12,8 @@ class MapServerTests(unittest.TestCase):
 
     def test_only_explicit_asset_routes_leave_web_root(self):
         self.assertEqual(Path(self.handler.translate_path('/assets/str.glb')), ASSETS['/assets/str.glb'])
+        self.assertEqual(Path(self.handler.translate_path('/assets/native-str.glb')), ASSETS['/assets/native-str.glb'])
+        self.assertEqual(Path(self.handler.translate_path('/assets/native-str.attributes.json')), ASSETS['/assets/native-str.attributes.json'])
         for route in ('/../references/model.rvt', '/%2e%2e/.git/config', '/vendor/../../docs/STATE.md', '/assets/../../references/model.rvt'):
             result = Path(self.handler.translate_path(route))
             self.assertTrue(result.is_relative_to(ROOT / 'web'))

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "started_at_utc": "2026-10-21T08:06:09.938718+00:00",
+  "command": [
+    "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\artifacts\\tools\\ifcconvert-0.9.0post1\\bin\\IfcConvert.exe",
+    "--use-element-guids",
+    "--site-local-placement",
+    "-j",
+    "2",
+    "--log-file=artifacts/native-package-e2e-2026-10-21/conversion-messages.log",
+    "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\data\\ifc\\revit-str-2026-10-21\\A18A-CO-STR-native-internal.ifc",
+    "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\artifacts\\native-package-e2e-2026-10-21\\model.glb"
+  ],
+  "input_sha256": "75a75ceeddaae45ef775fb9acb9a6136f306391c95be7aee3d58ea3c08912354",
+  "tool_sha256": "5d657f7eff258e67a85968876da6fd259b0d1489bf348334871e03f2d3f07b6d",
+  "status": "converted_container_checked",
+  "log": "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\reports\\revit-export-str-2026-10-21\\package-e2e-conversion.log",
+  "output": "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\artifacts\\native-package-e2e-2026-10-21\\model.glb",
+  "rvt_export_provenance": "must_be_supplied_separately",
+  "help_exit_code": 0,
+  "exit_code": 0,
+  "validation": {
+    "check": "container_and_json_only",
+    "nodes": 8243,
+    "meshes": 8113,
+    "full_gltf_validation": "not_run",
+    "visual_acceptance": "not_run",
+    "placement_acceptance": "not_run"
+  },
+  "output_sha256": "3ef9230299fdf26b55366ce980c0a8e0a02e1831e48b2c5c80aedf44946b93e3",
+  "finished_at_utc": "2026-10-21T08:06:31.852980+00:00"
+}

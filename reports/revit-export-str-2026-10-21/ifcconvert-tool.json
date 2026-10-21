@@ -1,0 +1,11 @@
+{
+  "source": "https://github.com/IfcOpenShell/IfcOpenShell/releases/download/ifcconvert-0.9.0post1/ifcconvert-0.9.0post1-win64.zip",
+  "archive_sha256": "963265186fec13ad2ba56edea614f32b715774ca1a5777fc8b84e5e5a35767ff",
+  "official_digest_verified": true,
+  "version_output": "IfcOpenShell IfcConvert 0.9.0post1+b5e509b",
+  "version_exit_code": 0,
+  "help_exit_code": 0,
+  "exe_sha256": "5d657f7eff258e67a85968876da6fd259b0d1489bf348334871e03f2d3f07b6d",
+  "conversion_test": "not_run",
+  "license": "See official IfcOpenShell distribution"
+}

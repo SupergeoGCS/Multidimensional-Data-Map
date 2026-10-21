@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "status": "attributes_packaged_guid_verified",
+  "created_at_utc": "2026-10-21T08:01:17.682298+00:00",
+  "ifc": "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\data\\ifc\\revit-str-2026-10-21\\A18A-CO-STR-native-internal.ifc",
+  "glb": "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\artifacts\\revit-str-2026-10-21\\native-internal.glb",
+  "attributes": "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\artifacts\\revit-str-2026-10-21\\native-internal.attributes.json",
+  "geometry_acceptance": "not_implied_by_attribute_packaging",
+  "conversion_report": "C:\\Users\\benhs\\OneDrive\\文件\\三維圖台\\reports\\revit-export-str-2026-10-21\\internal-conversion.json",
+  "source_ifc_sha256": "75a75ceeddaae45ef775fb9acb9a6136f306391c95be7aee3d58ea3c08912354",
+  "glb_sha256": "e16b819e6cd63d11faf72d77981d9c6696253994434fe5cae0d7d39c04c39b00",
+  "attributes_sha256": "723a32efbeda6bb1215f94ecd3a9a05496158db0aa45c8e44013f4a2547f3086",
+  "ifcopenshell_version": "0.8.5",
+  "element_count": 8536,
+  "matched_mesh_nodes": 8243,
+  "attributes_bytes": 6948120,
+  "element_types": {
+    "IfcBeam": 3737,
+    "IfcBuildingElementProxy": 180,
+    "IfcColumn": 1231,
+    "IfcSlab": 2679,
+    "IfcWall": 355,
+    "IfcBuildingElementPart": 125,
+    "IfcOpeningElement": 229
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "status": "unknown",
+  "source_sha256": "7b5e3f023db9803b8e3fa90bb64405189abab20bcf4a9c444e24884fce929bb9",
+  "source_crs": null,
+  "source_length_unit": null,
+  "vertical_datum": null,
+  "internal_origin": null,
+  "project_base_point": null,
+  "survey_point": null,
+  "true_north_rotation": null,
+  "discipline_to_common_matrix": null,
+  "glb_local_to_enu_matrix": null,
+  "matrix_convention": null,
+  "anchor": {
+    "longitude": null,
+    "latitude": null,
+    "height": null
+  },
+  "control_points": [],
+  "tolerances": null,
+  "measured_errors": null
+}

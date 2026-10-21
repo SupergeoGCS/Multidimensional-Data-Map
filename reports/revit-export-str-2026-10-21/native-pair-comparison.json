@@ -1,0 +1,15 @@
+{
+  "internal_conversion_status": "converted_container_checked",
+  "matched_glb_guids": 8243,
+  "only_shared_glb": 0,
+  "only_internal_glb": 0,
+  "position_layout_mismatches": 0,
+  "max_local_position_or_matrix_delta": 0.0,
+  "nodes_above_1e_5_difference": 0,
+  "body_elements": 8243,
+  "body_guids_missing_from_internal_glb": [],
+  "opening_error_log": "[error] [GEO192] [2026-10-21 15:17:20] {1wj3$2YBX81ubIDkAMUbiG} Opening subtraction failed for 1 openings\n#19856=IfcSlab('1wj3$2YBX81ubIDkAMUbiG',#6,'",
+  "status": "candidate_with_opening_subtraction_issue",
+  "visual_acceptance": "not_run",
+  "geographic_acceptance": "pending"
+}
