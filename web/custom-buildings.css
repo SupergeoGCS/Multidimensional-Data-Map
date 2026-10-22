@@ -8,3 +8,4 @@
 .sidebar .building-editor>header .close-button{display:none}
 .sidebar .building-editor-body{padding:0;overflow:visible}
 .sidebar .building-editor .studio-button-row>.button{height:auto;min-height:44px}
+.building-editor #saved-building-select:disabled{opacity:1;background:#f2f6f8;color:#526b78;cursor:default}

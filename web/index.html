@@ -25,7 +25,7 @@
     <div class="panel-label">資料圖層 <span class="layer-heading-actions"><button id="collapse-all-cards" class="collapse-all-cards" type="button" aria-label="收折全部資料圖層卡片">全部收折</button><span id="layer-count" class="count-badge" aria-live="polite">2項</span></span></div>
     <section class="model-card"><div class="card-top"><span class="cube-icon">⬡</span><div><h3 id="model-name">開源方案 · STR</h3><p id="model-subtitle">rvt-rs 0.6.0 → GLB</p></div><button class="card-collapse" type="button" aria-expanded="false" aria-controls="open-card-body" aria-label="展開開源方案資料卡"></button></div>
       <label class="check-label"><input id="show-open-bim" type="checkbox" checked>顯示於地圖</label>
-      <p id="open-placement-note" class="muted" hidden>專案採用定位 · RVT「原始位置」· EPSG:3826 · 使用者確認</p>
+      <p id="open-placement-note" class="muted" hidden>座標系統：TWD97 / TM2 121（EPSG:3826）</p>
       <div id="open-card-body" class="card-body" hidden><img class="model-thumbnail" data-local-src="./assets/preview.png" alt="STR 結構模型概略預覽">
       <div class="model-metrics"><div><strong id="mesh-count">8,373</strong><span id="mesh-label">構件</span></div><div><strong id="storey-count">16</strong><span>來源樓層</span></div><div><strong id="model-size">5.27</strong><span>MB</span></div></div>
       <button id="preview-model" class="button primary full">檢視模型 <span>↗</span></button>
@@ -34,6 +34,7 @@
     <section class="model-card native-card">
       <div class="card-top"><span class="cube-icon">⬡</span><div><h3>Revit IFC 方案 · STR</h3><p>Revit → IFC4 → GLB · 內部原點</p></div><button class="card-collapse" type="button" aria-expanded="false" aria-controls="native-card-body" aria-label="展開 Revit IFC 方案資料卡"></button></div>
       <label class="check-label"><input id="show-native-bim" type="checkbox" checked>顯示於地圖</label>
+      <p id="native-placement-note" class="muted" hidden>座標系統：TWD97 / TM2 121（EPSG:3826）</p>
       <div id="native-card-body" class="card-body" hidden><div class="model-metrics"><div><strong>8,243</strong><span>幾何節點</span></div><div><strong>16</strong><span>來源樓層</span></div><div><strong>15.66</strong><span>MB</span></div></div>
       <button id="preview-native" class="button primary full">檢視模型 <span>↗</span></button>
       <div class="quality-note"><span>△</span><p>原生幾何候選 · 專案定位已確認<br><span>樓板 92848 一處開口轉換待確認；不作精確量測依據。</span></p></div>
@@ -58,7 +59,7 @@
         <div class="form-pair"><label>地下樓層<input id="building-basements" type="number" min="0" max="10" value="0" required></label><label>地下層高（m）<input id="building-basement-height" type="number" min="2" max="10" step="0.1" value="3.5" required></label></div>
       </section><section><h3>03 住宅配置</h3><div class="form-pair"><label>每層戶數<input id="building-units" type="number" min="1" max="20" value="4" required></label><label>配置方式<select id="building-layout"><option value="double">雙排配置</option><option value="single">單排配置</option><option value="ring">環形配置</option></select></label></div><label>中央公共設施比例（%）<input id="building-common-ratio" type="number" min="0" max="99" step="0.1" value="0" required></label><p class="muted compact">各層先扣除此比例再分戶；設為 0 不產生中央區域。</p><p class="muted compact">地上各層採相同配置，扣除中央公共設施後等面積分戶；地下室整層呈現。</p><button class="button primary full" type="submit">產生／更新三維建築</button><p id="building-result" role="status" class="studio-note">選定基地後即可預覽。</p></section></form>
       <section><h3>04 保存與管理</h3>
-        <label>已建立建築<select id="saved-building-select"><option value="">尚無建築</option></select></label>
+        <label>目前編輯建築<select id="saved-building-select" disabled><option value="">尚無建築</option></select></label>
         <div class="studio-button-row"><button id="new-custom-building" class="button secondary">新增一棟</button><button id="delete-custom-building" class="button secondary">刪除此棟</button></div>
         <div class="studio-button-row"><button id="save-custom-buildings" class="button secondary">儲存於本機</button><button id="restore-custom-buildings" class="button secondary">讀取本機存檔</button></div>
         <div class="studio-button-row"><button id="export-custom-buildings" class="button secondary">匯出 JSON</button><label class="button secondary file-control">匯入 JSON<input id="import-custom-buildings" type="file" accept=".json"></label></div>
@@ -66,7 +67,7 @@
     </div>
   </section>
 <section id="panel-placement" class="sidebar-block placement-panel" role="tabpanel" aria-labelledby="tab-placement" hidden><h3 id="placement-heading" class="panel-label block-heading"><span class="block-heading-title"><span class="block-number" aria-hidden="true">02</span>定位</span> <span id="placement-badge" class="amber">尚未指定</span></h3>
-      <p class="muted compact" id="placement-description">模型尚無已驗證座標。可在地圖上指定暫放位置，查看三維整合效果。</p>
+      <p class="muted compact" id="placement-description" hidden>模型尚無已驗證座標。可在地圖上指定暫放位置，查看三維整合效果。</p>
       <button id="apply-native-candidate" class="button secondary full" type="button">套用 STR 確認定位 · TWD97</button>
       <button class="button secondary full" id="pick-location">⌖ 在地圖上指定位置</button>
       <form id="placement-form"><div class="form-pair"><label>經度<input id="longitude" type="number" min="-180" max="180" step="any" placeholder="例如 121.25" required></label><label>緯度<input id="latitude" type="number" min="-85" max="85" step="any" placeholder="例如 25.01" required></label></div><div class="form-pair"><label>底部高度（公尺）<input id="altitude" type="number" step="any" value="0" required></label><label>旋轉（度）<input id="rotation" type="number" step="any" value="0" required></label></div><button class="button secondary full" type="submit">套用暫放位置</button></form>

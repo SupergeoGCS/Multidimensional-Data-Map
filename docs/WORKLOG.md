@@ -1,5 +1,27 @@
 # 工作紀錄
 
+## 2026-10-22：補齊 Revit IFC 資料卡座標系統
+- 前次僅更新 open-placement-note，原生卡沒有對應節點。本次新增 native-placement-note，兩卡統一由 setStrCoordinateNotesVisible 控制確認定位／手動暫放／清除位置時的顯示狀態。
+- Node 定位及接受紀錄測試 5 項通過，app.js 語法與 git diff --check 通過；尚未本次瀏覽器目視驗收，未提交／發布。
+
+## 2026-10-22：資料卡僅顯示適用座標系統
+- 依使用者標記將 open-placement-note 改為「座標系統：TWD97 / TM2 121（EPSG:3826）」。純文字調整，git diff --check 通過，未新增測試；尚未本次瀏覽器目視驗收，未提交／發布。
+
+## 2026-10-22：停用編輯建築切換選單
+- saved-building-select 加上 disabled，標籤改「目前編輯建築」，搭配可讀的唯讀外觀；原程式仍可更新目前建築名稱，使用者由資料卡編輯指定建築。
+- 執行 tests/custom-building-editor.test.mjs 既有編輯流程測試與 git diff --check 通過；局部欄位顯示調整未新增測試，尚未本次瀏覽器目視驗收。未提交／發布。
+
+## 2026-10-22：增加定位面板操作間距
+- 針對 placement-panel 增加相鄰按鈕 12px、表單上方 18px、表單套用鈕上方 6px 與底部控制列上方 18px 留白，避免確認定位與地圖指定位置按鈕緊貼。
+- 純 CSS 調整，git diff --check 通過；未新增測試，尚未本次瀏覽器目視驗收。未提交／發布。
+
+## 2026-10-22：隱藏定位面板冗長說明
+- 對 placement-description 加入 hidden，保留原定位流程及狀態徽章。git diff --check 通過；局部 HTML 顯示調整未新增測試，尚未本次瀏覽器目視驗收。未提交／發布。
+
+## 2026-10-22：環境資料來源選單符合站台風格
+- 修正新增 select 未套用既有表單外觀：補滿寬、內距、14px 文字、淺色邊框、圓角與 SVG 下拉箭頭，加入滑入／鍵盤焦點及 forced-colors 原生箭頭回復。未改資料來源或選項啟用狀態。
+- 純 CSS 調整；git diff --check 通過，未新增測試，尚未本次瀏覽器目視驗收。未提交／發布。
+
 ## 2026-10-22：NLSC 三維建物資料選項與有界介接查核
 - 查官方服務介紹、114 年成果供應公告、三維圖台及 MapLibre 官方自訂圖層文件。新增來源選單：OSM 可用；LOD1／LOD2 disabled 並明示尚未啟用，顯示官方入口與資料條件。
 - Python urllib HTTP 查核：FrontMap／NLSC Entrance 200，送 localhost Origin 時 ACAO 仍為官方域；公開設定指向 URBANXML.xml，200／332797 bytes，解析證實是 WMTS 清單而非模型端點。舊文件 I3S endpoint 404。證據詳見 reports/nlsc-building-feasibility-2026-10-22.md 與 JSON 摘要。未下載模型或複用金鑰。
@@ -449,3 +471,7 @@
 ### 正式站定位修正部署證據
 - a0951a6102e1f34f786daddd6cb966791b0b7154已推送；Actions run39749681533 test／deploy皆success。IAB正式HTTPS首頁自動完成定位，TWD97確認說明及套用按鈕可見，縮放18／傾角60；逐一開關兩種STR可同址顯示，console error 0。截圖reports/str-public-placement-fix-2026-10-22.png。
 - 本次修正未更動模型、座標矩陣與接受證據；保留其他未提交樣式／文件變更。
+
+## 2026-10-22：提交並推送座標標示與介面微調
+- 使用者授權目前六檔修改提交及推送main。內容為兩種STR座標資訊顯示同步、定位操作間距與說明簡化、目前編輯建築欄位固定及環境來源選單樣式。
+- 完整Node42項、app.js語法、diff --check皆通過；本次無新瀏覽器目視驗收，未更改模型或定位矩陣。推送觸發既有CI／Pages；實際提交hash及遠端結果以Git／Actions為準。
