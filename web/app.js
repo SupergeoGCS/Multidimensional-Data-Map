@@ -35,9 +35,8 @@ function renderCustomCatalog(items){
     check.onchange=()=>customEditor?.setBuildingVisible(item.id,check.checked);
     const body=document.createElement('div');body.className='card-body';body.hidden=true;const summary=document.createElement('p');summary.className='custom-building-summary';summary.textContent=`${item.floors} 層 · ${item.units} 戶 · 示意配置`;
     const actions=document.createElement('div');actions.className='custom-building-actions';
-    const view=document.createElement('button');view.className='button primary';view.textContent='檢視模型';view.onclick=()=>customEditor?.focusBuilding(item.id);
     const edit=document.createElement('button');edit.className='button secondary';edit.textContent='編輯';edit.onclick=()=>{$('tab-custom-building').click();customEditor?.focusBuilding(item.id);};
-    actions.append(view,edit);body.append(summary,actions);card.append(top,label,body);host.append(card);
+    actions.append(edit);body.append(summary,actions);card.append(top,label,body);host.append(card);
     toggle.onclick=()=>{body.hidden=!body.hidden;toggle.setAttribute('aria-expanded',String(!body.hidden));toggle.setAttribute('aria-label',`${body.hidden?'展開':'收折'}${item.name}資料卡`);};
   }
   updateLayerCount();
@@ -118,7 +117,7 @@ for(const [selector,key]of [['#panel-data>.model-card:not(.native-card)','open']
   });
 }
 customEditor=mountCustomBuildings({map,setMode,getMode:()=>mode,showProperties,toast,cancelBimPicking:cancelPicking,onCatalogChange:renderCustomCatalog});
-mountSidebarTabs({buttons:[...document.querySelectorAll('.function-tab')],getPanel:$,sidebar:document.querySelector('.sidebar'),title:$('sidebar-title'),onSelect:button=>{cancelPicking();if(button.id==='tab-custom-building')customEditor?.startNew();if(button.id!=='tab-custom-building')$('close-building-editor').click();if(matchMedia('(max-width:650px)').matches){document.body.classList.add('sidebar-open');$('toggle-sidebar').setAttribute('aria-expanded','true');}}});
+mountSidebarTabs({buttons:[...document.querySelectorAll('.function-tab')],getPanel:$,sidebar:document.querySelector('.sidebar'),title:$('sidebar-title'),onSelect:button=>{customEditor?.setPanelActive(button.id==='tab-custom-building');cancelPicking();if(button.id==='tab-custom-building')customEditor?.startNew();if(button.id!=='tab-custom-building')$('close-building-editor').click();if(matchMedia('(max-width:650px)').matches){document.body.classList.add('sidebar-open');$('toggle-sidebar').setAttribute('aria-expanded','true');}}});
 if(nativeModel) await selectBimSource('native');
 
 $('clear-model-selection').onclick=()=>{clearSelection();preview?.draw();};

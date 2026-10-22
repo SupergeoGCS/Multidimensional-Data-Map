@@ -12,6 +12,42 @@ function clip(ring,axis,limit,less){
 }
 const cut=(pieces,axis,value,less)=>pieces.map(r=>clip(r,axis,value,less)).filter(r=>r.length>=3&&area(r)>1e-9);
 const sumArea=pieces=>pieces.reduce((sum,r)=>sum+area(r),0);
+function clipPlane(ring,nx,ny,limit){
+  const output=[];
+  for(let i=0;i<ring.length;i++){
+    const a=ring[i],b=ring[(i+1)%ring.length],va=nx*a[0]+ny*a[1]-limit,vb=nx*b[0]+ny*b[1]-limit;
+    if(va>=0)output.push(a);
+    if((va>=0)!==(vb>=0)){const t=va/(va-vb);output.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]);}
+  }
+  return output;
+}
+function sector(pieces,center,start,end){
+  if(end-start>=Math.PI*2-1e-12)return pieces;
+  if(end-start>Math.PI)return [...sector(pieces,center,start,(start+end)/2),...sector(pieces,center,(start+end)/2,end)];
+  const nx=-Math.sin(start),ny=Math.cos(start),mx=Math.sin(end),my=-Math.cos(end);
+  return pieces.map(r=>clipPlane(clipPlane(r,nx,ny,nx*center[0]+ny*center[1]),mx,my,mx*center[0]+my*center[1])).filter(r=>r.length>=3&&area(r)>1e-9);
+}
+function centralArea(triangles,ratio){
+  const total=sumArea(triangles),center=[0,0];
+  for(const ring of triangles){const weight=area(ring)/total;center[0]+=ring.reduce((s,p)=>s+p[0],0)/ring.length*weight;center[1]+=ring.reduce((s,p)=>s+p[1],0)/ring.length*weight;}
+  if(!triangles.some(r=>contains(center,r))){
+    const candidates=triangles.map(r=>[r.reduce((s,p)=>s+p[0],0)/r.length,r.reduce((s,p)=>s+p[1],0)/r.length]);
+    candidates.sort((a,b)=>(a[0]-center[0])**2+(a[1]-center[1])**2-((b[0]-center[0])**2+(b[1]-center[1])**2));center.splice(0,2,...candidates[0]);
+  }
+  if(!ratio)return {center,common:[],residential:triangles};
+  const vertices=triangles.flat(),xs=vertices.map(p=>p[0]),ys=vertices.map(p=>p[1]);
+  const halfX=Math.max(center[0]-Math.min(...xs),Math.max(...xs)-center[0]),halfY=Math.max(center[1]-Math.min(...ys),Math.max(...ys)-center[1]);
+  const inside=scale=>cut(cut(cut(cut(triangles,0,center[0]-halfX*scale,false),0,center[0]+halfX*scale,true),1,center[1]-halfY*scale,false),1,center[1]+halfY*scale,true);
+  let low=0,high=1;for(let i=0;i<48;i++){const mid=(low+high)/2;if(sumArea(inside(mid))<total*ratio)low=mid;else high=mid;}
+  const scale=(low+high)/2,x0=center[0]-halfX*scale,x1=center[0]+halfX*scale,y0=center[1]-halfY*scale,y1=center[1]+halfY*scale;
+  // Eight consistently split grid regions surround the core; matching edges can be dissolved.
+  const xBands=[cut(triangles,0,x0,true),cut(cut(triangles,0,x0,false),0,x1,true),cut(triangles,0,x1,false)],residential=[];
+  for(let x=0;x<3;x++){
+    residential.push(...cut(xBands[x],1,y0,true),...cut(xBands[x],1,y1,false));
+    if(x!==1)residential.push(...cut(cut(xBands[x],1,y0,false),1,y1,true));
+  }
+  return {center,common:inside(scale),residential};
+}
 function splitEqual(pieces,axis,counts){
   let remaining=pieces;const result=[];
   for(let i=0;i<counts.length-1;i++){
@@ -59,7 +95,7 @@ function dissolve(pieces){
   return outers;
 }
 
-export function partitionParcel(polygons,count,layout,rotation=0){
+export function partitionParcel(polygons,count,layout,rotation=0,commonRatio=0){
   const angle=rotation*Math.PI/180,c=Math.cos(angle),s=Math.sin(angle);
   const rotate=p=>[p[0]*c+p[1]*s,-p[0]*s+p[1]*c];
   const unrotate=p=>[p[0]*c-p[1]*s,p[0]*s+p[1]*c];
@@ -70,11 +106,23 @@ export function partitionParcel(polygons,count,layout,rotation=0){
     for(const face of ShapeUtils.triangulateShape(rings[0],rings.slice(1)))triangles.push(face.map(i=>[vertices[i].x,vertices[i].y]));
   }
   if(!triangles.length||sumArea(triangles)<.01)throw new Error('占地面積過小，無法產生樓板。');
+  const {center,common,residential}=centralArea(triangles,commonRatio);
   const rowCounts=layout==='double'&&count>1?[Math.ceil(count/2),Math.floor(count/2)]:[count];
-  const rows=splitEqual(triangles,1,rowCounts),cells=[];
-  for(let row=0;row<rows.length;row++)for(const pieces of splitEqual(rows[row],0,Array(rowCounts[row]).fill(1))){
-    const merged=dissolve(pieces);if(!merged.length)throw new Error('無法產生有效住宅輪廓。');
-    const first=pieces[0];cells.push({polygons:merged.map(p=>p.map(r=>r.map(unrotate))),area:sumArea(pieces),point:unrotate([first.reduce((n,p)=>n+p[0],0)/first.length,first.reduce((n,p)=>n+p[1],0)/first.length])});
+  let partitions=[];
+  if(layout==='ring'){
+    let previous=0;const total=sumArea(residential);
+    for(let index=0;index<count;index++){
+      let low=previous,high=Math.PI*2;
+      if(index<count-1)for(let step=0;step<48;step++){const mid=(low+high)/2;if(sumArea(sector(residential,center,0,mid))<total*(index+1)/count)low=mid;else high=mid;}
+      const end=index===count-1?Math.PI*2:(low+high)/2;partitions.push(sector(residential,center,previous,end));previous=end;
+    }
+  }else{
+    const rows=splitEqual(residential,1,rowCounts);
+    for(let row=0;row<rows.length;row++)partitions.push(...splitEqual(rows[row],0,Array(rowCounts[row]).fill(1)));
   }
-  return cells;
+  const makeCell=pieces=>{
+    const merged=dissolve(pieces);if(!merged.length)throw new Error('無法產生有效住宅輪廓。');
+    const first=pieces[0];return {polygons:merged.map(p=>p.map(r=>r.map(unrotate))),area:sumArea(pieces),point:unrotate([first.reduce((n,p)=>n+p[0],0)/first.length,first.reduce((n,p)=>n+p[1],0)/first.length])};
+  };
+  return {cells:partitions.map(makeCell),common:common.length?makeCell(common):null};
 }

@@ -221,9 +221,11 @@ export function generateBuilding(config, parcelFeature) {
   if (!(ratio > 0)) fail('ratio 必須大於零');
   const rotation = config.rotation === undefined ? 0 : finite(config.rotation, 'rotation');
   const layout = config.layout ?? (units >= 4 ? 'double' : 'single');
-  if (layout !== 'single' && layout !== 'double') fail("layout 必須是 'single' 或 'double'");
+  if (!['single','double','ring'].includes(layout)) fail("layout 必須是 'single'、'double' 或 'ring'");
+  const commonRatio=finite(config.commonAreaRatio??0,'commonAreaRatio');
+  if(commonRatio<0||commonRatio>=1)fail('中央公共設施比例必須介於 0 與 100% 之間（不含100%）');
   const totalUnits = floors * units;
-  if (totalUnits + basements > 2000) fail('建物 feature 總數不得超過 2000');
+  if (totalUnits + basements+(commonRatio>0?floors:0) > 2000) fail('建物 feature 總數不得超過 2000');
 
   const normalized = normalizeParcels(parcelFeature);
   if (normalized.features.length !== 1) fail('generateBuilding 每次只接受一個 parcel feature');
@@ -232,15 +234,17 @@ export function generateBuilding(config, parcelFeature) {
     sum + polygon.reduce((ringSum, ring) => ringSum + ring.length - 1, 0), 0);
   if (vertexCount > 500) fail(`目前建物配置最多處理 500 個地籍頂點（收到 ${vertexCount}）；請先簡化選取的地籍`);
   const polygons = projectedPolygons(parcel, project), parcelAreaM2 = polygons.reduce((sum, polygon) => sum + polygonAreaXY(polygon), 0);
-  if(config.footprintMode==='parcel'){
-    const cells=partitionParcel(polygons,units,layout,rotation),features=[];
+  if(config.footprintMode==='parcel'||layout==='ring'||commonRatio>0){
+    const {cells,common}=partitionParcel(polygons,units,layout,rotation,commonRatio),features=[];
     const footprint=structuredClone(parcel.geometry),name=config.name||config.id;
+    const cellGeometry=cell=>{const coordinates=cell.polygons.map(p=>p.map(r=>r.map(project.toLonLat)));return coordinates.length===1?{type:'Polygon',coordinates:coordinates[0]}:{type:'MultiPolygon',coordinates};};
     for(let basement=basements;basement>=1;basement--)features.push({type:'Feature',properties:{buildingId:config.id,floor:-basement,unitId:`${config.id}-B${basement}`,base:-basement*basementHeight,height:basementHeight,underground:true,usage:'basement',label:`${name} B${basement} 地下室`,area_m2:parcelAreaM2,floor_area_m2:parcelAreaM2,representative_point:project.toLonLat(cells[0].point)},geometry:structuredClone(footprint)});
     for(let floor=1;floor<=floors;floor++)cells.forEach((cell,index)=>{
       const coordinates=cell.polygons.map(p=>p.map(r=>r.map(project.toLonLat)));
       features.push({type:'Feature',properties:{buildingId:config.id,floor,unitId:`${config.id}-F${floor}-U${index+1}`,base:(floor-1)*floorHeight,height:floorHeight,underground:false,usage:'residential',label:`${name} F${floor} 戶 ${index+1}`,area_m2:cell.area,floor_area_m2:parcelAreaM2,representative_point:project.toLonLat(cell.point)},geometry:coordinates.length===1?{type:'Polygon',coordinates:coordinates[0]}:{type:'MultiPolygon',coordinates}});
     });
-    return {type:'FeatureCollection',features,metadata:{buildingId:config.id,footprint,centroid:project.toLonLat(cells[0].point),footprintArea:parcelAreaM2,parcelArea:parcelAreaM2,floorArea:parcelAreaM2,aboveGroundFloorArea:parcelAreaM2*floors,basementFloorArea:parcelAreaM2*basements,totalFloorArea:parcelAreaM2*(floors+basements),totalUnits,floors,basementFloors:basements,layout,footprintMode:'parcel',estimated:true}};
+    if(common)for(let floor=1;floor<=floors;floor++)features.push({type:'Feature',properties:{buildingId:config.id,floor,unitId:`${config.id}-F${floor}-COMMON`,base:(floor-1)*floorHeight,height:floorHeight,underground:false,usage:'common',label:`${name} F${floor} 中央公共設施`,area_m2:common.area,floor_area_m2:parcelAreaM2,representative_point:project.toLonLat(common.point)},geometry:cellGeometry(common)});
+    return {type:'FeatureCollection',features,metadata:{buildingId:config.id,footprint,centroid:project.toLonLat(cells[0].point),footprintArea:parcelAreaM2,parcelArea:parcelAreaM2,floorArea:parcelAreaM2,commonAreaRatio:commonRatio,commonAreaPerFloor:common?.area||0,residentialAreaPerFloor:cells.reduce((s,cell)=>s+cell.area,0),aboveGroundFloorArea:parcelAreaM2*floors,basementFloorArea:parcelAreaM2*basements,totalFloorArea:parcelAreaM2*(floors+basements),totalUnits,floors,basementFloors:basements,layout,footprintMode:'parcel',estimated:true}};
   }
   const fitted = fitRectangle(polygons, parcelAreaM2 * coverage, ratio, rotation);
   const unitsXY = splitRectangle(fitted.rect, units, layout), features = [];

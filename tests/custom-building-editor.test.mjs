@@ -9,12 +9,13 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     value='';checked=true;hidden=false;options=[];style={};textContent='';
     add(option){this.options.push(option);}
     replaceChildren(...children){this.options=children;}
+    setAttribute(key,value){this[key]=value;}
   }
   const el=id=>{if(!elements.has(id))elements.set(id,new Element());return elements.get(id);};
   const globals=['document','window','Option','localStorage','maplibregl'];
   const previous=Object.fromEntries(globals.map(key=>[key,globalThis[key]]));
   const storage=new Map(),sources=new Map(),layers=new Map(),messages=[];let picked=null,mode='2d',hit=[],catalog=[];
-  const map={isStyleLoaded:()=>true,getSource:id=>sources.get(id),addSource(id,options){sources.set(id,{data:options.data,setData(data){this.data=data;}});},addLayer(layer){layers.set(layer.id,layer);},getLayer:id=>layers.get(id),setLayoutProperty(id,key,value){layers.get(id)[key]=value;},fitBounds(bounds,options){this.camera=options;},getContainer:()=>({clientWidth:900}),getCanvas:()=>({style:{}}),queryRenderedFeatures:()=>hit};
+  const map={isStyleLoaded:()=>true,getSource:id=>sources.get(id),addSource(id,options){sources.set(id,{data:options.data,setData(data){this.data=data;}});},addLayer(layer){layers.set(layer.id,layer);},getLayer:id=>layers.get(id),setLayoutProperty(id,key,value){layers.get(id)[key]=value;},fitBounds(bounds,options){this.camera=options;},getContainer:()=>({clientWidth:900,clientHeight:700}),getCanvas:()=>({style:{}}),queryRenderedFeatures:()=>hit};
   try{
     const handlers=new Map(),featureStates=new Map();let dragPanEnabled=true;
     const originalAddSource=map.addSource;
@@ -28,8 +29,8 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     map.removeFeatureState=({id})=>featureStates.delete(id);
     map.on=(event,...args)=>{const key=args.length===2?`${event}:${args[0]}`:event;handlers.set(key,args.at(-1));};
     map.dragPan={isEnabled:()=>dragPanEnabled,disable(){dragPanEnabled=false;},enable(){dragPanEnabled=true;}};
-    map.project=()=>({x:200,y:150});
-    globalThis.document={getElementById:el};globalThis.window={addEventListener(){}};
+    map.project=()=>({x:200,y:150});map.getZoom=()=>19;
+    globalThis.document={getElementById:el,createElement:()=>new Element()};globalThis.window={addEventListener(){}};
     globalThis.Option=class{constructor(text,value){this.text=text;this.value=value;}};
     globalThis.maplibregl={LngLatBounds:class{extend(){return this;}}};
     globalThis.localStorage={setItem:(key,value)=>storage.set(key,value),getItem:key=>storage.get(key)};
@@ -37,6 +38,9 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     for(const [id,value]of Object.entries(defaults))el(id).value=value;
     const dependencies={map,setMode(next){mode=next;editor?.setMode(next);},getMode:()=>mode,showProperties:(title,properties)=>picked={title,properties},toast:message=>messages.push(message),cancelBimPicking(){},onCatalogChange:items=>catalog=items};
     let editor;editor=mountCustomBuildings(dependencies);
+    assert.equal(layers.get('studio-parcels-fill').visibility,'none');
+    editor.setPanelActive(true);assert.equal(layers.get('studio-parcels-fill').visibility,'visible');
+    editor.setPanelActive(false);assert.equal(layers.get('studio-parcels-line').visibility,'none');
     const bytes=await readFile(new URL('../web/examples/studio-parcel.geojson',import.meta.url));
     const file={name:'studio-parcel.geojson',size:bytes.length,arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)};
     await el('parcel-input').onchange({target:{files:[file],value:'x'}});
@@ -47,6 +51,41 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     assert.equal(catalog.length,1);assert.equal(catalog[0].type,'自訂建築');assert.equal(catalog[0].units,32);
     const housing=()=>sources.get('studio-housing').data.features;
     assert.equal(housing().length,32);assert.equal(map.camera.pitch,60);
+    const switcher=el('building-floor-switcher');
+    assert.equal(switcher.hidden,true,'floor controls wait for a map model click');
+    hit=[housing()[0]];editor.onMapClick({point:{}});
+    assert.equal(switcher.hidden,false);
+    assert.deepEqual(switcher.options.map(button=>button.textContent),['全部','8','7','6','5','4','3','2','1','B1','B2']);
+    switcher.options.find(button=>button.textContent==='7').onclick();
+    assert.equal(el('building-floor-filter').value,'above','map floor control must not change the global environment filter');
+    assert.equal(housing().length,4);assert.ok(housing().every(f=>f.properties.floor===7));
+    assert.equal(switcher.options.find(button=>button.textContent==='7')['aria-pressed'],'true');
+    el('building-floor-filter').value='-1';el('building-floor-filter').onchange();
+    assert.equal(switcher.options.find(button=>button.textContent==='B1')['aria-pressed'],'true');
+    el('custom-building-visible').checked=false;el('custom-building-visible').onchange();assert.equal(switcher.hidden,true);
+    el('custom-building-visible').checked=true;el('custom-building-visible').onchange();
+    assert.equal(switcher.hidden,true);
+    hit=[housing()[0]];editor.onMapClick({point:{}});
+    switcher.options[0].onclick();assert.equal(housing().length,32);
+    switcher.options.find(button=>button.textContent==='7').onclick();assert.equal(housing().length,4);
+    hit=[];editor.onMapClick({point:{}});assert.equal(switcher.hidden,true);assert.equal(housing().length,32,'deselect restores all above-ground floors');
+    hit=[housing()[0]];editor.onMapClick({point:{}});assert.equal(switcher.hidden,false);
+    assert.equal(switcher.options[0]['aria-pressed'],'true');
+    switcher.options.find(button=>button.textContent==='3').onclick();assert.equal(housing().length,4);
+    handlers.get('moveend')();assert.equal(switcher.hidden,false,'selected model is still in the area of interest');
+    hit=[];handlers.get('moveend')();assert.equal(switcher.hidden,true,'controls hide when selected model leaves the area of interest');
+    assert.equal(housing().length,32,'leaving the area of interest restores the building');
+    assert.ok(housing().every(f=>f.properties.color==='#f5f5f3'));
+    assert.equal(layers.get('studio-housing-3d').paint['fill-extrusion-vertical-gradient'],false);
+    assert.equal(layers.get('studio-floor-bands').paint['fill-extrusion-vertical-gradient'],false);
+    const bands=sources.get('studio-floor-bands').data.features;
+    assert.equal(bands.length,7);assert.ok(Math.abs(bands[0].properties.height-bands[0].properties.base-.05)<1e-9);
+    assert.equal(el('building-floor-labels').hidden,false);
+    dependencies.setMode('2d');
+    assert.equal(layers.get('studio-footprint-outline').visibility,'visible');
+    assert.equal(sources.get('studio-footprints').data.features.length,1);
+    assert.equal(layers.get('studio-unit-boundaries').visibility,'visible');
+    dependencies.setMode('3d');assert.equal(layers.get('studio-footprint-outline').visibility,'none');
     const third=housing().find(f=>f.properties.floor===3);
     assert.equal(third.properties.displayBase,6.4);assert.ok(Math.abs(third.properties.displayHeight-9.6)<1e-8);
     assert.equal(third.id,third.properties.unitId);
@@ -74,7 +113,11 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     el('save-custom-buildings').onclick();
     el('restore-custom-buildings').onclick();el('building-floor-filter').value='above';el('building-floor-filter').onchange();
     assert.ok(housing().some(f=>f.properties.unitId===id));
+    hit=[housing()[0]];editor.onMapClick({point:{}});el('feature-panel').hidden=false;
     editor.setBuildingVisible(catalog[0].id,false);assert.equal(housing().length,0);
+    assert.equal(sources.get('studio-floor-bands').data.features.length,0);
+    assert.equal(sources.get('studio-footprints').data.features.length,0);
+    assert.equal(el('feature-panel').hidden,true);
     assert.equal(editor.focusOnMap(catalog[0].id),false);
     editor.focusBuilding(catalog[0].id);assert.equal(housing().length,32);
     const activeBefore=el('saved-building-select').value;
@@ -86,6 +129,18 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     assert.match(el('building-result').textContent,/新增模式/);
     el('demo-parcel').onclick();el('custom-building-form').onsubmit({preventDefault(){}});
     assert.equal(catalog.length,2);assert.notEqual(catalog[0].id,catalog[1].id);
+    const firstBuilding=catalog[0].id,secondBuilding=catalog[1].id;
+    hit=[housing().find(f=>f.properties.buildingId===firstBuilding)];editor.onMapClick({point:{}});
+    switcher.options.find(button=>button.textContent==='7').onclick();
+    assert.equal(housing().filter(f=>f.properties.buildingId===firstBuilding).length,4);
+    assert.equal(housing().filter(f=>f.properties.buildingId===secondBuilding).length,32,'other models keep all floors');
+    hit=[housing().find(f=>f.properties.buildingId===secondBuilding)];editor.onMapClick({point:{}});
+    assert.equal(switcher.options[0]['aria-pressed'],'true');
+    switcher.options.find(button=>button.textContent==='3').onclick();
+    assert.ok(housing().filter(f=>f.properties.buildingId===firstBuilding).every(f=>f.properties.floor===7));
+    assert.ok(housing().filter(f=>f.properties.buildingId===secondBuilding).every(f=>f.properties.floor===3));
+    el('building-floor-filter').value='above';el('building-floor-filter').onchange();
+    assert.equal(housing().length,64);
     el('save-custom-buildings').onclick();
     const retainedId=catalog[0].id,deletedId=catalog[1].id;
     editor.focusBuilding(retainedId);el('building-name').value='尚未儲存的修改';el('custom-building-form').onsubmit({preventDefault(){}});
@@ -120,6 +175,18 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     sources.clear();layers.clear();catalog=[];editor=mountCustomBuildings(dependencies);
     assert.equal(catalog.length,1);assert.equal(catalog[0].id,retainedId);
     assert.equal(catalog.some(b=>b.id===deletedId),false);
+    editor.focusBuilding(retainedId);el('building-layout').value='ring';el('building-common-ratio').value='20';
+    el('custom-building-form').onsubmit({preventDefault(){}});
+    const common=housing().filter(f=>f.properties.usage==='common'),homes=housing().filter(f=>f.properties.usage==='residential');
+    assert.equal(common.length,8);assert.equal(homes.length,32);assert.equal(catalog[0].units,32);
+    assert.ok(common.every(f=>f.properties.color==='#d6dce1'));
+    assert.ok(Math.abs(homes[0].properties.area_m2*4-common[0].properties.floor_area_m2*.8)<.001);
+    hit=[common[0]];editor.onMapClick({point:{}});assert.equal(picked.properties['區域用途'],'中央公共設施');
+    assert.equal(picked.properties['住宅 ID'],undefined);
+    el('save-custom-buildings').onclick();sources.clear();layers.clear();catalog=[];editor=mountCustomBuildings(dependencies);
+    assert.equal(el('building-common-ratio').value,20);assert.equal(el('building-layout').value,'ring');
+    el('building-common-ratio').value='0';el('custom-building-form').onsubmit({preventDefault(){}});
+    assert.equal(housing().some(f=>f.properties.usage==='common'),false);
     assert.equal(messages.some(message=>/錯誤|無效/.test(message)),false);
   }finally{for(const key of globals)if(previous[key]===undefined)delete globalThis[key];else globalThis[key]=previous[key];}
 });

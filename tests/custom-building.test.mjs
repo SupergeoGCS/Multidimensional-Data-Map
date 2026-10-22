@@ -103,6 +103,30 @@ test('separate parcel parts retain their area and produce multipart housing wher
   normalizeParcels(model.features[0]);
 });
 
+test('central common area is deducted from housing for every layout; zero creates no region',()=>{
+  for(const layout of ['single','double','ring'])for(const ratio of [0,.2,.6]){
+    const model=generateBuilding({id:'core',floors:2,floorHeight:3,unitsPerFloor:4,coverage:1,footprintMode:'parcel',layout,rotation:17,commonAreaRatio:ratio},square);
+    const homes=model.features.filter(f=>f.properties.floor===1&&f.properties.usage==='residential');
+    const common=model.features.filter(f=>f.properties.floor===1&&f.properties.usage==='common');
+    assert.equal(homes.length,4);assert.equal(common.length,ratio?1:0);
+    const gross=model.metadata.floorArea,sum=homes.reduce((s,f)=>s+f.properties.area_m2,0);
+    assert.ok(Math.abs(sum-gross*(1-ratio))<.001);
+    assert.ok(Math.abs((common[0]?.properties.area_m2||0)-gross*ratio)<.001);
+    for(const f of [...homes,...common])normalizeParcels(f);
+  }
+  for(const ratio of [-.1,1,NaN])assert.throws(()=>generateBuilding({id:'bad',floors:1,floorHeight:3,unitsPerFloor:4,coverage:1,commonAreaRatio:ratio},square));
+});
+
+test('ring common areas preserve concave outlines and existing holes',()=>{
+  const parcel=feature([[[121,25],[121.003,25],[121.003,25.001],[121.001,25.001],[121.001,25.003],[121,25.003],[121,25]],[[121.0002,25.0002],[121.0007,25.0002],[121.0007,25.0007],[121.0002,25.0007],[121.0002,25.0002]]]);
+  for(const count of [1,3,7]){
+    const model=generateBuilding({id:'ring',floors:1,floorHeight:3,unitsPerFloor:count,coverage:1,footprintMode:'parcel',layout:'ring',rotation:30,commonAreaRatio:.25},parcel);
+    assert.equal(model.features.length,count+1);
+    assert.ok(Math.abs(model.features.reduce((s,f)=>s+f.properties.area_m2,0)-model.metadata.floorArea)<.001);
+    for(const f of model.features)normalizeParcels(f);
+  }
+});
+
 test('validates config ranges and hard unit cap', () => {
   const valid = {id:'x', floors:1, floorHeight:3, unitsPerFloor:1, coverage:0.5};
   for (const [change, pattern] of [
