@@ -287,3 +287,5 @@ GitHub 上版／更新由專用對話管理；使用者指定儲存庫 https://g
 - main提交並推送將觸發既有CI／Pages；以Git與Actions結果為準，前述未提交為歷程。
 
 - 正式站證據：f7cd395已推送，Actions run39755806619 test／deploy皆success；IAB正式HTTPS首頁同視野可見STR及兩示意建物，console error 0。截圖reports/demo-buildings-near-str-2026-10-22.png。Python完整27項亦通過；工作樹以Git為準。
+
+- 正式部署已驗證：4dca292，Actions run39757152208 test／deploy皆success；Node44／Python27通過。正式HTTPS首頁IAB確認A／B在1097巷南側空地、平行道路、與STR共同總覽，console error 0。證據reports/demo-road-aligned-public-2026-10-22.png。
