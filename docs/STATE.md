@@ -240,3 +240,5 @@ GitHub 上版／更新由專用對話管理；使用者指定儲存庫 https://g
 - 根因：PUBLIC_DEMO=true 時仍隱藏套用定位按鈕且跳過啟動定位；資料和接受紀錄已在發布包。移除兩處環境限制，公開站與本機共用既有接受紀錄／兩份GLB雜湊／定位矩陣檢查。
 - 本機正式發布包IAB實測：啟動自動飛至STR，縮放18／傾角60，定位頁顯示TWD97已確認與可用按鈕；開源及原生可切換同址顯示，console error 0。Node42項、JS語法、diff檢查與發布資產查核通過。
 - 下一步：推送並核對Pages部署及正式網址。既有NLSC選單樣式與其文件修改保留在工作樹，未納入此次定位修正。
+
+- 正式站修正已驗證：提交a0951a6，Actions run39749681533的test／deploy均success。正式HTTPS首頁自動套用定位，地圖縮放18／傾角60；開源與原生同址切換成功，定位標示及按鈕可見，console error 0。證據reports/str-public-placement-fix-2026-10-22.png。
