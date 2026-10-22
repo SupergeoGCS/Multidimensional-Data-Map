@@ -1,5 +1,8 @@
 # 工作紀錄
 
+## 2026-10-22：隱藏地圖底部定位提示框
+- map-notice 加上 hidden，節點保留供既有流程更新文字，隱藏使用者標記的中央底部提示框。純 HTML 顯示調整，git diff --check 通過，未新增測試；尚未本次瀏覽器目視驗收，未提交／發布。
+
 ## 2026-10-22：修正單層檢視灰色頂面
 - 診斷 custom-buildings.js render：separated 原僅判斷非地下且不是頂樓，在單層模式仍將白模減高 5cm 並放置整片 #8f969c 灰色分隔量體，造成頂樓以外皆灰。
 - 增加 filter==='above' 條件，單層不生成分隔薄層、不縮減白模高度；全部模式維持分層區隔，保留 0.65 白模透明度。
@@ -502,3 +505,6 @@
 ### 指定空地道路對齊正式站證據
 - 4dca292847a32317aeae1a9dc7c05d1aeba84070已推送；Actions run39757152208 test／deploy皆success，本機Node44／Python27通過。正式HTTPS首頁確認三棟總覽及A／B平行1097巷，console error 0。
 - reports/demo-road-aligned-public-2026-10-22.png記錄正式站結果。示意配置與真實STR定位分開，原模型幾何／定位不變；未修改使用者自訂資料。
+
+## 2026-10-22：提交並推送地圖提示框隱藏
+- 使用者要求COMMIT／PUSH；提交web/index.html的map-notice hidden與既有紀錄。檢閱單行HTML差異及diff --check通過，未新增測試／目視驗收。main推送觸發既有CI／Pages；實際hash與部署結果以Git／Actions為準。

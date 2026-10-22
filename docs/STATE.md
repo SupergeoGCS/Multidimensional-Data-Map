@@ -1,5 +1,8 @@
 # 專案狀態
 
+## 2026-10-22 最新介面：隱藏地圖中央底部提示框
+- 依使用者標記隱藏 map-notice，保留座標狀態列、底圖控制與出處資訊。差異空白檢查通過，尚未本次瀏覽器目視驗收；未提交／發布。
+
 ## 2026-10-22：A／B 改至使用者標記空地並對齊道路
 - 依截圖所示1097巷南側空地配置兩棟，群組中心約121.2098／25.0207。由OSM公開API讀取way1310859889相鄰道路線段，長邊朝向約41.67°（從東逆時針）；兩棟中心沿道路錯開60m，與道路中心線至少40m間隔，基地彼此及與STR不重疊。
 - 正式展示自動總覽改以STR實際完整scene包圍範圍與兩基地fitBounds，支援不同視窗寬度；本機原STR視角不變。未修改舊臺北／西側種子會在記憶體搬移並更新方向，使用者編輯及其他建物保留。
@@ -289,3 +292,6 @@ GitHub 上版／更新由專用對話管理；使用者指定儲存庫 https://g
 - 正式站證據：f7cd395已推送，Actions run39755806619 test／deploy皆success；IAB正式HTTPS首頁同視野可見STR及兩示意建物，console error 0。截圖reports/demo-buildings-near-str-2026-10-22.png。Python完整27項亦通過；工作樹以Git為準。
 
 - 正式部署已驗證：4dca292，Actions run39757152208 test／deploy皆success；Node44／Python27通過。正式HTTPS首頁IAB確認A／B在1097巷南側空地、平行道路、與STR共同總覽，console error 0。證據reports/demo-road-aligned-public-2026-10-22.png。
+
+## 2026-10-22：地圖提示框隱藏上版
+- 使用者授權COMMIT／PUSH，目前修改僅map-notice加入hidden及相關紀錄；已檢閱差異，git diff --check通過。純HTML顯示調整，未新增測試或瀏覽器目視驗收。推送後由既有CI／Pages驗證部署，最終以Git／Actions為準。
