@@ -1,0 +1,111 @@
+{
+  "date": "2026-10-22",
+  "target": "Open area south of Shuiyuan South Road Lane 1097, approximated from the user screenshot; demonstration layout only.",
+  "source": "https://api.openstreetmap.org/api/0.6/map?bbox=121.2065,25.0194,121.2095,25.0215",
+  "road": {
+    "osm_way": "1310859889",
+    "name": "水源南路1097巷",
+    "highway": "residential",
+    "segments": [
+      {
+        "distance_m": 59.71,
+        "rotation_from_east_deg": -138.33,
+        "a": [
+          121.2086857,
+          25.0206801
+        ],
+        "b": [
+          121.2076733,
+          25.0198636
+        ]
+      },
+      {
+        "distance_m": 121.33,
+        "rotation_from_east_deg": -138.327,
+        "a": [
+          121.2096479,
+          25.0214562
+        ],
+        "b": [
+          121.2086857,
+          25.0206801
+        ]
+      }
+    ]
+  },
+  "group_center_wgs84": [
+    121.2098,
+    25.0207
+  ],
+  "rotation_from_east_degrees": 41.67,
+  "center_spacing_m": 60,
+  "building_summaries": [
+    {
+      "id": "demo-a",
+      "rotation": 41.67,
+      "footprint": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              121.20952221100389,
+              25.020328511122102
+            ],
+            [
+              121.2097946008138,
+              25.020548194911562
+            ],
+            [
+              121.20963297764924,
+              25.020712746751947
+            ],
+            [
+              121.20936058783933,
+              25.020493062962487
+            ],
+            [
+              121.20952221100389,
+              25.020328511122102
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "demo-b",
+      "rotation": 41.67,
+      "footprint": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              121.20995845433404,
+              25.020657532518655
+            ],
+            [
+              121.21027298391337,
+              25.020911201508618
+            ],
+            [
+              121.21008635701284,
+              25.021101209607302
+            ],
+            [
+              121.20977182743351,
+              25.02084754061734
+            ],
+            [
+              121.20995845433404,
+              25.020657532518655
+            ]
+          ]
+        ]
+      }
+    }
+  ],
+  "notes": [
+    "No change to STR placement or model geometry.",
+    "Long sides parallel the referenced road; road centerline clearance exceeds 40m.",
+    "Unmodified legacy seeds migrate in memory only."
+  ]
+}

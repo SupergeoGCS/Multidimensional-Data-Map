@@ -219,13 +219,13 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     assert.equal(housing().filter(f=>f.properties.usage==='residential').length,80);
     assert.equal(storage.size,0,'the demo must not write local storage');
     const legacyDemo=createDemoBuildings();
-    legacyDemo.buildings.forEach((b,i)=>{b.parcel.geometry=rectangleAt([[121.535,25.045],[121.5357,25.045]][i],i?1200:900,1.5,0);});
+    legacyDemo.buildings.forEach((b,i)=>{b.config.rotation=0;b.parcel.geometry=rectangleAt([[121.535,25.045],[121.5357,25.045]][i],i?1200:900,1.5,0);});
     const legacySave=JSON.stringify(legacyDemo);
     storage.set('spatial-workspace-custom-buildings-v1',legacySave);
     sources.clear();layers.clear();catalog=[];
     editor=mountCustomBuildings({...dependencies,initialData:createDemoBuildings()});
     assert.equal(catalog.length,2);
-    assert.ok(housing().every(f=>f.geometry.coordinates[0][0][0]<121.21),'saved legacy demos relocate beside STR on public startup');
+    assert.ok(housing().every(f=>f.geometry.coordinates[0][0][0]>121.209&&f.geometry.coordinates[0][0][0]<121.211),'saved legacy demos relocate to the new road-aligned site');
     assert.equal(storage.get('spatial-workspace-custom-buildings-v1'),legacySave,'relocation must not auto-overwrite local storage');
     assert.ok(savedBefore);
   }finally{for(const key of globals)if(previous[key]===undefined)delete globalThis[key];else globalThis[key]=previous[key];}

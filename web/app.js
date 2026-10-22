@@ -117,7 +117,17 @@ async function applyNativeCandidate(){
     $('placement-description').textContent='本專案依使用者裁定採用 RVT「原始位置」（233312），座標系統 TWD97 / TM2 121（EPSG:3826）、來源高程 −0.85 m；開源與原生 STR 共用此定位。確認方式：使用者裁定；RVT 獨立萃取結果已與 IFC 比對相符。下方欄位供手動暫放。';
     $('clear-placement').disabled=false;
     $('map-notice').textContent='STR 專案採用定位 · TWD97 / EPSG:3826 · 使用者確認';
-    setMode('3d');map.flyTo({center:[placement.lon,placement.lat],zoom:18,pitch:60,bearing:-25});
+    setMode('3d');
+    if(PUBLIC_DEMO){
+      const bounds=new maplibregl.LngLatBounds(),box=new THREE.Box3().setFromObject(bimSources.native.root);
+      const matrix=nativeCandidateMatrix(maplibregl.MercatorCoordinate);
+      for(const x of [box.min.x,box.max.x])for(const z of [box.min.z,box.max.z]){
+        const point=new THREE.Vector3(x,0,z).applyMatrix4(matrix);
+        bounds.extend(new maplibregl.MercatorCoordinate(point.x,point.y,point.z).toLngLat());
+      }
+      for(const demo of createDemoBuildings().buildings)for(const point of demo.parcel.geometry.coordinates[0])bounds.extend(point);
+      map.fitBounds(bounds,{padding:{top:115,bottom:100,left:45,right:45},maxZoom:18,pitch:50,bearing:-25,duration:1000});
+    }else map.flyTo({center:[placement.lon,placement.lat],zoom:18,pitch:60,bearing:-25});
     setStrCoordinateNotesVisible(true);
     toast('兩種 STR 已套用專案確認定位；可切換資料卡的顯示開關比較。');
   }catch(error){toast(error.message);}finally{button.disabled=false;}
