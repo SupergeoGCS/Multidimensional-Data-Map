@@ -48,7 +48,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     map.addLayer({id:ids[3],type:'fill-extrusion',source:'studio-housing',paint:{'fill-extrusion-color':housingColor,'fill-extrusion-base':['get','displayBase'],'fill-extrusion-height':['get','wallHeight'],'fill-extrusion-opacity':0.65,'fill-extrusion-vertical-gradient':false}});
     map.addSource('studio-floor-bands',{type:'geojson',data:empty()});
     map.addLayer({id:'studio-floor-bands',type:'fill-extrusion',source:'studio-floor-bands',paint:{'fill-extrusion-color':'#8f969c','fill-extrusion-vertical-gradient':false,'fill-extrusion-base':['get','base'],'fill-extrusion-height':['get','height'],'fill-extrusion-opacity':0.75}});
-    map.addLayer({id:ids[4],type:'circle',source:'studio-points',paint:{'circle-radius':4,'circle-color':'#143e52','circle-stroke-color':'white','circle-stroke-width':1},minzoom:17});
+    map.addLayer({id:ids[4],type:'circle',source:'studio-points',layout:{visibility:'none'},paint:{'circle-radius':4,'circle-color':'#143e52','circle-stroke-color':'white','circle-stroke-width':1},minzoom:17});
     map.addSource('studio-drawing',{type:'geojson',data:empty()});
     map.addLayer({id:'studio-drawing-fill',type:'fill',source:'studio-drawing',filter:['==',['geometry-type'],'Polygon'],paint:{'fill-color':'#159d8e','fill-opacity':.16}});
     map.addLayer({id:'studio-drawing-line',type:'line',source:'studio-drawing',filter:['!=',['geometry-type'],'Point'],paint:{'line-color':'#078f84','line-width':2.5}});
@@ -125,12 +125,13 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     hoveredHousing=next;syncHighlights();map.getCanvas().style.cursor=next?'pointer':'';
   }
   function clearHousingSelection(){
+    $('feature-panel').hidden=true;
     const buildingId=floorSwitcherBuildingId||selectedHousing?.buildingId;
     if(buildingId)buildingFloorFilters.set(buildingId,'above');
     selectedHousing=null;hoveredHousing=null;floorSwitcherBuildingId=null;
     if(buildingId)render();else syncHighlights();
   }
-  $('close-feature').addEventListener?.('click',clearHousingSelection);
+  $('close-feature').addEventListener?.('click',()=>{$('feature-panel').hidden=true;});
   map.on?.('mouseout',()=>{hoveredHousing=null;syncHighlights();if(!drawPoints)map.getCanvas().style.cursor='';});
   map.on?.('moveend',()=>{
     if(!floorSwitcherBuildingId||drawPoints)return;
@@ -173,7 +174,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     floorLabels?.update([...labels.values()],visible&&getMode()==='3d');
     map.setLayoutProperty(ids[2],'visibility',visible&&getMode()==='2d'?'visible':'none');
     map.setLayoutProperty(ids[3],'visibility',visible&&getMode()==='3d'?'visible':'none');
-    map.setLayoutProperty(ids[4],'visibility',visible?'visible':'none');
+    map.setLayoutProperty(ids[4],'visibility','none');
     if(filter!=='above'&&Number(filter)<0)$('building-result').textContent=`目前為 B${Math.abs(Number(filter))} 抬升示意檢視，非真實地表高程。`;
     else {const active=buildings.find(b=>b.config.id===activeId);if(active)$('building-result').textContent=resultText(active);}
   }

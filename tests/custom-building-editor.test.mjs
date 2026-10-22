@@ -11,6 +11,8 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     add(option){this.options.push(option);}
     replaceChildren(...children){this.options=children;}
     setAttribute(key,value){this[key]=value;}
+    listeners=new Map();
+    addEventListener(event,handler){this.listeners.set(event,handler);}
   }
   const el=id=>{if(!elements.has(id))elements.set(id,new Element());return elements.get(id);};
   const globals=['document','window','Option','localStorage','maplibregl'];
@@ -69,7 +71,16 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     hit=[housing()[0]];editor.onMapClick({point:{}});
     switcher.options[0].onclick();assert.equal(housing().length,32);
     switcher.options.find(button=>button.textContent==='7').onclick();assert.equal(housing().length,4);
+    hit=[housing()[0]];editor.onMapClick({point:{}});el('feature-panel').hidden=false;
+    const selectedBeforeClose=housing()[0].properties.unitId;
+    el('close-feature').listeners.get('click')();
+    assert.equal(el('feature-panel').hidden,true);
+    assert.equal(housing().length,4,'closing properties retains the selected floor');
+    assert.equal(featureStates.get(selectedBeforeClose).selected,true,'closing properties retains the selected unit');
+    assert.equal(switcher.hidden,false,'closing properties retains the floor switcher');
+    el('feature-panel').hidden=false;
     hit=[];editor.onMapClick({point:{}});assert.equal(switcher.hidden,true);assert.equal(housing().length,32,'deselect restores all above-ground floors');
+    assert.equal(el('feature-panel').hidden,true,'deselect also closes the property panel');
     hit=[housing()[0]];editor.onMapClick({point:{}});assert.equal(switcher.hidden,false);
     assert.equal(switcher.options[0]['aria-pressed'],'true');
     switcher.options.find(button=>button.textContent==='3').onclick();assert.equal(housing().length,4);

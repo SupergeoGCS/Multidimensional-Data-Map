@@ -99,3 +99,21 @@
 @media(max-width:640px){.building-floor-switcher{width:58px}}
 .building-floor-switcher{scrollbar-width:none;-ms-overflow-style:none}
 .building-floor-switcher::-webkit-scrollbar{display:none;width:0;height:0}
+.sidebar-collapse{position:absolute;top:94px;left:388px;z-index:5;display:grid;place-items:center;width:28px;height:40px;padding:0;border:1px solid #dbe6e9;border-left:0;border-radius:0 8px 8px 0;background:#fff;color:#527580;box-shadow:3px 2px 8px #16344012}
+.sidebar-collapse svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sidebar{opacity:1;visibility:visible;transition:transform .24s cubic-bezier(.22,.61,.36,1),opacity .2s ease,visibility 0s}
+.sidebar-collapsed .sidebar{transform:translateX(-20px);opacity:0;visibility:hidden;pointer-events:none;transition:transform .24s cubic-bezier(.22,.61,.36,1),opacity .18s ease,visibility 0s linear .24s}
+.map-workspace{transition:left .24s cubic-bezier(.22,.61,.36,1)}
+.sidebar-collapse{transition:left .24s cubic-bezier(.22,.61,.36,1),background .15s,box-shadow .15s}
+.sidebar-collapse svg{transition:transform .24s ease}
+.sidebar-collapsed .map-workspace{left:68px}
+.sidebar-collapsed .sidebar-collapse{left:68px}
+.sidebar-collapsed .sidebar-collapse svg{transform:rotate(180deg)}
+@media(max-width:1000px) and (min-width:651px){.sidebar-collapse{left:358px}.sidebar-collapsed .sidebar-collapse{left:68px}}
+@media(max-width:650px){.sidebar-collapse{top:81px;left:calc(min(290px,100vw - 56px) + 56px - 28px);border-left:1px solid #dbe6e9;border-radius:8px}.sidebar-collapsed .sidebar-collapse{left:56px}.sidebar-collapsed .map-workspace{left:56px}.sidebar:not(:hover){transform:translateX(calc(-100% - 56px))}.sidebar-open .sidebar:not(:hover){transform:translateX(0)}}
+@media(max-width:650px){.sidebar-collapsed .sidebar,.sidebar-collapsed .sidebar:hover{transform:translateX(calc(-100% - 56px))}}
+@media(prefers-reduced-motion:reduce){.sidebar,.sidebar-collapsed .sidebar,.map-workspace,.sidebar-collapse,.sidebar-collapse svg{transition:none}}
+.feature-panel{padding:16px 20px 20px}
+.feature-panel h3{margin:0 28px 14px 0;line-height:1.5}
+.feature-panel>.close-button{position:absolute;right:12px;top:10px;float:none;line-height:1;width:28px;height:28px;padding:0;display:grid;place-items:center}
+.feature-panel dl{margin:0}

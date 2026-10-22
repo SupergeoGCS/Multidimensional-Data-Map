@@ -6,6 +6,7 @@ import {BIM_SOURCES, loadBimSource, applyBimSourceVisibility, verifyAttributePac
 import {createBasemapStyle, applyBasemapVisibility, BUILDING_LAYER_ID} from './map-basemaps.js';
 import {mountCustomBuildings} from './custom-buildings.js';
 import {mountSidebarTabs} from './sidebar-tabs.js';
+import {mountSidebarCollapse} from './sidebar-collapse.js';
 import {bindCardMapFocus} from './card-map-focus.js';
 import {applyCameraMode} from './map-camera-mode.js';
 import {PUBLIC_DEMO} from './site-config.js';
@@ -105,7 +106,9 @@ $('file-input').onchange=async e=>{const file=e.target.files[0];e.target.value='
 window.addEventListener('keydown',e=>{if(e.key==='Escape')cancelPicking();});
 window.addEventListener('beforeunload',()=>{preview?.observer.disconnect();preview?.controls.dispose();preview?.renderer.dispose();map.remove();});
 
-$('toggle-sidebar').onclick=()=>{const open=document.body.classList.toggle('sidebar-open');$('toggle-sidebar').setAttribute('aria-expanded',String(open));};
+const sidebarControls=mountSidebarCollapse({body:document.body,button:$('collapse-sidebar'),mobileButton:$('toggle-sidebar'),isMobile:()=>matchMedia('(max-width:650px)').matches,onChange:()=>requestAnimationFrame(()=>map.resize())});
+const mapLayoutObserver=new ResizeObserver(()=>map.resize());
+mapLayoutObserver.observe(map.getContainer());
 async function setBimVisible(key, visible){const source=bimSources[key];source.visible=visible;try{if(placement&&visible){await ensureSource(key);if(!placement)return;addMapModel();}if(mapBimRoot)applyBimSourceVisibility(mapBimRoot,bimSources,$('show-model').checked);map.triggerRepaint();}catch(error){source.visible=false;$(key==='open'?'show-open-bim':'show-native-bim').checked=false;toast(error.message);}}
 $('show-open-bim').onchange=e=>setBimVisible('open',e.target.checked);
 $('show-native-bim').onchange=e=>setBimVisible('native',e.target.checked);
@@ -125,7 +128,7 @@ for(const [selector,key]of [['#panel-data>.model-card:not(.native-card)','open']
   });
 }
 customEditor=mountCustomBuildings({map,setMode,getMode:()=>mode,showProperties,toast,cancelBimPicking:cancelPicking,onCatalogChange:renderCustomCatalog,initialData:PUBLIC_DEMO?createDemoBuildings():null});
-mountSidebarTabs({buttons:[...document.querySelectorAll('.function-tab')],getPanel:$,sidebar:document.querySelector('.sidebar'),title:$('sidebar-title'),onSelect:button=>{customEditor?.setPanelActive(button.id==='tab-custom-building');cancelPicking();if(button.id==='tab-custom-building')customEditor?.startNew();if(button.id!=='tab-custom-building')$('close-building-editor').click();if(matchMedia('(max-width:650px)').matches){document.body.classList.add('sidebar-open');$('toggle-sidebar').setAttribute('aria-expanded','true');}}});
+mountSidebarTabs({buttons:[...document.querySelectorAll('.function-tab')],getPanel:$,sidebar:document.querySelector('.sidebar'),title:$('sidebar-title'),onSelect:button=>{sidebarControls.open();customEditor?.setPanelActive(button.id==='tab-custom-building');cancelPicking();if(button.id==='tab-custom-building')customEditor?.startNew();if(button.id!=='tab-custom-building')$('close-building-editor').click();if(matchMedia('(max-width:650px)').matches){document.body.classList.add('sidebar-open');$('toggle-sidebar').setAttribute('aria-expanded','true');}}});
 if(nativeModel) await selectBimSource('native');
 
 $('clear-model-selection').onclick=()=>{clearSelection();preview?.draw();};
