@@ -147,10 +147,14 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     assert.equal(housing().filter(f=>f.properties.buildingId===firstBuilding).length,4);
     assert.equal(housing().filter(f=>f.properties.buildingId===secondBuilding).length,32,'other models keep all floors');
     hit=[housing().find(f=>f.properties.buildingId===secondBuilding)];editor.onMapClick({point:{}});
+    assert.equal(housing().filter(f=>f.properties.buildingId===firstBuilding).length,32,'selecting B restores all floors of A');
     assert.equal(switcher.options[0]['aria-pressed'],'true');
     switcher.options.find(button=>button.textContent==='3').onclick();
-    assert.ok(housing().filter(f=>f.properties.buildingId===firstBuilding).every(f=>f.properties.floor===7));
+    assert.equal(housing().filter(f=>f.properties.buildingId===firstBuilding).length,32);
     assert.ok(housing().filter(f=>f.properties.buildingId===secondBuilding).every(f=>f.properties.floor===3));
+    hit=[housing().find(f=>f.properties.buildingId===firstBuilding)];editor.onMapClick({point:{}});
+    assert.equal(housing().filter(f=>f.properties.buildingId===secondBuilding).length,32,'switching back to A also resets B');
+    assert.equal(switcher.options[0]['aria-pressed'],'true');
     el('building-floor-filter').value='above';el('building-floor-filter').onchange();
     assert.equal(housing().length,64);
     el('save-custom-buildings').onclick();

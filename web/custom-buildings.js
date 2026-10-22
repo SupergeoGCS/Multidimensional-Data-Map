@@ -277,7 +277,13 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     if(drawPoints){if(drawPoints.length>=500){toast('繪製上限 500 個轉折點，請完成或重新繪製。');return true;}drawPoints.push([e.lngLat.lng,e.lngLat.lat]);updateDrawing();return true;}
     if(!map.getSource('studio-parcels'))return false;
     const hit=map.queryRenderedFeatures(e.point,{layers:ids.filter(id=>map.getLayer(id))})[0];if(!hit){clearHousingSelection();return false;}
-    if(hit.properties.unitId){selectedHousing=hit.properties;floorSwitcherBuildingId=hit.properties.buildingId;syncHighlights();}else clearHousingSelection();
+    if(hit.properties.unitId){
+      const previousId=floorSwitcherBuildingId||selectedHousing?.buildingId;
+      const switched=Boolean(previousId&&previousId!==hit.properties.buildingId);
+      if(switched){buildingFloorFilters.set(previousId,'above');hoveredHousing=null;}
+      selectedHousing=hit.properties;floorSwitcherBuildingId=hit.properties.buildingId;
+      if(switched)render();else syncHighlights();
+    }else clearHousingSelection();
     if(hit.properties.unitId){const p=hit.properties;showProperties(`${p.buildingName} · ${p.label||p.unitId}`,{'類型':'自訂建築','區域用途':p.usage==='common'?'中央公共設施':p.underground?'地下室':'住宅','樓層':p.floor<0?`B${-p.floor}`:`${p.floor}F`,[p.usage==='common'?'區域名稱':'戶號']:p.label||p.unitId,[p.usage==='common'?'區域 ID':'住宅 ID']:p.unitId,'配置狀態':'自動配置示意','樓板分區面積（m²）':Number(p.area_m2).toFixed(1),'該層樓板面積（m²）':p.floor_area_m2?Number(p.floor_area_m2).toFixed(1):'未提供','地下室':p.underground?'是（抬升示意檢視）':'否'});return true;}
     if(!$('building-editor').hidden&&hit.properties.studioIndex!==undefined){$('parcel-select').value=String(hit.properties.studioIndex);selectParcel(false);return true;}return false;
   }};
