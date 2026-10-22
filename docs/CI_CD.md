@@ -6,6 +6,8 @@
 GitHub Pages 啟用 API 回覆 HTTP 422：`Your current plan does not support GitHub Pages for this repository.`
 未變更儲存庫可見性，也未另建公開儲存庫。
 
+遠端首次實跑：[Actions run 39717220298](https://github.com/SupergeoGCS/Multidimensional-Data-Map/actions/runs/39717220298)，程式提交 `e5b1f75`。test job 全部通過，含 35 項 Node、14 項 Python、展示打包與 artifact 上傳；deploy job 為 skipped，沒有公開發布網站。
+
 ## 自動流程
 
 `.github/workflows/pages.yml` 在 push 至 main、對 main 提出 PR，或手動執行時：

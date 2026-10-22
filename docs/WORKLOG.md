@@ -326,3 +326,7 @@
 - Python 3.12內建runtime的初次暫存路徑受沙箱檔案權限限制，改用既有artifacts/test-tmp；HTTP連線另受WinError 10013限制，於權限提升環境完成驗證。最初HTTP測試未讀完大JS造成伺服器ConnectionAbortedError，改為讀完回應，最終無此錯誤。
 - GitHub API：儲存庫private且admin=true，Actions enabled；POST /pages回覆422 Your current plan does not support GitHub Pages for this repository. 使用者選擇先完成CI／部署程式，暫不公開。未改可見性、未建立公開repo、未成功啟用Pages。
 - 遠端CI需推送後核對，未以本機測試冒充；操作與日後啟用方式見docs/CI_CD.md。
+
+### GitHub 遠端 CI 證據
+- 已推送e5b1f750f137b4570c0db3f28b673feb511a829e。Actions run 39717220298：test job success；Node／Python／whitespace／打包／Pages artifact上傳皆success；deploy job skipped。網址：https://github.com/SupergeoGCS/Multidimensional-Data-Map/actions/runs/39717220298。
+- 公開部署未執行；私有儲存庫及本機來源模型保留。下一步為正常開發後push main自動CI，日後公開須另獲授權及解決方案限制。
