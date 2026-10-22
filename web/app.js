@@ -19,7 +19,7 @@ const nativeModel = new URLSearchParams(location.search).get('model') === 'nativ
 if(PUBLIC_DEMO){
   document.title='多維度空間資料檢視圖台 · 成果展示';
   document.querySelector('.header-meta').textContent='成果展示 · STR 與示意資料';
-  $('map-notice').textContent='STR 可從資料卡檢視；地圖中的自訂建築與基地為示意資料。BIM 尚未驗證地理位置。';
+  $('map-notice').textContent='正在載入 STR 與專案確認定位；自訂建築與基地為示意資料。';
 }
 const thumbnail=document.querySelector('[data-local-src]');thumbnail.src=thumbnail.dataset.localSrc;
 let activeBimSource=nativeModel?'native':'open';
@@ -122,7 +122,6 @@ async function applyNativeCandidate(){
   }catch(error){toast(error.message);}finally{button.disabled=false;}
 }
 $('apply-native-candidate').onclick=applyNativeCandidate;
-$('apply-native-candidate').hidden=PUBLIC_DEMO;
 function updateGeojsonMode(){for(const layer of imported.values())for(const id of layer.ids){const isExtrude=id.endsWith('-3d'),isFill=id.endsWith('-fill');map.setLayoutProperty(id,'visibility',layer.visible&&(!isExtrude||mode==='3d')&&(!isFill||mode==='2d')?'visible':'none');}}
 function collectCoordinates(value,out=[]){if(Array.isArray(value)){if(value.length>=2&&typeof value[0]==='number'&&typeof value[1]==='number'){if(!Number.isFinite(value[0])||!Number.isFinite(value[1])||Math.abs(value[0])>180||Math.abs(value[1])>90)throw new Error('GeoJSON 請使用 WGS84 經緯度座標，不能直接使用 TWD97 平面座標。');out.push(value);}else for(const item of value)collectCoordinates(item,out);}return out;}
 function addGeojson(data,name){if(data.type==='Feature')data={type:'FeatureCollection',features:[data]};else if(data.type!=='FeatureCollection')data={type:'FeatureCollection',features:[{type:'Feature',geometry:data,properties:{}}]};if(!Array.isArray(data.features)||!data.features.length)throw new Error('GeoJSON 沒有可顯示的圖徵。');let bounds=new maplibregl.LngLatBounds(),count=0;for(const f of data.features){const geometries=f.geometry?.type==='GeometryCollection'?f.geometry.geometries:[f.geometry];for(const g of geometries||[])for(const c of collectCoordinates(g?.coordinates)){bounds.extend(c.slice(0,2));count++;}}if(!count)throw new Error('GeoJSON 沒有可顯示的有效座標。');const id=`local-${++importedSequence}`;map.addSource(id,{type:'geojson',data});const polygon=['==',['geometry-type'],'Polygon'];const height=['max',0,['to-number',['get','height'],0]];const layers=[{id:id+'-fill',type:'fill',filter:polygon,paint:{'fill-color':'#168e84','fill-opacity':.32}},{id:id+'-3d',type:'fill-extrusion',filter:polygon,paint:{'fill-extrusion-color':'#52a49b','fill-extrusion-height':height,'fill-extrusion-opacity':.78}},{id:id+'-line',type:'line',paint:{'line-color':'#126f70','line-width':2}},{id:id+'-point',type:'circle',filter:['==',['geometry-type'],'Point'],paint:{'circle-radius':6,'circle-color':'#158b82','circle-stroke-color':'white','circle-stroke-width':2}}];for(const layer of layers)map.addLayer({...layer,source:id});const row=document.createElement('div');row.className='imported-row';const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=true;label.append(check,document.createTextNode(name));const remove=document.createElement('button');remove.textContent='×';remove.setAttribute('aria-label','移除 '+name);row.append(label,remove);$('imported-layers').append(row);imported.set(id,{ids:layers.map(l=>l.id),visible:true});check.onchange=()=>{imported.get(id).visible=check.checked;updateGeojsonMode();};remove.onclick=()=>{for(const l of layers)if(map.getLayer(l.id))map.removeLayer(l.id);map.removeSource(id);imported.delete(id);row.remove();$('layer-count').textContent=`${2+customCatalog.length}項`;};$('layer-count').textContent=`${2+customCatalog.length}項`;updateGeojsonMode();map.fitBounds(bounds,{padding:65,maxZoom:18});toast(`已載入 ${data.features.length} 筆圖徵。多邊形 height 屬性以公尺顯示三維高度。`);}
@@ -159,6 +158,4 @@ mountSidebarTabs({buttons:[...document.querySelectorAll('.function-tab')],getPan
 if(nativeModel) await selectBimSource('native');
 
 $('clear-model-selection').onclick=()=>{clearSelection();preview?.draw();};
-if(!PUBLIC_DEMO){
-  if(map.isStyleLoaded())void applyNativeCandidate();else map.once('load',applyNativeCandidate);
-}
+if(map.isStyleLoaded())void applyNativeCandidate();else map.once('load',applyNativeCandidate);
