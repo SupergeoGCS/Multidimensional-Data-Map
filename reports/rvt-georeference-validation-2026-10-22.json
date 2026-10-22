@@ -1,0 +1,106 @@
+{
+  "status": "matched_named_location_active_differs",
+  "tolerance_m": 0.001,
+  "matched_location_ids": [
+    233312
+  ],
+  "active_location_matches": false,
+  "locations": [
+    {
+      "id": 376928,
+      "name": "A18A-DD-AR",
+      "active": false,
+      "translation_delta_m": [
+        -2.3283064365386963e-10,
+        -4.656612873077393e-10,
+        70.31999999999996
+      ],
+      "translation_error_m": 70.31999999999996,
+      "rotation_matrix_max_error": 1.1102230246251565e-16,
+      "matches": false
+    },
+    {
+      "id": 1512,
+      "name": "專案",
+      "active": false,
+      "translation_delta_m": [
+        -271015.3020411354,
+        -2768158.3377700103,
+        2.02
+      ],
+      "translation_error_m": 2781393.5134946574,
+      "rotation_matrix_max_error": 0.6603768560951564,
+      "matches": false
+    },
+    {
+      "id": 233312,
+      "name": "原始位置",
+      "active": false,
+      "translation_delta_m": [
+        5.820766091346741e-11,
+        -4.656612873077393e-10,
+        2.886579864025407e-15
+      ],
+      "translation_error_m": 4.692851652188149e-10,
+      "rotation_matrix_max_error": 3.3306690738754696e-16,
+      "matches": true
+    },
+    {
+      "id": 233319,
+      "name": "A18-1",
+      "active": false,
+      "translation_delta_m": [
+        -2.3283064365386963e-10,
+        -4.656612873077393e-10,
+        70.31999999999996
+      ],
+      "translation_error_m": 70.31999999999996,
+      "rotation_matrix_max_error": 1.1102230246251565e-16,
+      "matches": false
+    },
+    {
+      "id": 1509,
+      "name": "A18A-S",
+      "active": true,
+      "translation_delta_m": [
+        1.0477378964424133e-09,
+        1.862645149230957e-09,
+        70.31999999999988
+      ],
+      "translation_error_m": 70.31999999999988,
+      "rotation_matrix_max_error": 7.771561172376096e-16,
+      "matches": false
+    }
+  ],
+  "crs_validated": false,
+  "geographic_acceptance": false,
+  "reference_ifc_sha256": "ba21ff9e5e6b6639ee67d5a6357dd05d73f662f036d54ecfdee10966e15a9bd8",
+  "extracted_report_sha256": "858865590f15aec6fbba8923916442b2f531f8ba4c90c411b5d3b5a65eaeb585",
+  "reference_matrix_m_row_major": [
+    [
+      0.7509343566077379,
+      -0.6603768560951564,
+      0.0,
+      271015.3020411354
+    ],
+    [
+      0.6603768560951564,
+      0.7509343566077379,
+      0.0,
+      2768158.3377700103
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      -0.85
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "ifcopenshell_version": "0.8.5"
+}

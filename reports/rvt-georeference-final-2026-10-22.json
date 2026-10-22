@@ -1,0 +1,369 @@
+{
+  "stream": "Partitions/790",
+  "tracking": {
+    "id": 1507,
+    "class": "ActiveGeoLocationTrackingElement",
+    "header_offset": 20003727,
+    "body_offset": 184766466,
+    "active_location_id": 1509,
+    "project_location_id": 1512
+  },
+  "locations": [
+    {
+      "id": 376928,
+      "class": "GeoLocation",
+      "header_offset": 16996139,
+      "references": [
+        1508,
+        376928
+      ],
+      "body_offset": 173207564,
+      "name": "A18A-DD-AR",
+      "site_id": 1508,
+      "transform_frame_flag_raw": "ffffffff",
+      "transform_offset": 173207666,
+      "serialized_transform": [
+        0.7509343566077379,
+        0.6603768560951564,
+        0.0,
+        -0.6603768560951564,
+        0.7509343566077379,
+        0.0,
+        0.0,
+        0.0,
+        0.9999999999999999,
+        -6665165.360036958,
+        -6232719.708812544,
+        -227.9199475065616
+      ],
+      "local_to_shared_m_row_major": [
+        [
+          0.7509343566077379,
+          -0.6603768560951564,
+          0.0,
+          271015.30204113515
+        ],
+        [
+          0.6603768560951564,
+          0.7509343566077379,
+          0.0,
+          2768158.33777001
+        ],
+        [
+          0.0,
+          0.0,
+          0.9999999999999999,
+          69.46999999999997
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "id": 1512,
+      "class": "GeoLocation",
+      "header_offset": 18729800,
+      "references": [
+        1511,
+        1512
+      ],
+      "body_offset": 179774977,
+      "name": "專案",
+      "site_id": 1511,
+      "transform_frame_flag_raw": "ffffffff",
+      "transform_offset": 179775063,
+      "serialized_transform": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        5.329070518200752e-15,
+        -3.8385826771653537
+      ],
+      "local_to_shared_m_row_major": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -1.6243006939475894e-15
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          1.17
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "id": 233312,
+      "class": "GeoLocation",
+      "header_offset": 18743903,
+      "references": [
+        1508,
+        233312
+      ],
+      "body_offset": 179796531,
+      "name": "原始位置",
+      "site_id": 1508,
+      "transform_frame_flag_raw": "00000000",
+      "transform_offset": 179796621,
+      "serialized_transform": [
+        0.7509343566077378,
+        0.6603768560951563,
+        0.0,
+        -0.6603768560951563,
+        0.7509343566077378,
+        0.0,
+        0.0,
+        0.0,
+        0.9999999999999997,
+        -6665165.360036958,
+        -6232719.708812544,
+        2.788713910761146
+      ],
+      "local_to_shared_m_row_major": [
+        [
+          0.7509343566077378,
+          -0.6603768560951563,
+          0.0,
+          271015.30204113544
+        ],
+        [
+          0.6603768560951563,
+          0.7509343566077378,
+          0.0,
+          2768158.33777001
+        ],
+        [
+          0.0,
+          0.0,
+          0.9999999999999997,
+          -0.8499999999999971
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "id": 233319,
+      "class": "GeoLocation",
+      "header_offset": 18744628,
+      "references": [
+        1508,
+        233319
+      ],
+      "body_offset": 179797383,
+      "name": "A18-1",
+      "site_id": 1508,
+      "transform_frame_flag_raw": "ffffffff",
+      "transform_offset": 179797475,
+      "serialized_transform": [
+        0.7509343566077379,
+        0.6603768560951564,
+        0.0,
+        -0.6603768560951564,
+        0.7509343566077379,
+        0.0,
+        0.0,
+        0.0,
+        0.9999999999999999,
+        -6665165.360036958,
+        -6232719.708812544,
+        -227.9199475065616
+      ],
+      "local_to_shared_m_row_major": [
+        [
+          0.7509343566077379,
+          -0.6603768560951564,
+          0.0,
+          271015.30204113515
+        ],
+        [
+          0.6603768560951564,
+          0.7509343566077379,
+          0.0,
+          2768158.33777001
+        ],
+        [
+          0.0,
+          0.0,
+          0.9999999999999999,
+          69.46999999999997
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "id": 1509,
+      "class": "GeoLocation",
+      "header_offset": 18746438,
+      "references": [
+        1508,
+        1509
+      ],
+      "body_offset": 179800875,
+      "name": "A18A-S",
+      "site_id": 1508,
+      "transform_frame_flag_raw": "ffffffff",
+      "transform_offset": 179800969,
+      "serialized_transform": [
+        0.7509343566077381,
+        0.6603768560951565,
+        0.0,
+        -0.6603768560951565,
+        0.7509343566077381,
+        0.0,
+        0.0,
+        0.0,
+        0.9999999999999992,
+        -6665165.360036962,
+        -6232719.708812544,
+        -227.91994750656147
+      ],
+      "local_to_shared_m_row_major": [
+        [
+          0.7509343566077381,
+          -0.6603768560951565,
+          0.0,
+          271015.3020411364
+        ],
+        [
+          0.6603768560951565,
+          0.7509343566077381,
+          0.0,
+          2768158.337770012
+        ],
+        [
+          0.0,
+          0.0,
+          0.9999999999999992,
+          69.46999999999989
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    }
+  ],
+  "sites": [
+    {
+      "id": 1511,
+      "class": "GeoSite",
+      "header_offset": 18729701,
+      "body_offset": 179774446,
+      "latitude": 42.38699999999996,
+      "longitude": -71.24199999999993,
+      "timezone": -5.0,
+      "elevation_source_units": 0.0,
+      "coordinate_system_raw": "",
+      "place_name": ""
+    },
+    {
+      "id": 1508,
+      "class": "GeoSite",
+      "header_offset": 18746974,
+      "body_offset": 179802067,
+      "latitude": 42.41486358642576,
+      "longitude": -71.25807189941403,
+      "timezone": -5.0,
+      "elevation_source_units": 118.11023622047243,
+      "coordinate_system_raw": "",
+      "place_name": "<預設>"
+    }
+  ],
+  "other_site_headers_not_selected": [
+    {
+      "id": 747810,
+      "class": "GeoSite",
+      "header_offset": 1418136
+    },
+    {
+      "id": 1275825,
+      "class": "GeoSite",
+      "header_offset": 2411549
+    },
+    {
+      "id": 1275826,
+      "class": "GeoLocation",
+      "header_offset": 2411652,
+      "references": [
+        1275825,
+        1275826
+      ]
+    },
+    {
+      "id": 1278372,
+      "class": "GeoSite",
+      "header_offset": 2600476
+    },
+    {
+      "id": 1278373,
+      "class": "GeoLocation",
+      "header_offset": 2600579,
+      "references": [
+        1278372,
+        1278373
+      ]
+    },
+    {
+      "id": 1510,
+      "class": "BasePoint",
+      "header_offset": 18746545
+    },
+    {
+      "id": 1513,
+      "class": "BasePoint",
+      "header_offset": 18746706
+    }
+  ],
+  "schema_version": 1,
+  "status": "extracted_crs_not_confirmed",
+  "reader": "rvt-rs",
+  "reader_version": "0.6.0",
+  "revit_version": 2021,
+  "source_sha256": "7b5e3f023db9803b8e3fa90bb64405189abab20bcf4a9c444e24884fce929bb9",
+  "input_kind": "RVT",
+  "ifc_input": false,
+  "source_units": "feet",
+  "output_units": "metres",
+  "vertical_datum": null,
+  "profile": "revit2021-geolocation-v1",
+  "transform_direction": "local_to_shared",
+  "crs": null,
+  "acceptance": "record_extraction_only_not_geographic_acceptance"
+}

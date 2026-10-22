@@ -117,3 +117,12 @@
 .feature-panel h3{margin:0 28px 14px 0;line-height:1.5}
 .feature-panel>.close-button{position:absolute;right:12px;top:10px;float:none;line-height:1;width:28px;height:28px;padding:0;display:grid;place-items:center}
 .feature-panel dl{margin:0}
+.layer-heading-actions{display:flex;align-items:center;gap:8px}
+.collapse-all-cards{border:1px solid #cfe1df;border-radius:5px;background:#fff;color:var(--teal);font-size:12px;line-height:1.4;padding:4px 7px;white-space:nowrap}
+.collapse-all-cards:hover{background:#edf5f4}
+.map-footer{height:auto;min-height:32px;padding:6px 14px;gap:4px 18px;flex-wrap:wrap;font-size:13px;line-height:1.5;font-weight:500;color:#385563;background:#fffffff2}
+@media(max-width:650px){.map-footer{font-size:12px;padding:5px 10px;gap:3px 12px}}
+.environment-source-label{display:block;margin-bottom:7px;font-size:13px}
+.environment-source-info{margin:12px 0 18px;padding:12px;border:1px solid var(--border);border-radius:7px;background:#f5f9fa;font-size:12px;line-height:1.7;color:#526b78}
+.environment-source-info p{margin:0 0 7px}
+.environment-source-info a{color:var(--teal)}

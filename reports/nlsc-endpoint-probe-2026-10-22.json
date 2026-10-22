@@ -1,0 +1,16 @@
+[
+  {
+    "url": "https://i3s.nlsc.gov.tw/i3s/nlsc3dbuilding/SceneServer/layers/0?f=pjson",
+    "error": "HTTP Error 404: Not Found"
+  },
+  {
+    "url": "https://3dmaps.nlsc.gov.tw/NLSC/Entrance",
+    "status": 200,
+    "cors": "https://3dmaps.nlsc.gov.tw",
+    "content_type": "text/html; charset=utf-8",
+    "bytes_read": 99036,
+    "title": [
+      "內政部國土測繪中心 多維度服務平臺"
+    ]
+  }
+]

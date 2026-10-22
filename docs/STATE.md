@@ -1,5 +1,42 @@
 # 專案狀態
 
+## 2026-10-22 最新：NLSC LOD1／LOD2 選項與介接評估
+- 環境模組新增建物來源選單：OSM 目前可用，國土測繪中心 LOD1／LOD2 明示尚未啟用，附官方圖台／申請入口及供應範圍說明。沒有以 OSM 冒充官方成果。
+- 官方確認有三維資料與 I3S／3D Tiles 途徑；HTTP 實測舊 I3S 路徑 404，現行圖台及 WMTS 清單 200 但 CORS 僅官方網域。未取得可用的現行模型端點，不宣稱已完成直接介接或本站範圍 LOD2 有覆蓋。
+- reports/nlsc-building-feasibility-2026-10-22.md 記錄官方來源、實測與 3D Tiles／I3S／離線 KMZ 實作路徑；端點摘要為 nlsc-endpoint-probe-2026-10-22.json。
+- 下一步取得官方確認的服務 URL 或授權圖資樣本後，驗證子圖磚、CORS、座標高程、覆蓋與公開展示權限，再接三維串流渲染器。本次未修改 BIM 流程。工作樹累積修改未提交／發布；尚無本次瀏覽器模型載入驗收。
+
+## 2026-10-22 最新介面：地圖狀態列可讀性
+- 底部經緯度、縮放／傾角與底圖狀態文字由 9px 放大為 13px（窄螢幕由 8px 改為 12px），加深文字與背景對比；狀態列增高並允許換行。
+- 僅修改 CSS；差異空白檢查通過，尚未瀏覽器目視驗收。累積修改未提交／發布。
+
+## 2026-10-22 最新介面：資料卡全部收折
+- 「資料圖層」標題旁新增「全部收折」，點擊時收起開源、原生及動態自訂建築資料卡，沿用各卡既有收折事件與無障礙狀態，不變更圖層可見性。
+- app.js 語法與 Git 差異空白檢查通過；未進行本次瀏覽器目視驗收。累積修改未提交／發布。定位狀態依下節使用者裁定維持。
+
+## 2026-10-22 最新：使用者裁定 STR 專案定位為真
+- 使用者明確接受目前萃取定位。專案正式採用 RVT「原始位置」233312、TWD97 / TM2 121（EPSG:3826）、E=271015.30204113544 m、N=2768158.33777001 m、來源高程約 -0.85 m 與既有方向；開源與原生 STR 共用。
+- web/str-placement-acceptance.js 獨立記錄 user_decision，綁定來源 RVT SHA、最終萃取報告 SHA、位置 ID、CRS 及矩陣。圖台套用前檢查一致性，改標「TWD97 定位已確認」。原始報告與生成候選保留萃取當時狀態；其 geographic_acceptance:false 不代表否定本次另行記錄的專案裁定。
+- 驗證：定位與接受紀錄 Node 測試 5/5 通過，app.js 語法檢查通過。尚未進行本次 WebGL 目視驗收；未提交、推送或發布。來源 RVT／IFC／GLB 未修改。
+- 下方 CRS 待正式採用的描述由本次使用者裁定接續；來源 CRS 字串空白、垂直基準未記載、有效位置與原始位置高度差仍保留為原始證據。本次確認方式為使用者裁定，並未新增測量驗收。
+- 下一步可依此定位進行圖台展示與目視核對；其他 RVT 版本支援及幾何品質驗收仍依原流程。工作樹累積前處理與本次確認修改未提交。
+
+## 2026-10-22 最新：RVT獨立座標萃取與IFC標準答案驗證完成
+- 已補上實跑流程：extract_rvt_georeference.py只接受RVT與rvt-rs0.6.0；verify_rvt_georeference.py另以原生IFC作標準答案；export_rvt_placement.py只從已匹配且雜湊一致的RVT報告輸出指定位置。IFC不作萃取輸入、不補值。
+- 真實STR以Revit2021 schema、ElementHeader、宣告ID、InstanceInfo／SymbolInfo與追蹤記錄連結，獨立取得5組位置及有效位置1509。證據：reports/rvt-georeference-final-2026-10-22.json、reports/rvt-georeference-final-validation-2026-10-22.json。
+- 「原始位置」233312符合IFC，平移數值差4.69e-10m、旋轉最大元素差3.33e-16；有效「A18A-S」1509的XY／方向相同，Z=69.47m與原始位置-0.85m相差70.32m。狀態matched_named_location_active_differs，沒有改寫有效位置。
+- RVT原始CRS字串空白、場址經緯度為美國樣板線索；crs及垂直基準仍未知。EPSG3826是使用者指定假設，不是萃取出EPSG或正式地理驗收。
+- 圖台已改讀生成的web/rvt-str-placement.js，矩陣來源為RVT「原始位置」；IFC只作驗證閘門，選非有效位置須明示。未修改來源RVT／IFC／GLB，未發布。
+- 專案及已安裝SKILL五腳本／參考文件同步，僅宣稱rvt-rs0.6.0／實測Revit2021布局；其他profile明確拒絕。新增串流／schema／記錄關聯／反算／歧義／不回填／候選輸出及副本一致性測試。Python27、Node40通過，尚無最新WebGL目視驗收。
+- 下一步釐清70.32m差異、核對CRS／垂直基準／基地控制點，再增加其他版本樣本。工作樹累積修改未提交。下方研究pending與IFC繼承定位為歷史紀錄，以本節為準。
+
+## 2026-10-22：直接從RVT萃取座標的研究尚未完成
+- 使用者澄清要開源工具獨立讀取RVT，不能以沿用IFC座標作為完成。圖台現行仍為IFC繼承候選，未改為獨立來源。
+- 本機rvt-rs0.6.0 Python介面沒有座標專用API；本份2021 RVT schema出現GeoLocation、GeoSite、BasePoint、ActiveGeoLocationTrackingElement、ProjectParamElem。decoded_elements實跑8519項，沒有上述定位記錄。通用reference_points.rs依合成欄位m_x／dx等解碼，不能當成此檔案已還原共用座標的證明。
+- 已新增tools/probe_rvt_coordinates.py及tests/test_rvt_coordinate_probe.py作唯讀有界研究：不讀IFC、無CRS預設、無自動接受；直接探測壓縮RVT串流的剛體變換候選。尚未取得完整探測報告或測試結果，不標passed。
+- 原始探測程序exec session 9609啟動後本輪尚未收到完成輸出；後續工具執行遭loop guard限制，未再啟動第二輪。下一步先檢查程序及reports/rvt-coordinate-probe-2026-10-22.json是否產生，再縮小至有效GeoLocation記錄與場址關聯，不重跑幾何、不依IFC數值定位搜尋。
+- 既有schema與篩選結果快取位於artifacts/rvt-rs-str-0.6.0/coordinate-schema.json、coordinate-decoded.json；官方v0.6.0原始碼及樹索引位於artifacts/tools/rvt-rs/coordinate-source/。未修改來源RVT。工作樹研究修改未提交。
+
 ## 公開站台啟用（2026-10-22 最新狀態）
 - 使用者回報已切換公開；API 核對 `private=false`。依本次公開展示接續要求，已成功建立 GitHub Pages（workflow 模式、HTTPS），設定 `PUBLIC_DEMO_PAGES=true`，並觸發 main 首次公開部署。
 - 首次部署 run `39718636378`，程式基準 `81fc4b2`，test／deploy jobs 均 success。正式站台 `https://supergeogcs.github.io/Multidimensional-Data-Map/`，`?model=native` 直接開原生 STR；IAB 在正式 HTTPS 網址實測模型載入、構件 142213／R1F／材料／GUID 顯示成功，console error 0。截圖 reports/str-public-site-2026-10-22.png。下方「未公開／private=true」為此前階段紀錄，以本節與最新 GitHub API 為準。
@@ -178,3 +215,23 @@ GitHub 上版／更新由專用對話管理；使用者指定儲存庫 https://g
 - 切換點選另一棟自訂建築時，前一棟樓層覆寫恢復全部地上並立即重繪，清除前棟懸停高亮；同棟點選及只關閉資訊視窗仍維持原篩選。整合測試涵蓋A7樓→B恢復A、B3樓→A恢復B，通過。
 
 - 本次依使用者要求提交並推送切換建物重設樓層修正；提交前Node 37項、JS語法與diff --check皆通過。未新增瀏覽器目視驗收；推送後由既有CI執行發布包驗證與部署，遠端結果以Actions為準。
+
+## 2026-10-22：RVT／IFC流程現況複核
+- 最新重跑Node37項、Python15項通過，含發布資產雜湊／8243幾何節點對8536IFC元素及展示包HTTP驗證。Python首次沙箱內HTTP遭WinError10013，允許本機通訊後整組通過。未重轉大型模型。
+- STR原生IFC→GLB與屬性對應／站台載入已驗證；RVT→IFC仍依原生Revit手動匯出，非全自動。rvt-rs約71.2%包圍盒近似未達正式替代。樓板92848開口問題、全量幾何等價／正式效能、CRS及測量定位仍未完成；AR／MEP／LS未完成同級驗證。
+
+## 2026-10-22：原生STR候選地理定位
+- 依使用者要求將共用座標假設為EPSG:3826套至目前native STR：原點經緯度121.2082316867／25.0213486824，來源高度-0.85m（高程基準未確認），沿用IFC旋轉。保留GLB原點，不置中或底部對齊；在投影座標中取局部基向量，涵蓋分帶投影的方向與尺度。
+- 僅本機非PUBLIC_DEMO自動套用，定位面板可重新套用或清除；只顯示native，開源模型不套用此轉換。使用已核對屬性包的GLB SHA-256鎖定指定版本，失配拒絕。未修改RVT／IFC／GLB，也未發布。
+- IfcOpenShell0.8.5核對三柱樣本：共用site逆轉後與internal placement矩陣差最大1.11e-16；證據reports/str-candidate-placement-2026-10-22.json。Node39／Python15通過，首頁與新模組HTTP200；實際基地／CRS／方向／高程及WebGL外觀待核對。工作樹修改未提交。
+
+## 2026-10-22：開源STR沿用候選定位（取代前節僅native限制）
+- 現有rvt-rs0.6.0 IFC的site為identity、經緯度及高程null，無IfcProjectedCRS／IfcMapConversion；現有匯出未萃取共用座標。沒有將網路新版支援宣稱當作這份RVT的成功證據。
+- 對兩份已發布GLB完整scene矩陣後的accessor包圍盒中心依ElementId比對7993項；1231柱全部差<1mm，柱p95約3.7微米；支持共同局部框架，非幾何等價驗收。小報告reports/open-str-frame-alignment-2026-10-22.json。未重掃RVT。
+- 已允許固定SHA開源STR沿用原生IFC候選定位，保留其英尺→公尺／軸轉換與原點，不bbox置中。兩方案共用候選地圖位置，預設顯示當前方案，資料卡開關可比較；卡片標明沿用IFC、待基地核對。PUBLIC_DEMO仍不自動套用。
+- Node40項、app語法及diff檢查通過；實際地理與最新WebGL外觀pending。修改未提交、未推送。
+
+## 2026-10-22：STR定位與RVT座標工具上版檢查點
+- 使用者要求COMMIT並PUSH目前完成內容。範圍包含STR定位／接受紀錄、RVT座標獨立萃取與驗證工具及skill文件、小型報告、NLSC介接可行性與來源介面；不增加或重轉模型產物。
+- 提交前Node42項、Python27項皆通過，app語法及diff --check通過；發布包資產雜湊／8243節點對8536元素及HTTP驗證仍通過。NLSC服務仍未啟用，最新WebGL外觀未新增目視驗收。
+- main提交推送將觸發既有CI與Pages；公開站台自動定位設定未更改。Git／Actions為實際提交與部署證據。

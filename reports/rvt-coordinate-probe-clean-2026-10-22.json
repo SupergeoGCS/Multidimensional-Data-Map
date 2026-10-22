@@ -1,0 +1,161 @@
+{
+  "status": "research_only_not_accepted",
+  "reader_version": "0.6.0",
+  "source_sha256": "7b5e3f023db9803b8e3fa90bb64405189abab20bcf4a9c444e24884fce929bb9",
+  "ifc_input": false,
+  "crs": null,
+  "active_site": null,
+  "streams": [
+    {
+      "name": "Global/Latest",
+      "stored_bytes": 4040832,
+      "inflated_bytes": 6595172,
+      "page_checksums_removed": true
+    },
+    {
+      "name": "Partitions/790",
+      "stored_bytes": 64548405,
+      "inflated_bytes": 388472512,
+      "page_checksums_removed": true
+    }
+  ],
+  "candidates": [
+    {
+      "stream": "Partitions/790",
+      "gzip_offset": 27297214,
+      "rotation_offset": 49818,
+      "origin_offset": 49890,
+      "layout": "rotation_then_origin",
+      "rotation_rows": [
+        [
+          0.7509343566077379,
+          0.6603768560951564,
+          0.0
+        ],
+        [
+          -0.6603768560951564,
+          0.7509343566077379,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9999999999999999
+        ]
+      ],
+      "origin_source_units": [
+        -6665165.360036958,
+        -6232719.708812544,
+        -227.9199475065616
+      ],
+      "origin_if_feet_m": [
+        -2031542.4017392648,
+        -1899732.9672460635,
+        -69.46999999999998
+      ]
+    },
+    {
+      "stream": "Partitions/790",
+      "gzip_offset": 27960559,
+      "rotation_offset": 116906,
+      "origin_offset": 116978,
+      "layout": "rotation_then_origin",
+      "rotation_rows": [
+        [
+          0.7509343566077381,
+          0.6603768560951565,
+          0.0
+        ],
+        [
+          -0.6603768560951565,
+          0.7509343566077381,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9999999999999992
+        ]
+      ],
+      "origin_source_units": [
+        -6665165.360036962,
+        -6232719.708812544,
+        -227.91994750656147
+      ],
+      "origin_if_feet_m": [
+        -2031542.401739266,
+        -1899732.9672460635,
+        -69.46999999999994
+      ]
+    },
+    {
+      "stream": "Partitions/790",
+      "gzip_offset": 27960559,
+      "rotation_offset": 113412,
+      "origin_offset": 113484,
+      "layout": "rotation_then_origin",
+      "rotation_rows": [
+        [
+          0.7509343566077379,
+          0.6603768560951564,
+          0.0
+        ],
+        [
+          -0.6603768560951564,
+          0.7509343566077379,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9999999999999999
+        ]
+      ],
+      "origin_source_units": [
+        -6665165.360036958,
+        -6232719.708812544,
+        -227.9199475065616
+      ],
+      "origin_if_feet_m": [
+        -2031542.4017392648,
+        -1899732.9672460635,
+        -69.46999999999998
+      ]
+    },
+    {
+      "stream": "Partitions/790",
+      "gzip_offset": 27960559,
+      "rotation_offset": 112558,
+      "origin_offset": 112630,
+      "layout": "rotation_then_origin",
+      "rotation_rows": [
+        [
+          0.7509343566077378,
+          0.6603768560951563,
+          0.0
+        ],
+        [
+          -0.6603768560951563,
+          0.7509343566077378,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9999999999999997
+        ]
+      ],
+      "origin_source_units": [
+        -6665165.360036958,
+        -6232719.708812544,
+        2.788713910761146
+      ],
+      "origin_if_feet_m": [
+        -2031542.4017392648,
+        -1899732.9672460635,
+        0.8499999999999973
+      ]
+    }
+  ],
+  "errors": []
+}

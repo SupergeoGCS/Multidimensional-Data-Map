@@ -1,0 +1,117 @@
+{
+  "method": "GLB accessor-bound centres after complete scene transforms; match Revit ElementId. Geometry approximation may shift bounds; not geometry-equivalence acceptance.",
+  "matches": 7993,
+  "classes": {
+    "IfcBeam": {
+      "count": 3732,
+      "median_delta_yup_m": [
+        -1.1835581936736617e-07,
+        -3.444091767335067e-08,
+        -1.421022961523022e-07
+      ],
+      "median_distance_m": 2.779625472312114e-06,
+      "p95_distance_m": 0.24999994880090073,
+      "within_1mm": 2855
+    },
+    "IfcBuildingElementPart": {
+      "count": 56,
+      "median_delta_yup_m": [
+        1.0610019600676424e-06,
+        -1.602197681194184e-07,
+        8.57942382026522e-07
+      ],
+      "median_distance_m": 1.8999980715910678,
+      "p95_distance_m": 2.8587509058587357,
+      "within_1mm": 0
+    },
+    "IfcColumn": {
+      "count": 1231,
+      "median_delta_yup_m": [
+        -3.427348627127458e-07,
+        -5.6231685086061134e-08,
+        2.617905892066119e-13
+      ],
+      "median_distance_m": 1.5305851160551929e-06,
+      "p95_distance_m": 3.696224201931735e-06,
+      "within_1mm": 1231
+    },
+    "IfcSlab": {
+      "count": 2619,
+      "median_delta_yup_m": [
+        1.6409181569088105e-08,
+        -5.600000019256868e-08,
+        -8.05246109791824e-08
+      ],
+      "median_distance_m": 1.7414138935262206e-06,
+      "p95_distance_m": 5.6002852238158976e-06,
+      "within_1mm": 2617
+    },
+    "IfcWall": {
+      "count": 355,
+      "median_delta_yup_m": [
+        -7.00837162748158e-08,
+        -2.648744279465376e-08,
+        1.2000000282341716e-07
+      ],
+      "median_distance_m": 1.6992884984241674e-06,
+      "p95_distance_m": 5.939313110673555e-06,
+      "within_1mm": 338
+    }
+  },
+  "open_ifc_georeference": {
+    "unit_to_m": 1,
+    "sites": [
+      {
+        "matrix": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "latitude": null,
+        "longitude": null,
+        "elevation": null
+      }
+    ],
+    "projected_crs_count": 0,
+    "map_conversion_count": 0
+  },
+  "model_hashes": {
+    "str.glb": {
+      "bytes": 5268112,
+      "sha256": "b9f5bbbed105d38d942bc96d0c37bced406e2c2381c4733395242ef30e5ce98f"
+    },
+    "native-str.glb": {
+      "bytes": 15657488,
+      "sha256": "e16b819e6cd63d11faf72d77981d9c6696253994434fe5cae0d7d39c04c39b00"
+    },
+    "native-str.attributes.json": {
+      "bytes": 6948120,
+      "sha256": "723a32efbeda6bb1215f94ecd3a9a05496158db0aa45c8e44013f4a2547f3086"
+    },
+    "preview.png": {
+      "bytes": 62404,
+      "sha256": "fcb3a27be4f233fe18c5b3e2b61cd890a81be23c45ff868686837edd0b9f0f85"
+    }
+  }
+}

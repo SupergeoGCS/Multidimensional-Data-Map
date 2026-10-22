@@ -1,0 +1,28 @@
+{
+  "status": "candidate_not_geographically_accepted",
+  "crs_assumption": "EPSG:3826",
+  "source_evidence": "reports/revit-export-str-2026-10-21/native-geometry-audit.json",
+  "model": "web/assets/native-str.glb",
+  "glb_sha256": "e16b819e6cd63d11faf72d77981d9c6696253994434fe5cae0d7d39c04c39b00",
+  "easting_m": 271015.3020411354,
+  "northing_m": 2768158.3377700103,
+  "longitude": 121.20823168671846,
+  "latitude": 25.021348682360305,
+  "source_height_m": -0.85,
+  "vertical_datum": null,
+  "rotation_cos": 0.7509343566077379,
+  "rotation_sin": 0.6603768560951564,
+  "source_axis": "GLB Y-up: IFC(x,y,z) = GLB(x,-z,y)",
+  "origin_policy": "Preserve source origin; no bounding-box centering or bottom alignment",
+  "ifc_sample_check": {
+    "tool": "IfcOpenShell 0.8.5",
+    "samples": 3,
+    "type": "IfcColumn",
+    "comparison": "inverse(shared IfcSite placement) * shared element placement versus internal element placement",
+    "maximum_matrix_difference_source_units": 1.1102230246251565e-16,
+    "internal_site_identity": true
+  },
+  "acceptance_pending": ["actual site/control point", "CRS confirmation", "orientation", "vertical datum", "browser visual acceptance"],
+  "open_alignment_evidence": "reports/open-str-frame-alignment-2026-10-22.json",
+  "scope": "Local test server applies to native STR and hash-locked open STR after local-frame comparison. Open STR inherits native IFC coordinates; it does not independently extract them. Public demo has no automatic placement."
+}
