@@ -2,9 +2,9 @@
 
 ## 目前狀態
 
-原始碼儲存庫維持私有。使用者於 2026-10-22 決定先完成 CI 與部署程式，暫不公開網站。
-GitHub Pages 啟用 API 回覆 HTTP 422：`Your current plan does not support GitHub Pages for this repository.`
-未變更儲存庫可見性，也未另建公開儲存庫。
+使用者已於 2026-10-22 自行將原始碼儲存庫切為公開，API 確認 `private=false`。已啟用 Pages workflow、HTTPS 及 `PUBLIC_DEMO_PAGES=true`，首次公開部署 run `39718636378`。
+站台網址：[多維度空間資料檢視圖台](https://supergeogcs.github.io/Multidimensional-Data-Map/)；[原生 STR 直接入口](https://supergeogcs.github.io/Multidimensional-Data-Map/?model=native)。首次公開部署 [run 39718636378](https://github.com/SupergeoGCS/Multidimensional-Data-Map/actions/runs/39718636378) 的 test／deploy 均成功，正式 HTTPS 網址已通過瀏覽器模型載入與屬性抽點驗證。
+此前私有儲存庫啟用 Pages 曾回覆 HTTP 422（方案不支援）；公開後建立成功。未另建公開儲存庫。
 
 遠端首次實跑：[Actions run 39717220298](https://github.com/SupergeoGCS/Multidimensional-Data-Map/actions/runs/39717220298)，程式提交 `e5b1f75`。test job 全部通過，含 35 項 Node、14 項 Python、展示打包與 artifact 上傳；deploy job 為 skipped，沒有公開發布網站。
 
@@ -44,11 +44,11 @@ python -m http.server 8767 --bind 127.0.0.1 --directory artifacts
 首次無存檔時另載入兩棟示意住宅並開啟 3D。示意資料不自動寫入本機儲存，已有存檔優先；保留自訂建築及瀏覽器本機檔案匯入功能。示意住宅位置與配置非真實地籍或建物。底圖仍需連線至既有服務，瀏覽器匯入的本機檔案不會送至 GitHub。
 新 clone 沒有 `artifacts/` 時，本機 `serve_map.py` 亦可讀取發布的 STR 檔；主工作區仍優先使用本機 artifacts 原有版本。
 
-## 日後啟用
+## 啟用與停用
 
-須由使用者再次決定公開發布；目前不啟用。
+目前已依使用者完成的公開切換啟用。以下為重新設定時的操作：
 
-1. 確認 GitHub 組織方案支援私有儲存庫 Pages，以及展示內容可以公開。
+1. 確認儲存庫公開或 GitHub 組織方案支援私有儲存庫 Pages，以及展示內容可以公開。
 2. 在 Settings → Pages 將 Source 設為 GitHub Actions。
 3. 在 Settings → Secrets and variables → Actions → Variables 設定 `PUBLIC_DEMO_PAGES=true`。
 4. 在 Actions 手動執行 `Test and deploy public demo`，或推送 main。

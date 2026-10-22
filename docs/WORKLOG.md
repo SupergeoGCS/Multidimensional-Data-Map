@@ -341,3 +341,10 @@
 ### STR GitHub 發布遠端證據
 - d33a6dedc46ae9fc84148717920fab39bfa0ce91已推送；Actions run 39718381959 completed/success，test success、deploy skipped。遠端已從Git取得兩份GLB／屬性，資產雜湊、對應與打包皆通過。https://github.com/SupergeoGCS/Multidimensional-Data-Map/actions/runs/39718381959。
 - .gitattributes固定GLB／屬性原始bytes，避免跨平台換行改變雜湊。公開網站尚未啟用；本機發布包已實測模型與屬性顯示，正式地理／完整幾何驗收限制維持。
+
+## 2026-10-22：正式公開站台啟用與驗證
+- 使用者完成儲存庫公開切換；API核對private=false。已建立Pages workflow與HTTPS、設定PUBLIC_DEMO_PAGES=true，觸發main首次公開部署。run 39718636378基準81fc4b2，test／deploy均success。
+- 站台：https://supergeogcs.github.io/Multidimensional-Data-Map/；原生入口加?model=native。IAB在正式網址成功載入原生模型，抽點柱142213，確認IfcColumn／R1F／材料及GUID，console error 0；證據reports/str-public-site-2026-10-22.png。
+- 不帶登入憑證讀取正式HTTPS四個資產：str.glb 5,268,112 bytes、native-str.glb 15,657,488 bytes、屬性6,948,120 bytes、預覽62,404 bytes；各檔大小與manifest SHA-256全數一致。未把載入成功當成幾何或地理驗收。
+- API dispatch回應204無內容，舊本機管理輔助程式JSON解析失敗；確認run已啟動，未重複觸發。輔助程式改支援空回應，未加入Git或保存憑證。
+- 文件與公開驗證證據隨後同步GitHub；下一次main push自動CI／部署。公開資料範圍仍限已授權內容，原始RVT／IFC未上傳。

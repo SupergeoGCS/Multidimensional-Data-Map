@@ -1,5 +1,9 @@
 # 專案狀態
 
+## 公開站台啟用（2026-10-22 最新狀態）
+- 使用者回報已切換公開；API 核對 `private=false`。依本次公開展示接續要求，已成功建立 GitHub Pages（workflow 模式、HTTPS），設定 `PUBLIC_DEMO_PAGES=true`，並觸發 main 首次公開部署。
+- 首次部署 run `39718636378`，程式基準 `81fc4b2`，test／deploy jobs 均 success。正式站台 `https://supergeogcs.github.io/Multidimensional-Data-Map/`，`?model=native` 直接開原生 STR；IAB 在正式 HTTPS 網址實測模型載入、構件 142213／R1F／材料／GUID 顯示成功，console error 0。截圖 reports/str-public-site-2026-10-22.png。下方「未公開／private=true」為此前階段紀錄，以本節與最新 GitHub API 為準。
+
 ## STR 發布資產（2026-10-22 最新）
 - 使用者明確授權將兩種 STR GLB、原生屬性 JSON 及預覽圖推送 GitHub，例外存於 `web/assets/`；四檔共 27,936,124 bytes。原始 RVT／IFC 與其他產物仍不提交。此授權不包含公開儲存庫或啟用 Pages，目前 API 核對仍 private=true。
 - 展示包恢復兩張 STR 卡片與相對 assets 路徑，`?model=native` 可直接開預覽；原生屬性保留完整配套、介面仍只顯示指定七列。本機無 artifacts 時可回退到發布檔。
@@ -149,3 +153,5 @@ GitHub 上版／更新由專用對話管理；使用者指定儲存庫 https://g
 ## 2026-10-22 提交檢查點
 - 本批自訂建築與地圖互動修改準備提交：含環形／公設面積、白模與樓層標示、逐棟樓層切換、取消選取恢復全部、整棟示意外框、透視高亮及捲軸外觀。前述未提交狀態為各次工作當時紀錄，以最新Git狀態為準。
 - 最新完整測試：Node 35項、Python 12項皆通過。瀏覽器最新外觀目視仍待使用者確認。僅本機commit，不推送。
+
+- 正式 HTTPS 發布檔實測：未帶登入憑證讀取四檔，27,936,124 bytes 大小與 manifest SHA-256 全數一致。後續 push main 會自動測試並更新正式站台；來源 RVT／IFC仍留本機，幾何／定位限制維持。
