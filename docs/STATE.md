@@ -280,3 +280,5 @@ GitHub 上版／更新由專用對話管理；使用者指定儲存庫 https://g
 ## 2026-10-22：單層白模修正提交檢查點
 - 使用者要求COMMIT並PUSH本次完成內容。提交前Node完整42項、custom-buildings語法與diff --check通過；回歸涵蓋單層無灰色分隔蓋板與完整白模高度。未新增本次WebGL目視驗收。
 - main提交並推送將觸發既有CI／Pages；以Git與Actions結果為準，前述未提交為歷程。
+
+- 正式站證據：f7cd395已推送，Actions run39755806619 test／deploy皆success；IAB正式HTTPS首頁同視野可見STR及兩示意建物，console error 0。截圖reports/demo-buildings-near-str-2026-10-22.png。Python完整27項亦通過；工作樹以Git為準。

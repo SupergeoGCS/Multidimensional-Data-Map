@@ -489,3 +489,7 @@
 - 使用者要求GitHub展示的兩棟自訂建築靠近RVT。只讀已發布原生GLB的JSON／accessor界限與完整scene矩陣，略過BIN，核對TWD97投影範圍；以STR原點向西82m、北31／91m配置A／B。原先臺北示意位置距STR約33km，現兩基地皆距模型中心200m內且不重疊。未改RVT／GLB／定位。
 - 新增未修改舊示意存檔的記憶體遷移；保留可見狀態、使用者編輯／其他建物，未自動寫回儲存。Node44項通過，含遷移實際啟動回歸。最初遷移測試以121.535+.0007產生浮點尾數，與原始literal121.5357不等；改用原版精確座標fixture後通過，未放寬正式匹配條件。
 - 正式發布模式打包成功、既有STR雜湊與8243／8536對應通過。IAB自動定位後同視野可見STR／A／B，無重疊，console error 0。下一步推送及正式站核對。
+
+### A／B鄰近展示正式站驗證
+- f7cd395fd4d45bf8c025864497aa21559ca6dde6已推送；Actions run39755806619 test／deploy皆success。完整本機Node44／Python27通過。
+- 正式HTTPS首頁實測：STR與A／B皆在同一區，收折側欄後三者完整可見，console error 0；截圖reports/demo-buildings-near-str-2026-10-22.png。A／B仍明示展示示意，非實際地籍或建物。
