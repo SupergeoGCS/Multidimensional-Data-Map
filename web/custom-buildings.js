@@ -150,7 +150,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
       const p=f.properties;if(!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
       if(filter==='above'?p.underground:Number(filter)!==p.floor)continue;
       const base=p.underground?0:p.base,height=p.underground?b.config.basementHeight:p.base+p.height;
-      const separated=!p.underground&&p.floor<b.config.floors;
+      const separated=filter==='above'&&!p.underground&&p.floor<b.config.floors;
       features.push({...f,id:p.unitId,properties:{...p,buildingName:b.config.name,color:p.usage==='common'?'#d6dce1':'#f5f5f3',displayBase:base,displayHeight:height,wallHeight:separated?height-.05:height}});
       const floorId=`${b.config.id}:${p.floor}`;
       if(!labels.has(floorId)){

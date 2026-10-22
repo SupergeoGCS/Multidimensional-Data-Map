@@ -62,6 +62,8 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     switcher.options.find(button=>button.textContent==='7').onclick();
     assert.equal(el('building-floor-filter').value,'above','map floor control must not change the global environment filter');
     assert.equal(housing().length,4);assert.ok(housing().every(f=>f.properties.floor===7));
+    assert.equal(sources.get('studio-floor-bands').data.features.length,0,'isolated floors must not be covered by the gray separator slab');
+    assert.ok(housing().every(f=>f.properties.wallHeight===f.properties.displayHeight),'isolated floors retain their complete white volume');
     assert.equal(switcher.options.find(button=>button.textContent==='7')['aria-pressed'],'true');
     el('building-floor-filter').value='-1';el('building-floor-filter').onchange();
     assert.equal(switcher.options.find(button=>button.textContent==='B1')['aria-pressed'],'true');
