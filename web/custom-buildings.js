@@ -3,6 +3,7 @@ import {readParcelFile} from './parcel-import.js';
 import {createBuildingFloorLabels} from './building-floor-labels.js';
 import {createBuildingSelectionOverlay} from './building-selection-overlay.js';
 import {createBuildingFloorSwitcher} from './building-floor-switcher.js';
+import {relocateLegacyDemoBuildings} from './demo-buildings.js';
 
 const empty=()=>({type:'FeatureCollection',features:[]});
 const KEY='spatial-workspace-custom-buildings-v1';
@@ -58,7 +59,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     render();
     syncParcelVisibility();
     let saved=null;
-    try{saved=localStorage.getItem(KEY);if(saved)unpack(JSON.parse(saved));}catch{toast('自訂建築存檔無法自動載入，請檢查或重新匯入 JSON。');}
+    try{saved=localStorage.getItem(KEY);if(saved){const data=JSON.parse(saved);unpack(initialData?relocateLegacyDemoBuildings(data):data);}}catch{toast('自訂建築存檔無法自動載入，請檢查或重新匯入 JSON。');}
     if(!saved&&initialData){unpack(initialData);setMode('3d');render();fit(buildings.map(b=>b.parcel));toast('已載入示意建築；點選建物可檢視戶別與切換樓層。');}
   }
   if(map.isStyleLoaded())ready();else map.once('load',ready);
