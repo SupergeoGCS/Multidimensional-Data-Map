@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {mountCustomBuildings} from '../web/custom-buildings.js';
+import {createDemoBuildings} from '../web/demo-buildings.js';
 
 test('editor imports parcel, places floors at cumulative height, picks units and restores stable IDs',async()=>{
   const elements=new Map();
@@ -188,5 +189,17 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     el('building-common-ratio').value='0';el('custom-building-form').onsubmit({preventDefault(){}});
     assert.equal(housing().some(f=>f.properties.usage==='common'),false);
     assert.equal(messages.some(message=>/錯誤|無效/.test(message)),false);
+    // A demonstration must preserve an existing local save and never auto-save itself.
+    const savedBefore=storage.get('spatial-workspace-custom-buildings-v1');
+    sources.clear();layers.clear();catalog=[];
+    editor=mountCustomBuildings({...dependencies,initialData:createDemoBuildings()});
+    assert.equal(catalog.length,1);assert.equal(catalog[0].id,retainedId);
+    storage.clear();sources.clear();layers.clear();catalog=[];
+    editor=mountCustomBuildings({...dependencies,initialData:createDemoBuildings()});
+    assert.deepEqual(catalog.map(b=>b.id),['demo-a','demo-b']);
+    assert.equal(mode,'3d');assert.equal(map.camera.pitch,60);
+    assert.equal(housing().filter(f=>f.properties.usage==='residential').length,80);
+    assert.equal(storage.size,0,'the demo must not write local storage');
+    assert.ok(savedBefore);
   }finally{for(const key of globals)if(previous[key]===undefined)delete globalThis[key];else globalThis[key]=previous[key];}
 });

@@ -6,7 +6,7 @@ import {createBuildingFloorSwitcher} from './building-floor-switcher.js';
 
 const empty=()=>({type:'FeatureCollection',features:[]});
 const KEY='spatial-workspace-custom-buildings-v1';
-export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,cancelBimPicking,onCatalogChange=()=>{}}) {
+export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,cancelBimPicking,onCatalogChange=()=>{},initialData=null}) {
   const $=id=>document.getElementById(id);
   let parcels=[],sourceName='',sourceCrs='',selected=-1,drawPoints=null,buildings=[],activeId=null,drawingAnchor=null;
   let draggedVertex=null,restoreDragPan=false,suppressClickUntil=0;
@@ -57,7 +57,9 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     selectionOverlay=createBuildingSelectionOverlay(map);
     render();
     syncParcelVisibility();
-    try{const saved=localStorage.getItem(KEY);if(saved)unpack(JSON.parse(saved));}catch{toast('自訂建築存檔無法自動載入，請檢查或重新匯入 JSON。');}
+    let saved=null;
+    try{saved=localStorage.getItem(KEY);if(saved)unpack(JSON.parse(saved));}catch{toast('自訂建築存檔無法自動載入，請檢查或重新匯入 JSON。');}
+    if(!saved&&initialData){unpack(initialData);setMode('3d');render();fit(buildings.map(b=>b.parcel));toast('已載入示意建築；點選建物可檢視戶別與切換樓層。');}
   }
   if(map.isStyleLoaded())ready();else map.once('load',ready);
   function requireMap(){if(!map.getSource('studio-parcels'))throw new Error('地圖仍在準備，請稍後再試。');}

@@ -1,5 +1,11 @@
 # 專案狀態
 
+## CI／展示部署（2026-10-22）
+- 新增 GitHub Actions：main push／PR／手動執行 Node 與 Python 測試、展示包驗證及打包。公開部署須明確設定 `PUBLIC_DEMO_PAGES=true`；預設跳過。使用者最新決定為先完成 CI 與部署程式，暫不公開網站。
+- GitHub 已確認目前儲存庫私有、現有授權有 admin、Actions enabled；Pages 建立 API 回覆 422（目前方案不支援此私有儲存庫），未成功啟用；維持私有，未另建公開儲存庫。後續若啟用須重新確認使用者意願與方案。
+- 展示包僅收 web 靜態檔、合成示意住宅，隱藏未發布 BIM 卡片；修正 assets 相對路徑，已有本機存檔優先且示意資料不自動儲存。本機模式保留原 BIM 流程。
+- 本機 IAB 已載入展示包、顯示兩棟示意卡片與 3D，觀測 console error 為 0；子路徑 HTTP、展示資料與存檔保留測試通過。最終完整測試及遠端 CI 結果見 WORKLOG；不得將本機結果當成遠端 CI 成功。操作說明：docs/CI_CD.md。
+
 ## GitHub 上版檢查點（2026-10-22）
 - 使用者授權將目前完成內容推送至 `origin/main`；程式基準 `ad75171`，推送前工作樹乾淨，遠端 refs 為空。目標為 `https://github.com/SupergeoGCS/Multidimensional-Data-Map.git`。
 - 本次重跑 Node 35 項、Python 12 項皆通過，`git diff --check` 通過；追蹤檔案無 RVT／IFC／GLB 等來源或產物、常見憑證檔與超過 20 MiB 檔案。最新畫面及正式 BIM 幾何／地理驗收仍待確認。

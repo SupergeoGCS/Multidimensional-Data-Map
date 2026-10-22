@@ -1,6 +1,6 @@
 export const BIM_SOURCES = {
-  open: {url:'/assets/str.glb', label:'開源方案 · STR', badge:'開源概略模型 · 尚未地理定位'},
-  native: {url:'/assets/native-str.glb', attributesUrl:'/assets/native-str.attributes.json', label:'Revit IFC 方案 · STR', badge:'原生 IFC 候選 · 尚未地理定位'},
+  open: {url:'./assets/str.glb', label:'開源方案 · STR', badge:'開源概略模型 · 尚未地理定位'},
+  native: {url:'./assets/native-str.glb', attributesUrl:'./assets/native-str.attributes.json', label:'Revit IFC 方案 · STR', badge:'原生 IFC 候選 · 尚未地理定位'},
 };
 
 export async function verifyAttributePackage(data, glbBuffer) {

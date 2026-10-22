@@ -8,18 +8,28 @@ import {mountCustomBuildings} from './custom-buildings.js';
 import {mountSidebarTabs} from './sidebar-tabs.js';
 import {bindCardMapFocus} from './card-map-focus.js';
 import {applyCameraMode} from './map-camera-mode.js';
+import {PUBLIC_DEMO} from './site-config.js';
+import {createDemoBuildings} from './demo-buildings.js';
 
 const $ = id => document.getElementById(id);
-const nativeModel = new URLSearchParams(location.search).get('model') === 'native';
+const nativeModel = !PUBLIC_DEMO && new URLSearchParams(location.search).get('model') === 'native';
+if(PUBLIC_DEMO){
+  document.title='多維度空間資料檢視圖台 · 成果展示';
+  document.querySelector('.header-meta').textContent='成果展示 · 示意資料';
+  for(const id of ['show-open-bim','show-native-bim']){$(id).checked=false;$(id).closest('.model-card').hidden=true;}
+  $('map-notice').textContent='展示建築與基地均為示意資料；點選建物查看戶別，或使用左側自訂建築功能。';
+}else{
+  const thumbnail=document.querySelector('[data-local-src]');thumbnail.src=thumbnail.dataset.localSrc;
+}
 let activeBimSource=nativeModel?'native':'open';
-const bimSources=Object.fromEntries(Object.entries(BIM_SOURCES).map(([key,value])=>[key,{...value,visible:true,root:null,promise:null}]));
+const bimSources=Object.fromEntries(Object.entries(BIM_SOURCES).map(([key,value])=>[key,{...value,visible:!PUBLIC_DEMO,root:null,promise:null}]));
 let mapBimRoot=null,customEditor=null;
 const home = {center:[121.0,23.8],zoom:6.8,pitch:0,bearing:0};
 let mode='2d', picking=false, placement=null, modelPromise, sourceModel, customLayer, preview, selectedMesh, selectedMaterials;
 let toastTimer, importedSequence=0, selectedHighlight;
 const imported=new Map();
 let customCatalog=[];
-function updateLayerCount(){$('layer-count').textContent=`${2+customCatalog.length}項`;}
+function updateLayerCount(){$('layer-count').textContent=`${(PUBLIC_DEMO?0:2)+customCatalog.length}項`;}
 function renderCustomCatalog(items){
   customCatalog=items;const host=$('custom-building-layers');host.replaceChildren();
   for(const item of items){
@@ -74,7 +84,7 @@ map.on('zoomend',updateBuildingHint);
 map.on('idle',updateBuildingHint);
 function clearSelection(){if(selectedMesh&&selectedMaterials){selectedMesh.material=selectedMaterials;selectedMesh=null;selectedMaterials=null;selectedHighlight?.dispose();selectedHighlight=null;}$('model-property-rows').replaceChildren();$('model-property-empty').hidden=false;$('model-property-table-wrap').hidden=true;$('clear-model-selection').hidden=true;}
 function disposeRoot(root){const geometries=new Set(),materials=new Set(),textures=new Set();root?.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of o.material?(Array.isArray(o.material)?o.material:[o.material]):[]){materials.add(m);for(const value of Object.values(m))if(value?.isTexture)textures.add(value);}});for(const x of [...geometries,...textures,...materials])x.dispose();}
-async function ensureSource(key){return loadBimSource(bimSources,key,async url=>{const source=bimSources[key];let gltf;if(source.attributesUrl){const response=await fetch(url);if(!response.ok)throw new Error('模型無法載入');const buffer=await response.arrayBuffer();try{const attributesResponse=await fetch(source.attributesUrl);if(!attributesResponse.ok)throw new Error('屬性檔無法載入');source.attributes=await verifyAttributePackage(await attributesResponse.json(),buffer);}catch(error){source.attributes=null;toast(error.message+'；僅顯示 GLB 既有資訊。');}gltf=await new GLTFLoader().parseAsync(buffer,'');}else gltf=await new GLTFLoader().loadAsync(url);const root=gltf.scene;root.updateMatrixWorld(true);root.traverse(o=>{if(o.isMesh){o.frustumCulled=false;if(!o.geometry.attributes.normal)o.geometry.computeVertexNormals();}});return root;});}
+async function ensureSource(key){if(PUBLIC_DEMO)throw new Error('展示站未發布 BIM 模型；可由外部資料開啟自己的 GLB 檔案。');return loadBimSource(bimSources,key,async url=>{const source=bimSources[key];let gltf;if(source.attributesUrl){const response=await fetch(url);if(!response.ok)throw new Error('模型無法載入');const buffer=await response.arrayBuffer();try{const attributesResponse=await fetch(source.attributesUrl);if(!attributesResponse.ok)throw new Error('屬性檔無法載入');source.attributes=await verifyAttributePackage(await attributesResponse.json(),buffer);}catch(error){source.attributes=null;toast(error.message+'；僅顯示 GLB 既有資訊。');}gltf=await new GLTFLoader().parseAsync(buffer,'');}else gltf=await new GLTFLoader().loadAsync(url);const root=gltf.scene;root.updateMatrixWorld(true);root.traverse(o=>{if(o.isMesh){o.frustumCulled=false;if(!o.geometry.attributes.normal)o.geometry.computeVertexNormals();}});return root;});}
 async function ensureModel(){const key=activeBimSource;if(key==='custom')return modelPromise;const root=await ensureSource(key);if(key!==activeBimSource)throw new Error('已切換模型來源');sourceModel=root;return root;}
 function disposePreview(){clearSelection();if(!preview)return;preview.observer.disconnect();preview.controls.dispose();preview.renderer.dispose();preview.renderer.domElement.remove();for(const material of preview.materialCopies.values())material.dispose();preview.grid.geometry.dispose();preview.grid.material.dispose();preview=null;}
 async function selectBimSource(key){if(activeBimSource==='custom'&&sourceModel)disposeRoot(sourceModel);disposePreview();activeBimSource=key;sourceModel=null;modelPromise=null;document.querySelector('.viewer-header h2').textContent=BIM_SOURCES[key].label;document.querySelector('.viewer-badge').textContent=BIM_SOURCES[key].badge;$('wireframe').checked=false;$('viewer-loading').textContent='正在從本機載入模型…';await openPreview();}
@@ -116,7 +126,7 @@ for(const [selector,key]of [['#panel-data>.model-card:not(.native-card)','open']
     setMode('3d');map.flyTo({center:[placement.lon,placement.lat],zoom:18,pitch:60,bearing:map.getBearing(),duration:800});
   });
 }
-customEditor=mountCustomBuildings({map,setMode,getMode:()=>mode,showProperties,toast,cancelBimPicking:cancelPicking,onCatalogChange:renderCustomCatalog});
+customEditor=mountCustomBuildings({map,setMode,getMode:()=>mode,showProperties,toast,cancelBimPicking:cancelPicking,onCatalogChange:renderCustomCatalog,initialData:PUBLIC_DEMO?createDemoBuildings():null});
 mountSidebarTabs({buttons:[...document.querySelectorAll('.function-tab')],getPanel:$,sidebar:document.querySelector('.sidebar'),title:$('sidebar-title'),onSelect:button=>{customEditor?.setPanelActive(button.id==='tab-custom-building');cancelPicking();if(button.id==='tab-custom-building')customEditor?.startNew();if(button.id!=='tab-custom-building')$('close-building-editor').click();if(matchMedia('(max-width:650px)').matches){document.body.classList.add('sidebar-open');$('toggle-sidebar').setAttribute('aria-expanded','true');}}});
 if(nativeModel) await selectBimSource('native');
 

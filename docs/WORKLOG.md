@@ -318,3 +318,11 @@
 - 使用者授權推送目前完成內容；程式基準 ad75171。遠端 refs 為空，本機起始工作樹乾淨。Node 35項與Python 12項重跑皆通過，diff檢查通過；大型模型及常見憑證檔未列入追蹤。
 - 沙箱內Git網路出現 getaddrinfo() thread failed to start，改以權限提升讀取遠端成功。系統python別名無法執行，改用內建Python runtime，12項通過。
 - 本紀錄隨首次推送提交，實際上版以push回傳及遠端main SHA核對為準；保留最新畫面與正式BIM驗收限制。
+
+## 2026-10-22：CI 與可選的 Pages 展示部署
+- 建立 .github/workflows/pages.yml：main push／PR／手動執行Node及Python測試、whitespace、展示打包；非PR上傳Pages artifact，公開部署須PUBLIC_DEMO_PAGES=true，預設跳過。
+- 新增只收web靜態檔的build_pages.py與合成雙棟住宅資料；部署包啟用展示設定，本機設定不變。已有存檔優先，示意不自動落盤；assets改相對路徑，公開版隱藏並阻止未發布BIM請求。
+- 最終本機Node 35項、Python 14項通過，JS語法與diff --check通過。IAB在/pages-site/成功呈現兩棟卡片／3D建物，console error 0；子路徑資源HTTP皆200。原始BIM及正式幾何／地理驗收無變動。
+- Python 3.12內建runtime的初次暫存路徑受沙箱檔案權限限制，改用既有artifacts/test-tmp；HTTP連線另受WinError 10013限制，於權限提升環境完成驗證。最初HTTP測試未讀完大JS造成伺服器ConnectionAbortedError，改為讀完回應，最終無此錯誤。
+- GitHub API：儲存庫private且admin=true，Actions enabled；POST /pages回覆422 Your current plan does not support GitHub Pages for this repository. 使用者選擇先完成CI／部署程式，暫不公開。未改可見性、未建立公開repo、未成功啟用Pages。
+- 遠端CI需推送後核對，未以本機測試冒充；操作與日後啟用方式見docs/CI_CD.md。
