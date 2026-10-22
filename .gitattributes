@@ -6,3 +6,6 @@
 .gitignore text eol=lf
 .gitattributes text eol=lf
 web/vendor/** -text -whitespace
+# Keep published model bytes identical to the SHA-256 manifest on every OS.
+web/assets/*.glb binary
+web/assets/native-str.attributes.json -text -diff

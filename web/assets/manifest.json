@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "files": {
+    "str.glb": {
+      "bytes": 5268112,
+      "sha256": "b9f5bbbed105d38d942bc96d0c37bced406e2c2381c4733395242ef30e5ce98f"
+    },
+    "native-str.glb": {
+      "bytes": 15657488,
+      "sha256": "e16b819e6cd63d11faf72d77981d9c6696253994434fe5cae0d7d39c04c39b00"
+    },
+    "native-str.attributes.json": {
+      "bytes": 6948120,
+      "sha256": "723a32efbeda6bb1215f94ecd3a9a05496158db0aa45c8e44013f4a2547f3086"
+    },
+    "preview.png": {
+      "bytes": 62404,
+      "sha256": "fcb3a27be4f233fe18c5b3e2b61cd890a81be23c45ff868686837edd0b9f0f85"
+    }
+  },
+  "quality": {
+    "open": "Preview only: approximately 71.2% bodies use bounding boxes.",
+    "native": "Native IFC candidate: one opening subtraction issue at Revit slab 92848; geometry acceptance pending.",
+    "placement": "Local model coordinates. Geographic placement is unverified."
+  }
+}

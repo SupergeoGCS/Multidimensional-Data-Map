@@ -18,7 +18,8 @@ class Handler(SimpleHTTPRequestHandler):
     def translate_path(self, path):
         clean = unquote(urlsplit(path).path)
         if clean in ASSETS:
-            return str(ASSETS[clean])
+            local_asset = ASSETS[clean]
+            return str(local_asset if local_asset.is_file() else ROOT / 'web' / clean.lstrip('/'))
         target = (ROOT / 'web' / clean.lstrip('/')).resolve()
         if not target.is_relative_to((ROOT / 'web').resolve()):
             return str(ROOT / 'web' / '__not_found__')

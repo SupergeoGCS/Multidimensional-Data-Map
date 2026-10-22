@@ -330,3 +330,10 @@
 ### GitHub 遠端 CI 證據
 - 已推送e5b1f750f137b4570c0db3f28b673feb511a829e。Actions run 39717220298：test job success；Node／Python／whitespace／打包／Pages artifact上傳皆success；deploy job skipped。網址：https://github.com/SupergeoGCS/Multidimensional-Data-Map/actions/runs/39717220298。
 - 公開部署未執行；私有儲存庫及本機來源模型保留。下一步為正常開發後push main自動CI，日後公開須另獲授權及解決方案限制。
+
+## 2026-10-22：STR 模型與屬性納入 GitHub 發布包
+- 使用者明確授權推送兩種STR成果與配套資料，發布例外記入AGENTS／DECISIONS。web/assets四檔27,936,124 bytes；原始RVT／IFC與其他產物仍留本機。GLB兩檔加入精確gitignore例外，未使用Git LFS。
+- build_pages加入固定資產清單與雜湊／GLB容器／原生mesh GUID驗證；8,243節點對應8,536元素。公開展示模式恢復兩張STR卡片，支援原生直接入口與屬性，保留品質限制、未知地理位置及公開部署閘門。新clone本機伺服器可回退發布檔。
+- 本機Node 35、Python 15通過；子路徑模型／屬性HTTP 200，屬性錯配拒絕測試通過。git check-ignore無輸出且exit 1表示兩個指定GLB未被忽略，非測試失敗。
+- IAB原生與開源模型均成功載入並抽點：原生混凝土結構柱142213／IfcColumn／R1F／GUID與材料顯示，切至開源不沿用原生欄位，console error 0。證據reports/str-github-delivery-2026-10-22.png。隱藏分頁首次截圖無法擷取，改用可見分頁成功；座標點擊關閉dialog後改用canvas locator成功抽點。未將目視載入當成完整幾何驗收。
+- API核對儲存庫仍private=true，未修改可見性或啟用Pages。推送與遠端CI結果待實際核對。

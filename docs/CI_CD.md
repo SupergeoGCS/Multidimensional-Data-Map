@@ -21,7 +21,16 @@ GitHub Pages 啟用 API 回覆 HTTP 422：`Your current plan does not support Gi
 
 ## 展示包
 
-`tools/build_pages.py` 僅複製 `web/` 中允許的靜態副檔名，不複製 `references/`、`artifacts/`、`reports/`、Git 設定、來源模型或 BIM 產物，拒絕符號連結。輸出目錄必須尚不存在。
+`tools/build_pages.py` 複製 `web/` 中允許的靜態檔，並依使用者 2026-10-22 最新授權，加入 `web/assets/manifest.json` 列出的 STR 發布檔。不複製 `references/`、`artifacts/`、`reports/`、Git 設定、原始 RVT／IFC 或其他 BIM 產物，拒絕符號連結。輸出目錄必須尚不存在。
+
+| 發布檔 | 大小（十進位 MB） |
+|---|---:|
+| assets/str.glb（開源概略模型） | 5.27 |
+| assets/native-str.glb（Revit IFC 候選） | 15.66 |
+| assets/native-str.attributes.json | 6.95 |
+| assets/preview.png | 0.06 |
+
+四檔合計 27,936,124 bytes（約 27.94 MB）。CI 以固定清單核對各檔 SHA-256、大小、GLB 容器與屬性綁定，並驗證原生 8,243 個幾何節點全數對應 8,536 元素字典。更新模型時須成對更新 GLB／屬性與 manifest，不能只改檔名或檔案大小。
 
 ```powershell
 python tools/build_pages.py --output artifacts/pages-preview-new
@@ -31,8 +40,9 @@ python -m http.server 8767 --bind 127.0.0.1 --directory artifacts
 開啟 `http://127.0.0.1:8767/pages-preview-new/` 可測試子路徑；Ctrl+C 停止。
 展示包內的 `site-config.js` 啟用公開示意模式，本機 `web/site-config.js` 維持關閉。
 
-展示模式隱藏未發布的 BIM 卡片、阻止請求本機 BIM，首次無存檔時載入兩棟示意住宅並開啟 3D。示意資料不自動寫入本機儲存，已有存檔優先；保留自訂建築及瀏覽器本機檔案匯入功能。
-位置與配置均為功能示意，非真實地籍或建物。底圖仍需連線至既有服務，匯入的本機檔案不會送至 GitHub。
+展示模式顯示兩種 STR 資料卡，可展開並按「檢視模型」，原生模型支援中文構件屬性；`?model=native` 可直接開啟原生預覽。兩者都未驗證地理位置，須由使用者手動暫放地圖。開源模型約 71.2% bodies 是包圍盒，原生模型仍保留樓板 92848 一處開口轉換問題說明。
+首次無存檔時另載入兩棟示意住宅並開啟 3D。示意資料不自動寫入本機儲存，已有存檔優先；保留自訂建築及瀏覽器本機檔案匯入功能。示意住宅位置與配置非真實地籍或建物。底圖仍需連線至既有服務，瀏覽器匯入的本機檔案不會送至 GitHub。
+新 clone 沒有 `artifacts/` 時，本機 `serve_map.py` 亦可讀取發布的 STR 檔；主工作區仍優先使用本機 artifacts 原有版本。
 
 ## 日後啟用
 
