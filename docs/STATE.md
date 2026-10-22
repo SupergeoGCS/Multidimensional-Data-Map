@@ -5,7 +5,7 @@
 - 展示包恢復兩張 STR 卡片與相對 assets 路徑，`?model=native` 可直接開預覽；原生屬性保留完整配套、介面仍只顯示指定七列。本機無 artifacts 時可回退到發布檔。
 - 新增固定清單／SHA-256／GLB 容器及原生 GUID 對應閘門；8,243 mesh nodes 全數對應 8,536 elements。Node 35／Python 15 通過，發布包子路徑三個模型／屬性網址 HTTP 200。
 - IAB 實際載入兩種模型並抽點成功；原生柱 ID 142213，GUID `3_h01_B617Du0GXgCl2FSG`、R1F、混凝土材料皆顯示，切換開源方案不沿用原生屬性，console error 0。截圖：reports/str-github-delivery-2026-10-22.png。此為發布載入驗證，非樓板開口／幾何等價或地理定位驗收。
-- 下一步：本次提交／推送並核對遠端 CI。公開部署仍需另行授權與解決 GitHub 方案／可見性限制；以 Git 與 Actions 實際結果為準。
+- 遠端證據：d33a6de 已推送，Actions run 39718381959 completed/success，test job success、deploy job skipped；包含模型的實際 GitHub checkout／資產查核／展示打包已通過。工作樹以 git status 為準。公開部署仍需另行授權與解決 GitHub 方案／可見性限制。
 
 ## CI／展示部署（2026-10-22）
 - 新增 GitHub Actions：main push／PR／手動執行 Node 與 Python 測試、展示包驗證及打包。公開部署須明確設定 `PUBLIC_DEMO_PAGES=true`；預設跳過。使用者最新決定為先完成 CI 與部署程式，暫不公開網站。

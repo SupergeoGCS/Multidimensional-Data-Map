@@ -337,3 +337,7 @@
 - 本機Node 35、Python 15通過；子路徑模型／屬性HTTP 200，屬性錯配拒絕測試通過。git check-ignore無輸出且exit 1表示兩個指定GLB未被忽略，非測試失敗。
 - IAB原生與開源模型均成功載入並抽點：原生混凝土結構柱142213／IfcColumn／R1F／GUID與材料顯示，切至開源不沿用原生欄位，console error 0。證據reports/str-github-delivery-2026-10-22.png。隱藏分頁首次截圖無法擷取，改用可見分頁成功；座標點擊關閉dialog後改用canvas locator成功抽點。未將目視載入當成完整幾何驗收。
 - API核對儲存庫仍private=true，未修改可見性或啟用Pages。推送與遠端CI結果待實際核對。
+
+### STR GitHub 發布遠端證據
+- d33a6dedc46ae9fc84148717920fab39bfa0ce91已推送；Actions run 39718381959 completed/success，test success、deploy skipped。遠端已從Git取得兩份GLB／屬性，資產雜湊、對應與打包皆通過。https://github.com/SupergeoGCS/Multidimensional-Data-Map/actions/runs/39718381959。
+- .gitattributes固定GLB／屬性原始bytes，避免跨平台換行改變雜湊。公開網站尚未啟用；本機發布包已實測模型與屬性顯示，正式地理／完整幾何驗收限制維持。
