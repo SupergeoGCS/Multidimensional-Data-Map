@@ -1,5 +1,10 @@
 # 專案狀態
 
+## GitHub 上版檢查點（2026-10-22）
+- 使用者授權將目前完成內容推送至 `origin/main`；程式基準 `ad75171`，推送前工作樹乾淨，遠端 refs 為空。目標為 `https://github.com/SupergeoGCS/Multidimensional-Data-Map.git`。
+- 本次重跑 Node 35 項、Python 12 項皆通過，`git diff --check` 通過；追蹤檔案無 RVT／IFC／GLB 等來源或產物、常見憑證檔與超過 20 MiB 檔案。最新畫面及正式 BIM 幾何／地理驗收仍待確認。
+- 此紀錄為首次推送前檢查；遠端成功與同步狀態須以實際 push 結果及遠端 main SHA 核對，不以本文件推定。
+
 更新日：2026-10-22（Asia/Taipei）。本檔是跨對話接續入口，實際 Git 工作樹與報告為證據來源。
 
 ## 目標與判斷
