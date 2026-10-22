@@ -38,7 +38,9 @@ function renderCustomCatalog(items){
     const card=document.createElement('section');card.className='model-card custom-building-card';
     bindCardMapFocus(card,()=>customEditor?.focusOnMap(item.id));
     const top=document.createElement('div');top.className='card-top';
-    const icon=document.createElement('span');icon.className='cube-icon';icon.textContent='⌂';
+    const icon=document.createElement('span');icon.className='cube-icon';icon.setAttribute('aria-hidden','true');
+    const house=document.createElementNS('http://www.w3.org/2000/svg','svg');house.setAttribute('viewBox','0 0 24 24');
+    const housePath=document.createElementNS('http://www.w3.org/2000/svg','path');housePath.setAttribute('d','m3 10 9-7 9 7M5 9v12h14V9M9 21v-7h6v7');house.append(housePath);icon.append(house);
     const heading=document.createElement('div'),name=document.createElement('h3'),type=document.createElement('p');
     name.textContent=item.name;type.textContent='自訂建築';heading.append(name,type);
     const toggle=document.createElement('button');toggle.type='button';toggle.className='card-collapse';toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label',`展開${item.name}資料卡`);

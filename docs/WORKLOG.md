@@ -1,5 +1,13 @@
 # 工作紀錄
 
+## 2026-10-22：替換回到全臺視野圖示
+- 將 home 房屋圖示改成四角向外的全域視野線稿，同步提示與無障礙名稱為「回到全臺視野」。未修改相機行為。
+- 純 HTML／SVG 調整，git diff --check 通過，未新增測試；尚未本次瀏覽器目視驗收，未提交／發布。
+
+## 2026-10-22：修正自訂建築卡房屋圖示置中
+- renderCustomCatalog 將 ⌂ 字元改成裝飾性 SVG 房屋線稿，CSS 使用 grid place-items:center 與固定尺寸，排除字型基線偏移。未變更圖卡互動。
+- node --check web/app.js 與 git diff --check 通過；局部圖示調整未新增測試，尚未本次瀏覽器目視驗收。未提交／發布。
+
 ## 2026-10-22：隱藏地圖底部定位提示框
 - map-notice 加上 hidden，節點保留供既有流程更新文字，隱藏使用者標記的中央底部提示框。純 HTML 顯示調整，git diff --check 通過，未新增測試；尚未本次瀏覽器目視驗收，未提交／發布。
 
@@ -508,3 +516,6 @@
 
 ## 2026-10-22：提交並推送地圖提示框隱藏
 - 使用者要求COMMIT／PUSH；提交web/index.html的map-notice hidden與既有紀錄。檢閱單行HTML差異及diff --check通過，未新增測試／目視驗收。main推送觸發既有CI／Pages；實際hash與部署結果以Git／Actions為準。
+
+## 2026-10-22：提交並推送圖示調整
+- 使用者要求COMMIT／PUSH目前五檔修改，範圍為自訂建築SVG圖示置中及全臺視野按鈕圖示／標籤。已檢閱差異，app.js語法與diff --check通過；未新增測試或瀏覽器目視驗收。main推送後由既有CI／Pages驗證部署。
