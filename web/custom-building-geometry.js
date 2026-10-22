@@ -232,6 +232,16 @@ export function generateBuilding(config, parcelFeature) {
     sum + polygon.reduce((ringSum, ring) => ringSum + ring.length - 1, 0), 0);
   if (vertexCount > 500) fail(`目前建物配置最多處理 500 個地籍頂點（收到 ${vertexCount}）；請先簡化選取的地籍`);
   const polygons = projectedPolygons(parcel, project), parcelAreaM2 = polygons.reduce((sum, polygon) => sum + polygonAreaXY(polygon), 0);
+  if(config.footprintMode==='parcel'){
+    const cells=partitionParcel(polygons,units,layout,rotation),features=[];
+    const footprint=structuredClone(parcel.geometry),name=config.name||config.id;
+    for(let basement=basements;basement>=1;basement--)features.push({type:'Feature',properties:{buildingId:config.id,floor:-basement,unitId:`${config.id}-B${basement}`,base:-basement*basementHeight,height:basementHeight,underground:true,usage:'basement',label:`${name} B${basement} 地下室`,area_m2:parcelAreaM2,floor_area_m2:parcelAreaM2,representative_point:project.toLonLat(cells[0].point)},geometry:structuredClone(footprint)});
+    for(let floor=1;floor<=floors;floor++)cells.forEach((cell,index)=>{
+      const coordinates=cell.polygons.map(p=>p.map(r=>r.map(project.toLonLat)));
+      features.push({type:'Feature',properties:{buildingId:config.id,floor,unitId:`${config.id}-F${floor}-U${index+1}`,base:(floor-1)*floorHeight,height:floorHeight,underground:false,usage:'residential',label:`${name} F${floor} 戶 ${index+1}`,area_m2:cell.area,floor_area_m2:parcelAreaM2,representative_point:project.toLonLat(cell.point)},geometry:coordinates.length===1?{type:'Polygon',coordinates:coordinates[0]}:{type:'MultiPolygon',coordinates}});
+    });
+    return {type:'FeatureCollection',features,metadata:{buildingId:config.id,footprint,centroid:project.toLonLat(cells[0].point),footprintArea:parcelAreaM2,parcelArea:parcelAreaM2,floorArea:parcelAreaM2,aboveGroundFloorArea:parcelAreaM2*floors,basementFloorArea:parcelAreaM2*basements,totalFloorArea:parcelAreaM2*(floors+basements),totalUnits,floors,basementFloors:basements,layout,footprintMode:'parcel',estimated:true}};
+  }
   const fitted = fitRectangle(polygons, parcelAreaM2 * coverage, ratio, rotation);
   const unitsXY = splitRectangle(fitted.rect, units, layout), features = [];
   const buildingName = config.name || config.id;
@@ -285,3 +295,4 @@ export function polygonLabelAnchor(points) {
   for(let i=0;i<ring.length;i++){const a=ring[(i+ring.length-1)%ring.length],b=ring[i],c=ring[(i+1)%ring.length];consider([(a[0]+b[0]+c[0])/3,(a[1]+b[1]+c[1])/3]);}
   return best?[best[0]+origin[0],best[1]+origin[1]]:null;
 }
+import {partitionParcel} from './parcel-footprint.js';

@@ -47,16 +47,16 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     if(selectedParcel()){
       const area=parcelArea(selectedParcel());
       $('parcel-info').textContent=sourceName==='地圖手繪'?`手繪區域面積：${area.toFixed(1)} m²`:`${sourceName} · ${sourceCrs} · 基地估算面積 ${area.toFixed(1)} m²。保留宗地邊界，建築輪廓另行配置。`;
-      $('building-area').value=Math.max(10,Math.round(area*.6));
+      $('building-area').value=area.toFixed(1);
       if(move)fit([selectedParcel()]);
     }
   }
   function setParcels(data,name,crs){requireMap();const next=normalizeParcels(data);parcels=next.features||next;selected=0;sourceName=name;sourceCrs=crs;refreshParcelOptions();fit(parcels);}
   function formConfig(){
     if(!activeId&&buildings.length>=50)throw new Error('第一版最多建立 50 棟建築，請先移除或另存既有資料。');
-    const area=Number($('building-area').value),siteArea=selectedParcel()?parcelArea(selectedParcel()):0;
+    const siteArea=selectedParcel()?parcelArea(selectedParcel()):0,area=siteArea;
     if(!Number.isFinite(area)||area<10||area>siteArea)throw new Error('目標占地須介於 10 m² 與基地面積之間。');
-    return {id:activeId||crypto.randomUUID(),name:$('building-name').value.trim()||'自訂住宅',floors:Number($('building-floors').value),floorHeight:Number($('building-floor-height').value),unitsPerFloor:Number($('building-units').value),basementFloors:Number($('building-basements').value),basementHeight:Number($('building-basement-height').value),rotation:Number($('building-rotation').value),layout:$('building-layout').value,coverage:area/siteArea,targetArea:area};
+    return {id:activeId||crypto.randomUUID(),name:$('building-name').value.trim()||'自訂住宅',floors:Number($('building-floors').value),floorHeight:Number($('building-floor-height').value),unitsPerFloor:Number($('building-units').value),basementFloors:Number($('building-basements').value),basementHeight:Number($('building-basement-height').value),rotation:Number($('building-rotation').value),layout:$('building-layout').value,coverage:1,targetArea:area,footprintMode:'parcel'};
   }
   function refreshBuildings(){const select=$('saved-building-select');select.replaceChildren();buildings.forEach(b=>select.add(new Option(b.config.name,b.config.id)));if(!buildings.length)select.add(new Option('尚無建築',''));select.value=activeId||'';onCatalogChange(buildings.map(b=>({id:b.config.id,name:b.config.name,type:'自訂建築',floors:b.config.floors,units:b.config.floors*b.config.unitsPerFloor,visible:b.visible!==false})));}
   function floorOptions(){const filter=$('building-floor-filter'),old=filter.value;filter.replaceChildren(new Option('全部地上樓層','above'));const b=buildings.find(b=>b.config.id===activeId);if(b){for(let f=b.config.floors;f>=1;f--)filter.add(new Option(`${f}F`,String(f)));for(let f=1;f<=b.config.basementFloors;f++)filter.add(new Option(`B${f} · 抬升示意`,String(-f)));}filter.value=[...filter.options].some(o=>o.value===old)?old:'above';}
@@ -87,12 +87,12 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     const filter=$('building-floor-filter').value,features=[],points=[];
     const palette=['#4e9dba','#69bfae','#e2bd79','#9faccb','#78b2ce','#b2c88e'];
     for(const b of buildings.filter(b=>b.visible!==false))for(const f of b.generated.features){
-      const p=f.properties;if(f.geometry.type!=='Polygon')continue;
+      const p=f.properties;if(!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
       if(filter==='above'?p.underground:Number(filter)!==p.floor)continue;
       const base=p.underground?0:p.base,height=p.underground?b.config.basementHeight:p.base+p.height;
       features.push({...f,id:p.unitId,properties:{...p,buildingName:b.config.name,color:p.underground?'#8b9aa8':palette[(Math.abs(p.floor)-1)%palette.length],displayBase:base,displayHeight:height}});
       // Representative point is a location within the generated rectangular unit, not an entrance.
-      const ring=f.geometry.coordinates[0].slice(0,-1),center=[0,1].map(axis=>ring.reduce((sum,c)=>sum+c[axis],0)/ring.length);
+      const outer=f.geometry.type==='MultiPolygon'?f.geometry.coordinates[0][0]:f.geometry.coordinates[0],ring=outer.slice(0,-1),center=p.representative_point||[0,1].map(axis=>ring.reduce((sum,c)=>sum+c[axis],0)/ring.length);
       if(filter!=='above'||getMode()==='2d')points.push({type:'Feature',geometry:{type:'Point',coordinates:center},properties:{...p,buildingName:b.config.name}});
     }
     source('studio-housing',{type:'FeatureCollection',features});source('studio-points',{type:'FeatureCollection',features:points});
@@ -104,7 +104,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     if(filter!=='above'&&Number(filter)<0)$('building-result').textContent=`目前為 B${Math.abs(Number(filter))} 抬升示意檢視，非真實地表高程。`;
     else {const active=buildings.find(b=>b.config.id===activeId);if(active)$('building-result').textContent=resultText(active);}
   }
-  function resultText(b){const m=b.generated.metadata||{};const polygon=b.generated.features.find(f=>!f.properties.underground);const area=m.footprintArea??(polygon?parcelArea(polygon)*b.config.unitsPerFloor:0);return `${b.config.name} · ${b.config.floors} 層／${b.config.floors*b.config.unitsPerFloor} 戶 · 地下 ${b.config.basementFloors} 層。實際占地約 ${Number(area).toFixed(1)} m²；住宅位置為自動配置示意。`;}
+  function resultText(b){const m=b.generated.metadata||{};const polygon=b.generated.features.find(f=>!f.properties.underground);const area=m.footprintArea??(polygon?parcelArea(polygon)*b.config.unitsPerFloor:0);const summary=`${b.config.name} · ${b.config.floors} 層／${b.config.floors*b.config.unitsPerFloor} 戶 · 地下 ${b.config.basementFloors} 層。`;return m.footprintMode==='parcel'?`${summary} 單層樓板約 ${area.toFixed(1)} m²；地上合計 ${m.aboveGroundFloorArea.toFixed(1)} m²；地下合計 ${m.basementFloorArea.toFixed(1)} m²。未扣公共空間與牆體，分戶為示意。`:`${summary} 原矩形模型占地約 ${Number(area).toFixed(1)} m²；重新產生後改依占地輪廓。`;}
   function open(){ $('building-editor').hidden=false;if($('model-dialog').open)$('model-dialog').close();cancelBimPicking(); }
   function positionDrawingLabel(){
     const label=$('drawing-measurement');
@@ -162,7 +162,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
   $('draw-parcel').onclick=()=>{if(drawPoints){cancelDraw();return;}try{requireMap();}catch(e){toast(e.message);return;}cancelBimPicking();drawPoints=[];updateDrawing();$('draw-parcel').textContent='取消繪製';$('finish-parcel').hidden=false;map.getCanvas().style.cursor='crosshair';setMode('2d');toast('在地圖依序點選基地頂點，完成後按「完成繪製」。');};
   $('finish-parcel').onclick=()=>{try{if(!drawPoints||drawPoints.length<3)throw new Error('至少需要三個頂點。');const coordinates=[...drawPoints,drawPoints[0]];setParcels({type:'Feature',properties:{name:'手繪基地'},geometry:{type:'Polygon',coordinates:[coordinates]}},'地圖手繪','WGS84 · 人工定義');cancelDraw();}catch(e){toast(e.message);}};
   $('custom-building-form').onsubmit=e=>{e.preventDefault();try{requireMap();if(!selectedParcel())throw new Error('請先匯入、繪製或載入示意基地。');const config=formConfig(),parcel=structuredClone(selectedParcel()),generated=generateBuilding(config,parcel);const b={config,parcel,sourceName,sourceCrs,generated},index=buildings.findIndex(x=>x.config.id===config.id);if(index<0)buildings.push(b);else buildings[index]=b;activeId=config.id;refreshBuildings();floorOptions();$('building-floor-filter').value='above';$('building-result').textContent=resultText(b);render();setMode('3d');fit([parcel]);toast('已建立自訂建築，點選住宅可查看樓層與戶號。');}catch(error){toast(error.message);}};
-  function loadActive(){const b=buildings.find(b=>b.config.id===$('saved-building-select').value);if(!b)return;activeId=b.config.id;parcels=[structuredClone(b.parcel)];selected=0;sourceName=b.sourceName;sourceCrs=b.sourceCrs;refreshParcelOptions();const c=b.config;for(const [id,key] of [['building-name','name'],['building-floors','floors'],['building-floor-height','floorHeight'],['building-units','unitsPerFloor'],['building-basements','basementFloors'],['building-basement-height','basementHeight'],['building-rotation','rotation'],['building-layout','layout']])$(id).value=c[key];$('building-area').value=c.targetArea??parcelArea(b.parcel)*c.coverage;floorOptions();render();$('building-result').textContent=resultText(b);fit([b.parcel]);}
+  function loadActive(){const b=buildings.find(b=>b.config.id===$('saved-building-select').value);if(!b)return;activeId=b.config.id;parcels=[structuredClone(b.parcel)];selected=0;sourceName=b.sourceName;sourceCrs=b.sourceCrs;refreshParcelOptions();const c=b.config;for(const [id,key] of [['building-name','name'],['building-floors','floors'],['building-floor-height','floorHeight'],['building-units','unitsPerFloor'],['building-basements','basementFloors'],['building-basement-height','basementHeight'],['building-rotation','rotation'],['building-layout','layout']])$(id).value=c[key];$('building-area').value=parcelArea(b.parcel).toFixed(1);floorOptions();render();$('building-result').textContent=resultText(b);fit([b.parcel]);}
   $('saved-building-select').onchange=loadActive;
   $('building-floor-filter').onchange=render;$('custom-building-visible').onchange=render;
   function startNew(){
@@ -174,7 +174,22 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     $('saved-building-select').value='';floorOptions();$('building-floor-filter').value='above';render();
   }
   $('new-custom-building').onclick=startNew;
-  $('delete-custom-building').onclick=()=>{buildings=buildings.filter(b=>b.config.id!==activeId);activeId=buildings[0]?.config.id||null;refreshBuildings();floorOptions();render();$('feature-panel').hidden=true;$('building-result').textContent='已移除此棟；本機存檔須按儲存更新。';if(activeId)loadActive();};
+  $('delete-custom-building').onclick=()=>{
+    if(!activeId){toast('請先選取要刪除的建築。');return;}
+    try{
+      const raw=localStorage.getItem(KEY);
+      if(raw){
+        const saved=JSON.parse(raw);
+        if(saved?.schemaVersion!==1||saved.type!=='custom-buildings'||!Array.isArray(saved.buildings))throw new Error('存檔格式無效');
+        saved.buildings=saved.buildings.filter(b=>b.config?.id!==activeId);
+        localStorage.setItem(KEY,JSON.stringify(saved));
+      }
+    }catch{toast('本機存檔更新失敗，尚未刪除建築。請檢查瀏覽器儲存空間。');return;}
+    buildings=buildings.filter(b=>b.config.id!==activeId);activeId=buildings[0]?.config.id||null;
+    refreshBuildings();floorOptions();render();$('feature-panel').hidden=true;
+    if(activeId)loadActive();
+    $('building-result').textContent='已刪除此棟，並同步更新本機存檔。';toast('已刪除建築，重新整理後不會還原。');
+  };
   function pack(){return {schemaVersion:1,type:'custom-buildings',buildings:buildings.map(({config,parcel,sourceName,sourceCrs,visible})=>({config,parcel,sourceName,sourceCrs,visible:visible!==false}))};}
   function unpack(data){if(data?.schemaVersion!==1||data.type!=='custom-buildings'||!Array.isArray(data.buildings)||data.buildings.length>50)throw new Error('不是支援的自訂建築設定檔（最多 50 棟）。');const seen=new Set();const next=data.buildings.map(b=>{if(typeof b.config?.id!=='string'||!b.config.id||seen.has(b.config.id))throw new Error('建築 ID 無效或重複。');seen.add(b.config.id);const normalized=normalizeParcels(b.parcel),parcel=(normalized.features||normalized)[0];return {...b,parcel,generated:generateBuilding(b.config,parcel)};});buildings=next;activeId=buildings[0]?.config.id||null;refreshBuildings();floorOptions();render();if(activeId)loadActive();toast('已載入自訂建築設定。');}
   $('save-custom-buildings').onclick=()=>{try{localStorage.setItem(KEY,JSON.stringify(pack()));refreshBuildings();$('tab-data')?.click?.();toast('已儲存，自訂建築可在「資料」中檢視。');}catch{toast('本機儲存失敗，請改用匯出 JSON。');}};
@@ -182,14 +197,14 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
   $('export-custom-buildings').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(pack(),null,2)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='custom-buildings.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
   $('import-custom-buildings').onchange=async e=>{const file=e.target.files[0];e.target.value='';if(!file)return;try{if(file.size>20*1024*1024)throw new Error('設定檔上限 20 MB。');unpack(JSON.parse(await file.text()));}catch(error){toast(error.message);}};
   window.addEventListener('keydown',e=>{if(e.key==='Escape'){cancelDraw();hoveredHousing=null;clearHousingSelection();}});
-  return {startNew,setMode:render,setBuildingVisible(id,visible){const b=buildings.find(b=>b.config.id===id);if(b){b.visible=visible;render();}},focusBuilding(id){const b=buildings.find(b=>b.config.id===id);if(!b)return;$('saved-building-select').value=id;loadActive();$('building-floor-filter').value='above';b.visible=true;refreshBuildings();setMode('3d');render();fit([b.parcel]);},onMapClick(e){
+  return {startNew,setMode:render,focusOnMap(id){const b=buildings.find(b=>b.config.id===id);if(!b)return false;if(b.visible===false||!$('custom-building-visible').checked){toast('此模型目前未顯示於地圖。');return false;}fit([b.parcel]);return true;},setBuildingVisible(id,visible){const b=buildings.find(b=>b.config.id===id);if(b){b.visible=visible;render();}},focusBuilding(id){const b=buildings.find(b=>b.config.id===id);if(!b)return;$('saved-building-select').value=id;loadActive();$('building-floor-filter').value='above';b.visible=true;refreshBuildings();setMode('3d');render();fit([b.parcel]);},onMapClick(e){
     if(draggedVertex!==null)return true;
     if(Date.now()<suppressClickUntil){suppressClickUntil=0;return true;}
     if(drawPoints){if(drawPoints.length>=500){toast('繪製上限 500 個轉折點，請完成或重新繪製。');return true;}drawPoints.push([e.lngLat.lng,e.lngLat.lat]);updateDrawing();return true;}
     if(!map.getSource('studio-parcels'))return false;
     const hit=map.queryRenderedFeatures(e.point,{layers:ids.filter(id=>map.getLayer(id))})[0];if(!hit){clearHousingSelection();return false;}
     if(hit.properties.unitId){selectedHousing=hit.properties;syncHighlights();}else clearHousingSelection();
-    if(hit.properties.unitId){const p=hit.properties;showProperties(`${p.buildingName} · ${p.label||p.unitId}`,{'類型':'自訂建築','樓層':p.floor<0?`B${-p.floor}`:`${p.floor}F`,'戶號':p.label||p.unitId,'住宅 ID':p.unitId,'配置狀態':'自動配置示意','估算面積（m²）':Number(p.area_m2).toFixed(1),'地下室':p.underground?'是（抬升示意檢視）':'否'});return true;}
+    if(hit.properties.unitId){const p=hit.properties;showProperties(`${p.buildingName} · ${p.label||p.unitId}`,{'類型':'自訂建築','樓層':p.floor<0?`B${-p.floor}`:`${p.floor}F`,'戶號':p.label||p.unitId,'住宅 ID':p.unitId,'配置狀態':'自動配置示意','樓板分區面積（m²）':Number(p.area_m2).toFixed(1),'該層樓板面積（m²）':p.floor_area_m2?Number(p.floor_area_m2).toFixed(1):'未提供','地下室':p.underground?'是（抬升示意檢視）':'否'});return true;}
     if(!$('building-editor').hidden&&hit.properties.studioIndex!==undefined){$('parcel-select').value=String(hit.properties.studioIndex);selectParcel(false);return true;}return false;
   }};
 }

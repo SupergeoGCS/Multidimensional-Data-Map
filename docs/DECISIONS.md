@@ -57,3 +57,7 @@
 - skill 的版本來源在本 repository 的 skills/；可安裝副本到使用者 skill 目錄。變更先在 repository 修改與驗證，再同步安裝副本，避免兩份漂移。
 - references/、data/、artifacts/ 與大型模型格式忽略。工作樹僅保存程式、skill、文件與小型報告；不複製原始 RVT。
 - STATE 保存當前進度，WORKLOG 保存完成事件，DECISIONS 保存選擇理由。以 git diff/status 判斷未提交變更，不靠對話回憶。
+
+## 2026-10-22：建物依占地輪廓生成
+- 新增 footprintMode=parcel：樓板採完整輸入輪廓，不再內縮矩形；覆蓋凹角、孔洞與 MultiPolygon。分戶以既有 Three.js 耳切三角化、半平面切割與共享邊合併生成，各戶加總保留單層面積。面積口徑不扣公設／牆體，不代表實坪。
+- 舊存檔無模式時維持矩形，明確編輯更新後才轉新模式；住宅 ID 維持建物／樓層／戶序。分戶方向僅影響切割，不旋轉外輪廓。無新增下載或雲端依賴。

@@ -74,6 +74,35 @@ test('rectangleAt returns a closed approximate-area WGS84 Polygon', () => {
   assert.ok(Math.abs(parcelArea({type:'Feature',properties:{},geometry:rectangle}) - 150) < 0.1);
 });
 
+test('parcel footprint retains concavity and holes and partitions the full floor area',()=>{
+  const parcel=feature([
+    [[121,25],[121.003,25],[121.003,25.001],[121.001,25.001],[121.001,25.003],[121,25.003],[121,25]],
+    [[121.0002,25.0002],[121.0007,25.0002],[121.0007,25.0007],[121.0002,25.0007],[121.0002,25.0002]]
+  ]);
+  for(const layout of ['single','double'])for(const rotation of [0,30,90]){
+    const model=generateBuilding({id:'outline',floors:3,floorHeight:3,unitsPerFloor:3,basementFloors:1,coverage:1,footprintMode:'parcel',layout,rotation},parcel);
+    assert.deepEqual(model.metadata.footprint,parcel.geometry);
+    assert.deepEqual(model.features[0].geometry,parcel.geometry);
+    const floor=model.features.filter(f=>f.properties.floor===1),sum=floor.reduce((s,f)=>s+f.properties.area_m2,0);
+    assert.ok(Math.abs(sum-parcelArea(parcel))<.001);
+    for(const unit of floor){
+      normalizeParcels(unit);
+      // Independent area calculation chooses a different local latitude for each unit.
+      assert.ok(Math.abs(parcelArea(unit)-unit.properties.area_m2)/unit.properties.area_m2<1e-5);
+      assert.ok(Math.abs(unit.properties.area_m2-sum/3)<.001);
+    }
+    assert.ok(Math.abs(model.metadata.aboveGroundFloorArea-sum*3)<.001);
+  }
+});
+
+test('separate parcel parts retain their area and produce multipart housing where needed',()=>{
+  const parcel={type:'Feature',properties:{},geometry:{type:'MultiPolygon',coordinates:[square.geometry.coordinates,rectangleAt([121.003,25],300,1,0).coordinates]}};
+  const model=generateBuilding({id:'multi',floors:1,floorHeight:3,unitsPerFloor:1,coverage:1,footprintMode:'parcel'},parcel);
+  assert.equal(model.features[0].geometry.type,'MultiPolygon');
+  assert.ok(Math.abs(parcelArea(model.features[0])-parcelArea(parcel))<.01);
+  normalizeParcels(model.features[0]);
+});
+
 test('validates config ranges and hard unit cap', () => {
   const valid = {id:'x', floors:1, floorHeight:3, unitsPerFloor:1, coverage:0.5};
   for (const [change, pattern] of [

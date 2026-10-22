@@ -43,6 +43,7 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     assert.match(el('parcel-info').textContent,/基地估算面積/);
     el('custom-building-form').onsubmit({preventDefault(){}});
     assert.match(el('building-result').textContent,/8 層／32 戶/);
+    assert.match(el('building-result').textContent,/單層樓板/);
     assert.equal(catalog.length,1);assert.equal(catalog[0].type,'自訂建築');assert.equal(catalog[0].units,32);
     const housing=()=>sources.get('studio-housing').data.features;
     assert.equal(housing().length,32);assert.equal(map.camera.pitch,60);
@@ -63,17 +64,38 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     const id=third.properties.unitId;
     el('building-floor-filter').value='-1';el('building-floor-filter').onchange();
     assert.equal(housing().length,1);assert.equal(housing()[0].properties.usage,'basement');assert.equal(housing()[0].properties.displayBase,0);
-    el('save-custom-buildings').onclick();el('delete-custom-building').onclick();assert.equal(housing().length,0);
+    el('save-custom-buildings').onclick();
+    const savedBeforeDelete=[...storage.values()][0];
+    el('delete-custom-building').onclick();assert.equal(housing().length,0);
+    assert.equal(JSON.parse([...storage.values()][0]).buildings.length,0);
+    el('restore-custom-buildings').onclick();assert.equal(catalog.length,0);
+    // Explicit JSON import restores the fixture; ordinary reload no longer restores a deleted building.
+    await el('import-custom-buildings').onchange({target:{files:[{size:savedBeforeDelete.length,text:async()=>savedBeforeDelete}],value:''}});
+    el('save-custom-buildings').onclick();
     el('restore-custom-buildings').onclick();el('building-floor-filter').value='above';el('building-floor-filter').onchange();
     assert.ok(housing().some(f=>f.properties.unitId===id));
     editor.setBuildingVisible(catalog[0].id,false);assert.equal(housing().length,0);
+    assert.equal(editor.focusOnMap(catalog[0].id),false);
     editor.focusBuilding(catalog[0].id);assert.equal(housing().length,32);
+    const activeBefore=el('saved-building-select').value;
+    assert.equal(editor.focusOnMap(catalog[0].id),true);
+    assert.equal(el('saved-building-select').value,activeBefore);
     sources.clear();layers.clear();catalog=[];editor=mountCustomBuildings(dependencies);
     assert.equal(catalog.length,1);assert.ok(housing().some(f=>f.properties.unitId===id));
     editor.startNew();assert.equal(el('saved-building-select').value,'');assert.equal(catalog.length,1);
     assert.match(el('building-result').textContent,/新增模式/);
     el('demo-parcel').onclick();el('custom-building-form').onsubmit({preventDefault(){}});
     assert.equal(catalog.length,2);assert.notEqual(catalog[0].id,catalog[1].id);
+    el('save-custom-buildings').onclick();
+    const retainedId=catalog[0].id,deletedId=catalog[1].id;
+    editor.focusBuilding(retainedId);el('building-name').value='尚未儲存的修改';el('custom-building-form').onsubmit({preventDefault(){}});
+    editor.focusBuilding(deletedId);
+    const normalSave=localStorage.setItem;localStorage.setItem=()=>{throw new Error('storage denied');};
+    el('delete-custom-building').onclick();assert.equal(catalog.length,2);
+    localStorage.setItem=normalSave;el('delete-custom-building').onclick();assert.equal(catalog.length,1);
+    const persisted=JSON.parse([...storage.values()][0]);
+    assert.equal(persisted.buildings.length,1);assert.equal(persisted.buildings[0].config.id,retainedId);
+    assert.notEqual(persisted.buildings[0].config.name,'尚未儲存的修改');
     el('draw-parcel').onclick();assert.equal(el('drawing-measurement').hidden,false);
     editor.onMapClick({lngLat:{lng:121.53,lat:25.04}});
     assert.equal(sources.get('studio-drawing').data.features.filter(f=>f.geometry.type==='Point').length,1);
@@ -95,6 +117,9 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     el('finish-parcel').onclick();assert.equal(el('drawing-measurement').hidden,true);
     assert.match(el('parcel-info').textContent,/^手繪區域面積：[\d.]+ m²$/);
     assert.equal(sources.get('studio-drawing').data.features.length,0);
+    sources.clear();layers.clear();catalog=[];editor=mountCustomBuildings(dependencies);
+    assert.equal(catalog.length,1);assert.equal(catalog[0].id,retainedId);
+    assert.equal(catalog.some(b=>b.id===deletedId),false);
     assert.equal(messages.some(message=>/錯誤|無效/.test(message)),false);
   }finally{for(const key of globals)if(previous[key]===undefined)delete globalThis[key];else globalThis[key]=previous[key];}
 });

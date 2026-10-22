@@ -6,6 +6,8 @@ import {BIM_SOURCES, loadBimSource, applyBimSourceVisibility, verifyAttributePac
 import {createBasemapStyle, applyBasemapVisibility, BUILDING_LAYER_ID} from './map-basemaps.js';
 import {mountCustomBuildings} from './custom-buildings.js';
 import {mountSidebarTabs} from './sidebar-tabs.js';
+import {bindCardMapFocus} from './card-map-focus.js';
+import {applyCameraMode} from './map-camera-mode.js';
 
 const $ = id => document.getElementById(id);
 const nativeModel = new URLSearchParams(location.search).get('model') === 'native';
@@ -22,15 +24,16 @@ function renderCustomCatalog(items){
   customCatalog=items;const host=$('custom-building-layers');host.replaceChildren();
   for(const item of items){
     const card=document.createElement('section');card.className='model-card custom-building-card';
+    bindCardMapFocus(card,()=>customEditor?.focusOnMap(item.id));
     const top=document.createElement('div');top.className='card-top';
     const icon=document.createElement('span');icon.className='cube-icon';icon.textContent='⌂';
     const heading=document.createElement('div'),name=document.createElement('h3'),type=document.createElement('p');
     name.textContent=item.name;type.textContent='自訂建築';heading.append(name,type);
-    const toggle=document.createElement('button');toggle.type='button';toggle.className='card-collapse';toggle.setAttribute('aria-expanded','true');toggle.setAttribute('aria-label',`收折${item.name}資料卡`);
+    const toggle=document.createElement('button');toggle.type='button';toggle.className='card-collapse';toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label',`展開${item.name}資料卡`);
     top.append(icon,heading,toggle);
     const label=document.createElement('label');label.className='check-label';const check=document.createElement('input');check.type='checkbox';check.checked=item.visible;label.append(check,document.createTextNode('顯示於地圖'));
     check.onchange=()=>customEditor?.setBuildingVisible(item.id,check.checked);
-    const body=document.createElement('div');body.className='card-body';const summary=document.createElement('p');summary.className='custom-building-summary';summary.textContent=`${item.floors} 層 · ${item.units} 戶 · 示意配置`;
+    const body=document.createElement('div');body.className='card-body';body.hidden=true;const summary=document.createElement('p');summary.className='custom-building-summary';summary.textContent=`${item.floors} 層 · ${item.units} 戶 · 示意配置`;
     const actions=document.createElement('div');actions.className='custom-building-actions';
     const view=document.createElement('button');view.className='button primary';view.textContent='檢視模型';view.onclick=()=>customEditor?.focusBuilding(item.id);
     const edit=document.createElement('button');edit.className='button secondary';edit.textContent='編輯';edit.onclick=()=>{$('tab-custom-building').click();customEditor?.focusBuilding(item.id);};
@@ -46,13 +49,14 @@ let vectorStyle=null, basemapFailure=false;
 try {const response=await fetch('./map-styles/openfreemap-liberty.json');if(!response.ok)throw new Error('style unavailable');vectorStyle=await response.json();}catch{toast('向量樣式無法載入，先使用街道圖。');$('basemap').value='street';$('basemap').querySelector('[value="vector"]').disabled=true;}
 const basemapConfig=createBasemapStyle(vectorStyle);
 const map=new maplibregl.Map({container:'map',style:basemapConfig.style,...home,maxPitch:80,canvasContextAttributes:{antialias:true},attributionControl:{compact:true}});
+applyCameraMode(map,mode);
 map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
 map.on('style.load',()=>{$('basemap').disabled=false;syncBasemap();});
 map.on('load',()=>map.resize());
 map.on('error',e=>{const message=e.error?.message||'';if(e.sourceId==='street'||basemapConfig.vectorSourceIds.includes(e.sourceId)||message.includes('tiles.openfreemap.org')){basemapFailure=true;$('network-status').textContent='底圖連線異常，可切換其他底圖';}else{console.error(e.error);toast('圖層載入遇到問題，請檢查資料與瀏覽器 WebGL 支援。');}});
 map.on('mousemove',e=>{$('cursor-coordinate').textContent=`${e.lngLat.lng.toFixed(5)}° E / ${e.lngLat.lat.toFixed(5)}° N`;});
 map.on('move',()=>{$('camera-state').textContent=`縮放 ${map.getZoom().toFixed(1)} · 傾角 ${map.getPitch().toFixed(0)}°`;});
-function setMode(next){mode=next;for(const m of ['2d','3d']){$(`mode-${m}`).classList.toggle('active',m===mode);$(`mode-${m}`).setAttribute('aria-pressed',String(m===mode));}map.easeTo({pitch:mode==='3d'?60:0,bearing:mode==='3d'?map.getBearing():0,duration:650});$('view-subtitle').textContent=mode==='3d'?'立體視角 · 拖曳旋轉檢視':'平面視角';if(customLayer)map.setLayoutProperty('bim-preview','visibility',mode==='3d'&&$('show-model').checked?'visible':'none');updateGeojsonMode();syncBasemap();customEditor?.setMode(mode);}
+function setMode(next){mode=next;applyCameraMode(map,mode);for(const m of ['2d','3d']){$(`mode-${m}`).classList.toggle('active',m===mode);$(`mode-${m}`).setAttribute('aria-pressed',String(m===mode));}map.easeTo({pitch:mode==='3d'?60:0,bearing:mode==='3d'?map.getBearing():0,duration:650});$('view-subtitle').textContent=mode==='3d'?'立體視角 · 拖曳旋轉檢視':'平面視角';if(customLayer)map.setLayoutProperty('bim-preview','visibility',mode==='3d'&&$('show-model').checked?'visible':'none');updateGeojsonMode();syncBasemap();customEditor?.setMode(mode);}
 $('mode-2d').onclick=()=>setMode('2d');$('mode-3d').onclick=()=>setMode('3d');
 $('home').onclick=()=>{map.flyTo({...home,pitch:mode==='3d'?60:0});};
 function updateBuildingHint(){
@@ -106,6 +110,13 @@ for(const button of document.querySelectorAll('.card-collapse'))button.onclick=(
   button.setAttribute('aria-label',button.getAttribute('aria-label').replace(expanded?'展開':'收折',expanded?'收折':'展開'));
 
 };
+for(const [selector,key]of [['#panel-data>.model-card:not(.native-card)','open'],['#panel-data>.native-card','native']]){
+  bindCardMapFocus(document.querySelector(selector),()=>{
+    if(!placement||!map.getLayer('bim-preview')){toast('此模型尚未在地圖上指定位置。');return;}
+    if(!bimSources[key].visible||!$('show-model').checked){toast('此模型目前未顯示於地圖。');return;}
+    setMode('3d');map.flyTo({center:[placement.lon,placement.lat],zoom:18,pitch:60,bearing:map.getBearing(),duration:800});
+  });
+}
 customEditor=mountCustomBuildings({map,setMode,getMode:()=>mode,showProperties,toast,cancelBimPicking:cancelPicking,onCatalogChange:renderCustomCatalog});
 mountSidebarTabs({buttons:[...document.querySelectorAll('.function-tab')],getPanel:$,sidebar:document.querySelector('.sidebar'),title:$('sidebar-title'),onSelect:button=>{cancelPicking();if(button.id==='tab-custom-building')customEditor?.startNew();if(button.id!=='tab-custom-building')$('close-building-editor').click();if(matchMedia('(max-width:650px)').matches){document.body.classList.add('sidebar-open');$('toggle-sidebar').setAttribute('aria-expanded','true');}}});
 if(nativeModel) await selectBimSource('native');

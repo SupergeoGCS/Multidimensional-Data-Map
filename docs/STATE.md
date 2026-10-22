@@ -19,6 +19,13 @@ MapLibre GL JS 三維模式展示 RVT 建築與結構。先 STR，再 AR，MEP�
 | 精確地理套合與效能驗收 | pending | 手動暫放僅為預覽；真實位置、測量誤差、目標硬體幀率／記憶體未量測；不把站台可用等同正式 BIM 驗收 |
 
 ## 已完成
+- 2026-10-22 第二版快照：占地輪廓樓板／分戶、資料卡定位、2D 鎖定、預設收折與刪除持久化。31 Node＋12 Python 共 43 項通過；提交 hash 以 git log -1 為準，歷程中的未提交字樣指當時狀態。
+- 自訂建築刪除即同步移除本機存檔的指定 ID，重整不再復活；失敗則保留模型並提示，不自動儲存其他草稿。整合測試通過，main 未提交。
+- 全部資料卡預設收折，保留名稱與顯示開關，箭頭可展開詳情；語法與靜態核對通過。main 未提交。
+- 2D 鎖正北／零傾角，停用滑鼠／觸控／鍵盤旋轉與傾斜，保留平移縮放；3D 恢復。模式測試通過，最新畫面待確認；main 未提交。
+- 資料卡「顯示於地圖」點擊區縮為 checkbox＋文字的實際寬度，不再佔滿整列；CSS 已檢查，main 未提交。
+- 資料卡點擊／鍵盤可定位到已放置且可見的 BIM 或自訂模型；內部控制項操作排除，未放置或隱藏時只提示。2 項相關測試通過；main 未提交。
+- 自訂建物新模式沿用占地輪廓（凹角／洞／MultiPolygon），分戶面積守恆並顯示各層／地上與地下合計。占地唯讀、方向僅改分戶。舊模型需編輯重新產生才套用。29 Node 通過；最新外觀待確認，e47d5cd 之後 main 未提交。
 - 2026-10-22 使用者要求提交目前版本快照：圖台／自訂建築／雙 BIM 與屬性流程及文件。提交前 27 Node＋12 Python 共 39 項通過，diff --check 通過。最新高亮畫面與正式幾何驗收仍待確認；本次提交 hash 以 git log -1 為準，先前各條「未提交」為當時歷程。
 - 高亮未呈現已補 source promoteId:'unitId'，統一文字住宅 ID 與 feature-state 的對接。測試新增來源 ID 查核並通過；最新 WebGL 效果待重整確認，若仍異常先查實際 rendered ID／state。main 未提交。
 - 自訂建築支援 hover 樓層／住宅戶高亮、點擊持續選取（金色）；點空白、關閉屬性或 Escape 可取消。整合測試／JS 語法通過；最新畫面待使用者確認，main 未提交。
@@ -77,6 +84,8 @@ MapLibre GL JS 三維模式展示 RVT 建築與結構。先 STR，再 AR，MEP�
 3. 屬性包與抽點顯示已完成；新增 IFC 時依 skill references/attributes.md 執行 package_ifc.py。後續填入定位契約、驗證更多代表構件及效能；現有 MapLibre 預覽不代表正式地理驗收。
 
 ## 工作樹與接續
+GitHub 上版／更新由專用對話管理；使用者指定儲存庫 https://github.com/SupergeoGCS/Multidimensional-Data-Map.git，帳號 ben771024。尚未驗證登入或推送；未提交修改保留。憑證不得寫入專案文件或 Git URL。
+
 主資料目錄：`C:/Users/benhs/OneDrive/文件/三維圖台/references/A18-1`。
 開發工作樹：`C:/Users/benhs/.codex/worktrees/bim-preprocess/三維圖台`，分支 `codex/bim-preprocess`，已附加於本聊天；主工作區維持 main。
 使用者 skill 已安裝於 `C:/Users/benhs/.codex/skills/bim-maplibre-preprocess`，repository 的 skills/ 是版本來源。新對話可用 `$bim-maplibre-preprocess`；是否立即出現在目前對話的 skill 清單取決於 app 重新載入，亦可直接讀專案內 SKILL.md。

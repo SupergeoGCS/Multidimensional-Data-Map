@@ -22,17 +22,17 @@
     <section id="panel-data" class="sidebar-block data-panel" role="tabpanel" aria-labelledby="tab-data"><h3 id="data-heading" class="block-heading"><span class="block-number" aria-hidden="true">01</span>資料</h3>
 
     <div class="panel-label">資料圖層 <span id="layer-count" class="count-badge" aria-live="polite">2項</span></div>
-    <section class="model-card"><div class="card-top"><span class="cube-icon">⬡</span><div><h3 id="model-name">開源方案 · STR</h3><p id="model-subtitle">rvt-rs 0.6.0 → GLB</p></div><button class="card-collapse" type="button" aria-expanded="true" aria-controls="open-card-body" aria-label="收折開源方案資料卡"></button></div>
+    <section class="model-card"><div class="card-top"><span class="cube-icon">⬡</span><div><h3 id="model-name">開源方案 · STR</h3><p id="model-subtitle">rvt-rs 0.6.0 → GLB</p></div><button class="card-collapse" type="button" aria-expanded="false" aria-controls="open-card-body" aria-label="展開開源方案資料卡"></button></div>
       <label class="check-label"><input id="show-open-bim" type="checkbox" checked>顯示於地圖</label>
-      <div id="open-card-body" class="card-body"><img class="model-thumbnail" src="/assets/preview.png" alt="STR 結構模型概略預覽">
+      <div id="open-card-body" class="card-body" hidden><img class="model-thumbnail" src="/assets/preview.png" alt="STR 結構模型概略預覽">
       <div class="model-metrics"><div><strong id="mesh-count">8,373</strong><span id="mesh-label">構件</span></div><div><strong id="storey-count">16</strong><span>來源樓層</span></div><div><strong id="model-size">5.27</strong><span>MB</span></div></div>
       <button id="preview-model" class="button primary full">檢視模型 <span>↗</span></button>
       <div class="quality-note"><span>△</span><p id="quality-note">概略模型 · 約 71.2% 為包圍盒近似<br><span>用於檢視，不作精確量測依據。</span></p></div>
     </div></section>
     <section class="model-card native-card">
-      <div class="card-top"><span class="cube-icon">⬡</span><div><h3>Revit IFC 方案 · STR</h3><p>Revit → IFC4 → GLB · 內部原點</p></div><button class="card-collapse" type="button" aria-expanded="true" aria-controls="native-card-body" aria-label="收折 Revit IFC 方案資料卡"></button></div>
+      <div class="card-top"><span class="cube-icon">⬡</span><div><h3>Revit IFC 方案 · STR</h3><p>Revit → IFC4 → GLB · 內部原點</p></div><button class="card-collapse" type="button" aria-expanded="false" aria-controls="native-card-body" aria-label="展開 Revit IFC 方案資料卡"></button></div>
       <label class="check-label"><input id="show-native-bim" type="checkbox" checked>顯示於地圖</label>
-      <div id="native-card-body" class="card-body"><div class="model-metrics"><div><strong>8,243</strong><span>幾何節點</span></div><div><strong>16</strong><span>來源樓層</span></div><div><strong>15.66</strong><span>MB</span></div></div>
+      <div id="native-card-body" class="card-body" hidden><div class="model-metrics"><div><strong>8,243</strong><span>幾何節點</span></div><div><strong>16</strong><span>來源樓層</span></div><div><strong>15.66</strong><span>MB</span></div></div>
       <button id="preview-native" class="button primary full">檢視模型 <span>↗</span></button>
       <div class="quality-note"><span>△</span><p>原生幾何候選 · 地理定位未驗證<br><span>保留轉換品質紀錄。</span></p></div>
     </div></section>
@@ -50,8 +50,8 @@
       </section>
       <form id="custom-building-form"><section><h3>02 建築量體</h3>
         <label>建築名稱<input id="building-name" value="自訂住宅" maxlength="60" required></label>
-        <div class="form-pair"><label>目標占地（m²）<input id="building-area" type="number" min="10" max="100000" step="any" value="300" required></label><label>方向（度）<input id="building-rotation" type="number" min="-180" max="180" value="0" required></label></div>
-        <p class="muted compact">在選取宗地內配置矩形建築；不規則基地可能縮小占地，以實際產生面積為準。</p>
+        <div class="form-pair"><label>占地面積（m²）<input id="building-area" readonly type="number" min="10" max="100000" step="any" value="300" required></label><label>分戶方向（度）<input id="building-rotation" type="number" min="-180" max="180" value="0" required></label></div>
+        <p class="muted compact">建築樓板沿用占地輪廓，保留凹角與孔洞；面積為估算值，未扣公共空間與牆體。</p>
         <div class="form-pair"><label>地上樓層<input id="building-floors" type="number" min="1" max="100" value="8" required></label><label>標準層高（m）<input id="building-floor-height" type="number" min="2" max="10" step="0.1" value="3.2" required></label></div>
         <div class="form-pair"><label>地下樓層<input id="building-basements" type="number" min="0" max="10" value="2" required></label><label>地下層高（m）<input id="building-basement-height" type="number" min="2" max="10" step="0.1" value="3.5" required></label></div>
       </section><section><h3>03 住宅配置</h3><div class="form-pair"><label>每層戶數<input id="building-units" type="number" min="1" max="20" value="4" required></label><label>配置方式<select id="building-layout"><option value="double">雙排配置</option><option value="single">單排配置</option></select></label></div><p class="muted compact">地上各層依相同戶數配置；地下室整層呈現，不分配住宅。住宅 ID 隨建築、樓層與戶序固定。</p><button class="button primary full" type="submit">產生／更新三維建築</button><p id="building-result" role="status" class="studio-note">選定基地後即可預覽。</p></section></form>
