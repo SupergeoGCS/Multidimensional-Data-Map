@@ -156,10 +156,12 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     for(const b of buildings.filter(b=>b.visible!==false))for(const f of b.generated.features){
       const filter=floorFilterFor(b.config.id);
       const p=f.properties;if(!['Polygon','MultiPolygon'].includes(f.geometry.type))continue;
+      if(p.usage==='common')continue;
       if(filter==='above'?p.underground:Number(filter)!==p.floor)continue;
       const base=p.underground?0:p.base,height=p.underground?b.config.basementHeight:p.base+p.height;
       const separated=filter==='above'&&!p.underground&&p.floor<b.config.floors;
-      features.push({...f,id:p.unitId,properties:{...p,buildingName:b.config.name,color:p.usage==='common'?'#d6dce1':'#f5f5f3',displayBase:base,displayHeight:height,wallHeight:separated?height-.05:height}});
+      const commonArea=p.underground?0:(b.generated.metadata.commonAreaPerFloor||0)/b.config.unitsPerFloor;
+      features.push({...f,id:p.unitId,properties:{...p,buildingName:b.config.name,common_area_ratio:p.underground?0:(b.generated.metadata.commonAreaRatio||0),allocated_common_area_m2:commonArea,gross_area_m2:p.area_m2+commonArea,color:'#f5f5f3',displayBase:base,displayHeight:height,wallHeight:separated?height-.05:height}});
       const floorId=`${b.config.id}:${p.floor}`;
       if(!labels.has(floorId)){
         const footprint=b.generated.metadata.footprint;
@@ -169,7 +171,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
       }
       // Representative point is a location within the generated rectangular unit, not an entrance.
       const outer=f.geometry.type==='MultiPolygon'?f.geometry.coordinates[0][0]:f.geometry.coordinates[0],ring=outer.slice(0,-1),center=p.representative_point||[0,1].map(axis=>ring.reduce((sum,c)=>sum+c[axis],0)/ring.length);
-      if(filter!=='above'||getMode()==='2d')points.push({type:'Feature',geometry:{type:'Point',coordinates:center},properties:{...p,buildingName:b.config.name}});
+      if(filter!=='above'||getMode()==='2d')points.push({type:'Feature',geometry:{type:'Point',coordinates:center},properties:{...features.at(-1).properties}});
     }
     source('studio-housing',{type:'FeatureCollection',features});source('studio-points',{type:'FeatureCollection',features:points});
     renderedHousing=features;highlightStates.clear();syncHighlights();
@@ -186,7 +188,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     if(filter!=='above'&&Number(filter)<0)$('building-result').textContent=`目前為 B${Math.abs(Number(filter))} 抬升示意檢視，非真實地表高程。`;
     else {const active=buildings.find(b=>b.config.id===activeId);if(active)$('building-result').textContent=resultText(active);}
   }
-  function resultText(b){const m=b.generated.metadata||{};const polygon=b.generated.features.find(f=>!f.properties.underground);const area=m.footprintArea??(polygon?parcelArea(polygon)*b.config.unitsPerFloor:0);const summary=`${b.config.name} · ${b.config.floors} 層／${b.config.floors*b.config.unitsPerFloor} 戶 · 地下 ${b.config.basementFloors} 層。`;return m.footprintMode==='parcel'?`${summary} 單層樓板約 ${area.toFixed(1)} m²；地上合計 ${m.aboveGroundFloorArea.toFixed(1)} m²；地下合計 ${m.basementFloorArea.toFixed(1)} m²。每層中央公設 ${(m.commonAreaPerFloor||0).toFixed(1)} m²（${((m.commonAreaRatio||0)*100).toFixed(1)}%）；扣除後每戶約 ${((m.residentialAreaPerFloor??area)/b.config.unitsPerFloor).toFixed(1)} m²。未扣牆體，分戶為示意。`:`${summary} 原矩形模型占地約 ${Number(area).toFixed(1)} m²；重新產生後改依占地輪廓。`;}
+  function resultText(b){const m=b.generated.metadata||{};const polygon=b.generated.features.find(f=>!f.properties.underground);const area=m.footprintArea??(polygon?parcelArea(polygon)*b.config.unitsPerFloor:0);const summary=`${b.config.name} · ${b.config.floors} 層／${b.config.floors*b.config.unitsPerFloor} 戶 · 地下 ${b.config.basementFloors} 層。`;return m.footprintMode==='parcel'?`${summary} 單層樓板約 ${area.toFixed(1)} m²；地上合計 ${m.aboveGroundFloorArea.toFixed(1)} m²；地下合計 ${m.basementFloorArea.toFixed(1)} m²。每層公設（區塊暫不顯示） ${(m.commonAreaPerFloor||0).toFixed(1)} m²（${((m.commonAreaRatio||0)*100).toFixed(1)}%）；扣除後每戶約 ${((m.residentialAreaPerFloor??area)/b.config.unitsPerFloor).toFixed(1)} m²。未扣牆體，分戶為示意。`:`${summary} 原矩形模型占地約 ${Number(area).toFixed(1)} m²；重新產生後改依占地輪廓。`;}
   function open(){ $('building-editor').hidden=false;if($('model-dialog').open)$('model-dialog').close();cancelBimPicking(); }
   function positionDrawingLabel(){
     const label=$('drawing-measurement');
@@ -293,7 +295,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
       selectedHousing=hit.properties;floorSwitcherBuildingId=hit.properties.buildingId;
       if(switched)render();else syncHighlights();
     }else clearHousingSelection();
-    if(hit.properties.unitId){const p=hit.properties;showProperties(`${p.buildingName} · ${p.label||p.unitId}`,{'類型':'自訂建築','區域用途':p.usage==='common'?'中央公共設施':p.underground?'地下室':'住宅','樓層':p.floor<0?`B${-p.floor}`:`${p.floor}F`,[p.usage==='common'?'區域名稱':'戶號']:p.label||p.unitId,[p.usage==='common'?'區域 ID':'住宅 ID']:p.unitId,'配置狀態':'自動配置示意','樓板分區面積（m²）':Number(p.area_m2).toFixed(1),'該層樓板面積（m²）':p.floor_area_m2?Number(p.floor_area_m2).toFixed(1):'未提供','地下室':p.underground?'是（抬升示意檢視）':'否'});return true;}
+    if(hit.properties.unitId){const p=hit.properties;showProperties(`${p.buildingName} · ${p.label||p.unitId}`,{'類型':'自訂建築','區域用途':p.underground?'地下室':'住宅','樓層':p.floor<0?`B${-p.floor}`:`${p.floor}F`,'戶號':p.label||p.unitId,'住宅 ID':p.unitId,'配置狀態':'自動配置示意',...(p.underground?{'樓板分區面積（m²）':Number(p.area_m2).toFixed(1)}:{'公設比例（%）':(Number(p.common_area_ratio)*100).toFixed(1),'每戶分配面積（含公設，m²）':Number(p.gross_area_m2).toFixed(1),'分攤公設面積（扣除，m²）':Number(p.allocated_common_area_m2).toFixed(1),'扣除公設後面積（m²）':Number(p.area_m2).toFixed(1)}),'該層樓板面積（m²）':p.floor_area_m2?Number(p.floor_area_m2).toFixed(1):'未提供','地下室':p.underground?'是（抬升示意檢視）':'否'});return true;}
     if(!$('building-editor').hidden&&hit.properties.studioIndex!==undefined){$('parcel-select').value=String(hit.properties.studioIndex);selectParcel(false);return true;}return false;
   }};
 }
