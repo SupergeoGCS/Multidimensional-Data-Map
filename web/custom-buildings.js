@@ -4,6 +4,8 @@ import {createBuildingFloorLabels} from './building-floor-labels.js';
 import {createBuildingSelectionOverlay} from './building-selection-overlay.js';
 import {createBuildingFloorSwitcher} from './building-floor-switcher.js';
 import {relocateLegacyDemoBuildings} from './demo-buildings.js';
+import {entranceBearingFor,facingPreset,facingArrow,validateBearing} from './building-facing.js';
+import {createBuildingFacingOverlay} from './building-facing-overlay.js';
 
 const empty=()=>({type:'FeatureCollection',features:[]});
 const KEY='spatial-workspace-custom-buildings-v1';
@@ -16,6 +18,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
   let panelActive=false;
   let floorLabels=null;
   let selectionOverlay=null;
+  let facingOverlay=null;
   let floorSwitcherBuildingId=null;
   const buildingFloorFilters=new Map();
   const highlightStates=new Map();
@@ -57,11 +60,13 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     map.addLayer({id:'studio-floor-bands',type:'fill-extrusion',source:'studio-floor-bands',paint:{'fill-extrusion-color':'#8f969c','fill-extrusion-vertical-gradient':false,'fill-extrusion-base':['get','base'],'fill-extrusion-height':['get','height'],'fill-extrusion-opacity':0.75}});
     map.addLayer({id:ids[4],type:'circle',source:'studio-points',layout:{visibility:'none'},paint:{'circle-radius':4,'circle-color':'#143e52','circle-stroke-color':'white','circle-stroke-width':1},minzoom:17});
     map.addSource('studio-drawing',{type:'geojson',data:empty()});
+    map.addSource('studio-facing',{type:'geojson',data:empty()});
     map.addLayer({id:'studio-drawing-fill',type:'fill',source:'studio-drawing',filter:['==',['geometry-type'],'Polygon'],paint:{'fill-color':'#ed9b35','fill-opacity':.12}});
     map.addLayer({id:'studio-drawing-line',type:'line',source:'studio-drawing',filter:['!=',['geometry-type'],'Point'],paint:{'line-color':'#b66b13','line-width':2.5,'line-dasharray':[3,2]}});
     map.addLayer({id:'studio-drawing-vertices',type:'circle',source:'studio-drawing',filter:['==',['geometry-type'],'Point'],paint:{'circle-radius':['case',['==',['get','index'],1],7,5.5],'circle-color':['case',['==',['get','index'],1],'#b66b13','#fffaf2'],'circle-stroke-color':'#b66b13','circle-stroke-width':2}});
     floorLabels=createBuildingFloorLabels(map,$('building-floor-labels'));
     selectionOverlay=createBuildingSelectionOverlay(map);
+    facingOverlay=createBuildingFacingOverlay(map);
     render();
     syncParcelVisibility();
     let saved=null;
@@ -91,14 +96,28 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     }
   }
   function setParcels(data,name,crs){requireMap();const next=normalizeParcels(data);if(drawPoints)cancelDraw();parcels=next.features||next;selected=0;sourceName=name;sourceCrs=crs;refreshParcelOptions();fit(parcels);}
+  function syncFacingInput(){
+    const preset=$('building-facing').value;
+    $('building-rotation').readOnly=preset!=='custom';
+    $('building-rotation').disabled=preset!=='custom';
+    if(preset!=='custom')$('building-rotation').value=preset||'0';
+  }
+  $('building-facing').onchange=syncFacingInput;
+  syncFacingInput();
   function formConfig(){
     if(!activeId&&buildings.length>=50)throw new Error('第一版最多建立 50 棟建築，請先移除或另存既有資料。');
     const siteArea=selectedParcel()?parcelArea(selectedParcel()):0,area=siteArea;
     if(!Number.isFinite(area)||area<10||area>siteArea)throw new Error('目標占地須介於 10 m² 與基地面積之間。');
-    return {id:activeId||crypto.randomUUID(),name:$('building-name').value.trim()||'自訂住宅',floors:Number($('building-floors').value),floorHeight:Number($('building-floor-height').value),unitsPerFloor:Number($('building-units').value),basementFloors:Number($('building-basements').value),basementHeight:Number($('building-basement-height').value),rotation:Number($('building-rotation').value),layout:$('building-layout').value,commonAreaRatio:Number($('building-common-ratio').value)/100,coverage:1,targetArea:area,footprintMode:'parcel'};
+    return {id:activeId||crypto.randomUUID(),name:$('building-name').value.trim()||'自訂住宅',floors:Number($('building-floors').value),floorHeight:Number($('building-floor-height').value),unitsPerFloor:Number($('building-units').value),basementFloors:Number($('building-basements').value),basementHeight:Number($('building-basement-height').value),rotation:-validateBearing(Number($('building-rotation').value)),entranceBearing:validateBearing(Number($('building-rotation').value)),layout:$('building-layout').value,commonAreaRatio:Number($('building-common-ratio').value)/100,coverage:1,targetArea:area,footprintMode:'parcel'};
   }
   function refreshBuildings(){const select=$('saved-building-select');select.replaceChildren();buildings.forEach(b=>select.add(new Option(b.config.name,b.config.id)));if(!buildings.length)select.add(new Option('尚無建築',''));select.value=activeId||'';onCatalogChange(buildings.map(b=>({id:b.config.id,name:b.config.name,type:'自訂建築',floors:b.config.floors,units:b.config.floors*b.config.unitsPerFloor,visible:b.visible!==false})));}
   function floorOptions(){const filter=$('building-floor-filter'),old=filter.value;filter.replaceChildren(new Option('全部地上樓層','above'));const floors=Math.max(0,...buildings.map(b=>b.config.floors)),basements=Math.max(0,...buildings.map(b=>b.config.basementFloors));for(let f=floors;f>=1;f--)filter.add(new Option(`${f}樓`,String(f)));for(let f=1;f<=basements;f++)filter.add(new Option(`地下${f}樓 · 抬升示意`,String(-f)));filter.value=[...filter.options].some(o=>o.value===old)?old:'above';}
+  function syncFacingOverlay(){
+    const building=buildings.find(b=>b.config.id===selectedHousing?.buildingId&&b.visible!==false);
+    const show=building&&$('custom-building-visible').checked&&renderedHousing.some(f=>f.properties.buildingId===building.config.id);
+    const features=show?facingArrow(building.generated.metadata.footprint,entranceBearingFor(building.config),building.config.id).map(f=>({...f,properties:{...f.properties,altitude:0}})):[];
+    source('studio-facing',{type:'FeatureCollection',features});facingOverlay?.update(features);
+  }
   function syncHighlights(){
     const available=new Set(renderedHousing.map(f=>f.properties.unitId));
     if(hoveredHousing&&!available.has(hoveredHousing.unitId))hoveredHousing=null;
@@ -123,6 +142,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     const envelopes=getMode()==='3d'&&$('custom-building-visible').checked
       ?buildings.filter(b=>b.visible!==false&&floorFilterFor(b.config.id)!=='above').map(b=>({geometry:b.generated.metadata.footprint,height:b.config.floors*b.config.floorHeight})):[];
     selectionOverlay?.update(overlay,envelopes);
+    syncFacingOverlay();
     syncFloorSwitcher();
   }
   function hoverHousing(e){
@@ -161,7 +181,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
       const base=p.underground?0:p.base,height=p.underground?b.config.basementHeight:p.base+p.height;
       const separated=filter==='above'&&!p.underground&&p.floor<b.config.floors;
       const commonArea=p.underground?0:(b.generated.metadata.commonAreaPerFloor||0)/b.config.unitsPerFloor;
-      features.push({...f,id:p.unitId,properties:{...p,buildingName:b.config.name,common_area_ratio:p.underground?0:(b.generated.metadata.commonAreaRatio||0),allocated_common_area_m2:commonArea,gross_area_m2:p.area_m2+commonArea,color:'#f5f5f3',displayBase:base,displayHeight:height,wallHeight:separated?height-.05:height}});
+      features.push({...f,id:p.unitId,properties:{...p,buildingName:b.config.name,entrance_bearing:entranceBearingFor(b.config),common_area_ratio:p.underground?0:(b.generated.metadata.commonAreaRatio||0),allocated_common_area_m2:commonArea,gross_area_m2:p.area_m2+commonArea,color:'#f5f5f3',displayBase:base,displayHeight:height,wallHeight:separated?height-.05:height}});
       const floorId=`${b.config.id}:${p.floor}`;
       if(!labels.has(floorId)){
         const footprint=b.generated.metadata.footprint;
@@ -247,13 +267,13 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
   $('draw-parcel').onclick=()=>{if(drawPoints){cancelDraw();return;}try{requireMap();}catch(e){toast(e.message);return;}cancelBimPicking();editingParcelIndex=canEditParcel()?selected:null;drawPoints=editingParcelIndex===null?[]:structuredClone(selectedParcel().geometry.coordinates[0].slice(0,-1));updateDrawing();syncDrawButton();$('finish-parcel').hidden=false;map.getCanvas().style.cursor='crosshair';setMode('2d');toast(editingParcelIndex===null?'在地圖依序點選基地頂點，完成後按「完成繪製」。':'拖曳圓點調整基地頂點，完成後按「完成編輯」；取消可保留原範圍。');};
   $('finish-parcel').onclick=()=>{try{if(!drawPoints||drawPoints.length<3)throw new Error('至少需要三個頂點。');const coordinates=[...drawPoints,drawPoints[0]];if(editingParcelIndex===null){setParcels({type:'Feature',properties:{name:'手繪基地'},geometry:{type:'Polygon',coordinates:[coordinates]}},'地圖手繪','WGS84 · 人工定義');}else{const parcel=structuredClone(parcels[editingParcelIndex]);parcel.geometry.coordinates[0]=coordinates;const normalized=normalizeParcels(parcel);parcels[editingParcelIndex]=(normalized.features||normalized)[0];}cancelDraw();}catch(e){toast(e.message);}};
   $('custom-building-form').onsubmit=e=>{e.preventDefault();try{requireMap();if(!selectedParcel())throw new Error('請先匯入、繪製或載入示意基地。');const config=formConfig(),parcel=structuredClone(selectedParcel()),generated=generateBuilding(config,parcel);const b={config,parcel,sourceName,sourceCrs,generated},index=buildings.findIndex(x=>x.config.id===config.id);if(index<0)buildings.push(b);else buildings[index]=b;activeId=config.id;refreshBuildings();floorOptions();$('building-floor-filter').value='above';$('building-result').textContent=resultText(b);render();setMode('3d');fit([parcel]);toast('已建立自訂建築，點選住宅可查看樓層與戶號。');}catch(error){toast(error.message);}};
-  function loadActive(){const b=buildings.find(b=>b.config.id===$('saved-building-select').value);if(!b)return;if(drawPoints)cancelDraw();activeId=b.config.id;parcels=[structuredClone(b.parcel)];selected=0;sourceName=b.sourceName;sourceCrs=b.sourceCrs;refreshParcelOptions();const c=b.config;for(const [id,key] of [['building-name','name'],['building-floors','floors'],['building-floor-height','floorHeight'],['building-units','unitsPerFloor'],['building-basements','basementFloors'],['building-basement-height','basementHeight'],['building-rotation','rotation'],['building-layout','layout']])$(id).value=c[key];$('building-area').value=parcelArea(b.parcel).toFixed(1);$('building-common-ratio').value=(c.commonAreaRatio??0)*100;floorOptions();render();$('building-result').textContent=resultText(b);fit([b.parcel]);}
+  function loadActive(){const b=buildings.find(b=>b.config.id===$('saved-building-select').value);if(!b)return;if(drawPoints)cancelDraw();activeId=b.config.id;parcels=[structuredClone(b.parcel)];selected=0;sourceName=b.sourceName;sourceCrs=b.sourceCrs;refreshParcelOptions();const c=b.config;for(const [id,key] of [['building-name','name'],['building-floors','floors'],['building-floor-height','floorHeight'],['building-units','unitsPerFloor'],['building-basements','basementFloors'],['building-basement-height','basementHeight'],['building-layout','layout']])$(id).value=c[key];$('building-rotation').value=entranceBearingFor(c);$('building-facing').value=facingPreset(entranceBearingFor(c));syncFacingInput();$('building-area').value=parcelArea(b.parcel).toFixed(1);$('building-common-ratio').value=(c.commonAreaRatio??0)*100;floorOptions();render();$('building-result').textContent=resultText(b);fit([b.parcel]);}
   $('saved-building-select').onchange=loadActive;
   $('building-floor-filter').onchange=()=>{buildingFloorFilters.clear();render();};$('custom-building-visible').onchange=render;
   function startNew(){
     cancelDraw();activeId=null;parcels=[];selected=-1;sourceName='';sourceCrs='';refreshParcelOptions();
-    const defaults={'building-name':'自訂住宅','building-area':'300','building-rotation':'0','building-floors':'8','building-floor-height':'3.2','building-basements':'0','building-basement-height':'3.5','building-units':'4','building-layout':'double','building-common-ratio':'0','parcel-crs':'auto'};
-    for(const [id,value]of Object.entries(defaults))$(id).value=value;
+    const defaults={'building-name':'自訂住宅','building-area':'300','building-facing':'0','building-rotation':'0','building-floors':'8','building-floor-height':'3.2','building-basements':'0','building-basement-height':'3.5','building-units':'4','building-layout':'double','building-common-ratio':'0','parcel-crs':'auto'};
+    for(const [id,value]of Object.entries(defaults))$(id).value=value;syncFacingInput();
     $('parcel-info').textContent='新增建築：請匯入地籍、繪製基地或載入示意基地。';
     $('building-result').textContent='新增模式：選定基地後產生新建築，不會覆寫既有建築。';
     $('saved-building-select').value='';floorOptions();$('building-floor-filter').value='above';render();
@@ -295,7 +315,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
       selectedHousing=hit.properties;floorSwitcherBuildingId=hit.properties.buildingId;
       if(switched)render();else syncHighlights();
     }else clearHousingSelection();
-    if(hit.properties.unitId){const p=hit.properties;showProperties(`${p.buildingName} · ${p.label||p.unitId}`,{'類型':'自訂建築','區域用途':p.underground?'地下室':'住宅','樓層':p.floor<0?`B${-p.floor}`:`${p.floor}F`,'戶號':p.label||p.unitId,'住宅 ID':p.unitId,'配置狀態':'自動配置示意',...(p.underground?{'樓板分區面積（m²）':Number(p.area_m2).toFixed(1)}:{'公設比例（%）':(Number(p.common_area_ratio)*100).toFixed(1),'每戶分配面積（含公設，m²）':Number(p.gross_area_m2).toFixed(1),'分攤公設面積（扣除，m²）':Number(p.allocated_common_area_m2).toFixed(1),'扣除公設後面積（m²）':Number(p.area_m2).toFixed(1)}),'該層樓板面積（m²）':p.floor_area_m2?Number(p.floor_area_m2).toFixed(1):'未提供','地下室':p.underground?'是（抬升示意檢視）':'否'});return true;}
+    if(hit.properties.unitId){const p=hit.properties;showProperties(`${p.buildingName} · ${p.label||p.unitId}`,{'類型':'自訂建築','區域用途':p.underground?'地下室':'住宅','樓層':p.floor<0?`B${-p.floor}`:`${p.floor}F`,'戶號':p.label||p.unitId,'住宅 ID':p.unitId,'配置狀態':'自動配置示意','大門朝向（度，北為0）':Number(p.entrance_bearing).toFixed(1),...(p.underground?{'樓板分區面積（m²）':Number(p.area_m2).toFixed(1)}:{'公設比例（%）':(Number(p.common_area_ratio)*100).toFixed(1),'每戶分配面積（含公設，m²）':Number(p.gross_area_m2).toFixed(1),'分攤公設面積（扣除，m²）':Number(p.allocated_common_area_m2).toFixed(1),'扣除公設後面積（m²）':Number(p.area_m2).toFixed(1)}),'該層樓板面積（m²）':p.floor_area_m2?Number(p.floor_area_m2).toFixed(1):'未提供','地下室':p.underground?'是（抬升示意檢視）':'否'});return true;}
     if(!$('building-editor').hidden&&hit.properties.studioIndex!==undefined){$('parcel-select').value=String(hit.properties.studioIndex);selectParcel(false);return true;}return false;
   }};
 }

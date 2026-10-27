@@ -136,6 +136,8 @@
 .custom-building-card .cube-icon{display:grid;place-items:center;flex-shrink:0;line-height:1}
 .custom-building-card .cube-icon svg{display:block;width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 #drawing-measurement{color:#8b510e;background:#fffaf2f5;border:1px solid #e7c99f}
+.building-facing-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;overflow:hidden}
+.building-facing-overlay text{font:600 12px "Segoe UI","Microsoft JhengHei",sans-serif;fill:#087c79;stroke:#fff;stroke-width:4px;paint-order:stroke;stroke-linejoin:round}
 .environment-source-info{margin:12px 0 18px;padding:12px;border:1px solid var(--border);border-radius:7px;background:#f5f9fa;font-size:12px;line-height:1.7;color:#526b78}
 .environment-source-info p{margin:0 0 7px}
 .environment-source-info a{color:var(--teal)}

@@ -49,7 +49,10 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     const file={name:'studio-parcel.geojson',size:bytes.length,arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)};
     await el('parcel-input').onchange({target:{files:[file],value:'x'}});
     assert.match(el('parcel-info').textContent,/基地估算面積/);
+    el('building-facing').value='90';el('building-facing').onchange();
+    assert.equal(el('building-rotation').value,'90');assert.equal(el('building-rotation').readOnly,true);
     el('custom-building-form').onsubmit({preventDefault(){}});
+    assert.equal(sources.get('studio-facing').data.features.length,0,'unselected buildings do not show facing arrows');
     assert.match(el('building-result').textContent,/8 層／32 戶/);
     assert.match(el('building-result').textContent,/單層樓板/);
     assert.equal(catalog.length,1);assert.equal(catalog[0].type,'自訂建築');assert.equal(catalog[0].units,32);
@@ -58,17 +61,22 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     const switcher=el('building-floor-switcher');
     assert.equal(switcher.hidden,true,'floor controls wait for a map model click');
     hit=[housing()[0]];editor.onMapClick({point:{}});
+    assert.equal(sources.get('studio-facing').data.features.length,3);
+    assert.equal(sources.get('studio-facing').data.features[0].properties.bearing,90);
+    assert.ok(sources.get('studio-facing').data.features.every(f=>f.properties.altitude===0),'selected arrow stays on the site boundary');
     assert.equal(switcher.hidden,false);
     assert.deepEqual(switcher.options.map(button=>button.textContent),['全部','8','7','6','5','4','3','2','1','B1','B2']);
     switcher.options.find(button=>button.textContent==='7').onclick();
     assert.equal(el('building-floor-filter').value,'above','map floor control must not change the global environment filter');
     assert.equal(housing().length,4);assert.ok(housing().every(f=>f.properties.floor===7));
+    assert.ok(sources.get('studio-facing').data.features.every(f=>f.properties.altitude===0),'floor filtering does not lift the site arrow');
     assert.equal(sources.get('studio-floor-bands').data.features.length,0,'isolated floors must not be covered by the gray separator slab');
     assert.ok(housing().every(f=>f.properties.wallHeight===f.properties.displayHeight),'isolated floors retain their complete white volume');
     assert.equal(switcher.options.find(button=>button.textContent==='7')['aria-pressed'],'true');
     el('building-floor-filter').value='-1';el('building-floor-filter').onchange();
     assert.equal(switcher.options.find(button=>button.textContent==='B1')['aria-pressed'],'true');
     el('custom-building-visible').checked=false;el('custom-building-visible').onchange();assert.equal(switcher.hidden,true);
+    assert.equal(sources.get('studio-facing').data.features.length,0);
     el('custom-building-visible').checked=true;el('custom-building-visible').onchange();
     assert.equal(switcher.hidden,true);
     hit=[housing()[0]];editor.onMapClick({point:{}});
@@ -82,7 +90,7 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     assert.equal(featureStates.get(selectedBeforeClose).selected,true,'closing properties retains the selected unit');
     assert.equal(switcher.hidden,false,'closing properties retains the floor switcher');
     el('feature-panel').hidden=false;
-    hit=[];editor.onMapClick({point:{}});assert.equal(switcher.hidden,true);assert.equal(housing().length,32,'deselect restores all above-ground floors');
+    hit=[];editor.onMapClick({point:{}});assert.equal(sources.get('studio-facing').data.features.length,0,'deselect hides facing arrows');assert.equal(switcher.hidden,true);assert.equal(housing().length,32,'deselect restores all above-ground floors');
     assert.equal(el('feature-panel').hidden,true,'deselect also closes the property panel');
     hit=[housing()[0]];editor.onMapClick({point:{}});assert.equal(switcher.hidden,false);
     assert.equal(switcher.options[0]['aria-pressed'],'true');
@@ -97,6 +105,7 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     assert.equal(bands.length,7);assert.ok(Math.abs(bands[0].properties.height-bands[0].properties.base-.05)<1e-9);
     assert.equal(el('building-floor-labels').hidden,false);
     dependencies.setMode('2d');
+    assert.ok(sources.get('studio-facing').data.features.every(f=>f.properties.altitude===0),'2D facing returns to ground elevation');
     assert.equal(layers.get('studio-footprint-outline').visibility,'visible');
     assert.equal(sources.get('studio-footprints').data.features.length,1);
     assert.equal(layers.get('studio-unit-boundaries').visibility,'visible');
@@ -120,6 +129,7 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     assert.equal(housing().length,1);assert.equal(housing()[0].properties.usage,'basement');assert.equal(housing()[0].properties.displayBase,0);
     el('save-custom-buildings').onclick();
     const savedBeforeDelete=[...storage.values()][0];
+    assert.equal(JSON.parse(savedBeforeDelete).buildings[0].config.entranceBearing,90);
     el('delete-custom-building').onclick();assert.equal(housing().length,0);
     assert.equal(JSON.parse([...storage.values()][0]).buildings.length,0);
     el('restore-custom-buildings').onclick();assert.equal(catalog.length,0);
@@ -140,6 +150,7 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     assert.equal(el('saved-building-select').value,activeBefore);
     sources.clear();layers.clear();catalog=[];editor=mountCustomBuildings(dependencies);
     assert.equal(catalog.length,1);assert.ok(housing().some(f=>f.properties.unitId===id));
+    assert.equal(el('building-facing').value,'90');assert.equal(Number(el('building-rotation').value),90);
     editor.startNew();assert.equal(el('saved-building-select').value,'');assert.equal(catalog.length,1);
     assert.match(el('building-result').textContent,/新增模式/);
     el('demo-parcel').onclick();el('custom-building-form').onsubmit({preventDefault(){}});
@@ -245,6 +256,17 @@ test('editor imports parcel, places floors at cumulative height, picks units and
     assert.equal(picked.properties['公設比例（%）'],'0.0');
     assert.equal(picked.properties['分攤公設面積（扣除，m²）'],'0.0');
     assert.equal(picked.properties['每戶分配面積（含公設，m²）'],picked.properties['扣除公設後面積（m²）']);
+    el('building-facing').value='custom';el('building-facing').onchange();
+    assert.equal(el('building-rotation').readOnly,false);
+    assert.equal(el('building-rotation').disabled,false,'other orientation enables numeric entry');
+    el('building-rotation').value='37';el('custom-building-form').onsubmit({preventDefault(){}});
+    hit=[housing()[0]];editor.onMapClick({point:{}});
+    assert.equal(sources.get('studio-facing').data.features[0].properties.bearing,37);
+    for(const bearing of ['0','180','90','270']){
+      el('building-facing').value=bearing;el('building-facing').onchange();
+      assert.equal(el('building-rotation').disabled,true);
+      assert.equal(el('building-rotation').value,bearing);
+    }
     assert.equal(messages.some(message=>/錯誤|無效/.test(message)),false);
     // A demonstration must preserve an existing local save and never auto-save itself.
     const savedBefore=storage.get('spatial-workspace-custom-buildings-v1');

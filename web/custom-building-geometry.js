@@ -1,3 +1,4 @@
+import {validateBearing} from './building-facing.js';
 const EARTH_RADIUS = 6371008.8;
 const EPS = 1e-12;
 
@@ -219,7 +220,7 @@ export function generateBuilding(config, parcelFeature) {
   if (!(coverage > 0 && coverage <= 1)) fail('coverage 必須大於 0 且不超過 1');
   const ratio = config.ratio === undefined ? 1.5 : finite(config.ratio, 'ratio');
   if (!(ratio > 0)) fail('ratio 必須大於零');
-  const rotation = config.rotation === undefined ? 0 : finite(config.rotation, 'rotation');
+  const rotation = config.entranceBearing===undefined?(config.rotation === undefined ? 0 : finite(config.rotation, 'rotation')):-validateBearing(config.entranceBearing);
   const layout = config.layout ?? (units >= 4 ? 'double' : 'single');
   if (!['single','double','ring'].includes(layout)) fail("layout 必須是 'single'、'double' 或 'ring'");
   const commonRatio=finite(config.commonAreaRatio??0,'commonAreaRatio');
