@@ -57,9 +57,9 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     map.addLayer({id:'studio-floor-bands',type:'fill-extrusion',source:'studio-floor-bands',paint:{'fill-extrusion-color':'#8f969c','fill-extrusion-vertical-gradient':false,'fill-extrusion-base':['get','base'],'fill-extrusion-height':['get','height'],'fill-extrusion-opacity':0.75}});
     map.addLayer({id:ids[4],type:'circle',source:'studio-points',layout:{visibility:'none'},paint:{'circle-radius':4,'circle-color':'#143e52','circle-stroke-color':'white','circle-stroke-width':1},minzoom:17});
     map.addSource('studio-drawing',{type:'geojson',data:empty()});
-    map.addLayer({id:'studio-drawing-fill',type:'fill',source:'studio-drawing',filter:['==',['geometry-type'],'Polygon'],paint:{'fill-color':'#159d8e','fill-opacity':.16}});
-    map.addLayer({id:'studio-drawing-line',type:'line',source:'studio-drawing',filter:['!=',['geometry-type'],'Point'],paint:{'line-color':'#078f84','line-width':2.5}});
-    map.addLayer({id:'studio-drawing-vertices',type:'circle',source:'studio-drawing',filter:['==',['geometry-type'],'Point'],paint:{'circle-radius':['case',['==',['get','index'],1],7,5.5],'circle-color':['case',['==',['get','index'],1],'#087c79','#fff'],'circle-stroke-color':'#087c79','circle-stroke-width':2}});
+    map.addLayer({id:'studio-drawing-fill',type:'fill',source:'studio-drawing',filter:['==',['geometry-type'],'Polygon'],paint:{'fill-color':'#ed9b35','fill-opacity':.12}});
+    map.addLayer({id:'studio-drawing-line',type:'line',source:'studio-drawing',filter:['!=',['geometry-type'],'Point'],paint:{'line-color':'#b66b13','line-width':2.5,'line-dasharray':[3,2]}});
+    map.addLayer({id:'studio-drawing-vertices',type:'circle',source:'studio-drawing',filter:['==',['geometry-type'],'Point'],paint:{'circle-radius':['case',['==',['get','index'],1],7,5.5],'circle-color':['case',['==',['get','index'],1],'#b66b13','#fffaf2'],'circle-stroke-color':'#b66b13','circle-stroke-width':2}});
     floorLabels=createBuildingFloorLabels(map,$('building-floor-labels'));
     selectionOverlay=createBuildingSelectionOverlay(map);
     render();
@@ -232,7 +232,8 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     }
     if(points.length>=2&&!features.some(f=>f.geometry.type==='Polygon'))features.unshift({type:'Feature',properties:{},geometry:{type:'LineString',coordinates:points}});
     source('studio-drawing',{type:'FeatureCollection',features});
-    $('drawing-measurement').textContent=drawingAnchor?areaText:message;$('drawing-measurement').hidden=!drawPoints;positionDrawingLabel();
+    const drawingStatus=editingParcelIndex===null?'繪製中':'編輯中';
+    $('drawing-measurement').textContent=`${drawingStatus} · ${drawingAnchor?areaText:message}`;$('drawing-measurement').hidden=!drawPoints;positionDrawingLabel();
     if(drawPoints)$('parcel-info').textContent=message+'。可拖曳圓點調整；實心圓為起點。';
   }
   function cancelDraw(){endVertexDrag();drawPoints=null;editingParcelIndex=null;updateDrawing();$('finish-parcel').hidden=true;syncDrawButton();map.getCanvas().style.cursor='';selectParcel(false);}
