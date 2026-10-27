@@ -11,6 +11,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
   const $=id=>document.getElementById(id);
   let parcels=[],sourceName='',sourceCrs='',selected=-1,drawPoints=null,buildings=[],activeId=null,drawingAnchor=null;
   let draggedVertex=null,restoreDragPan=false,suppressClickUntil=0;
+  let editingParcelIndex=null;
   let hoveredHousing=null,selectedHousing=null,renderedHousing=[];
   let panelActive=false;
   let floorLabels=null;
@@ -22,6 +23,11 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
   const ids=['studio-parcels-fill','studio-parcels-line','studio-housing-2d','studio-housing-3d','studio-housing-points'];
   const source=(id,data)=>map.getSource(id)?.setData(data);
   const selectedParcel=()=>parcels[selected];
+  const canEditParcel=()=>sourceName==='地圖手繪'&&selectedParcel()?.geometry.type==='Polygon';
+  function syncDrawButton(){
+    $('draw-parcel').textContent=drawPoints?(editingParcelIndex===null?'取消繪製':'取消編輯'):(canEditParcel()?'編輯基地':'地圖繪製基地');
+    $('finish-parcel').textContent=editingParcelIndex===null?'完成繪製':'完成編輯';
+  }
   const floorFilterFor=id=>buildingFloorFilters.get(id)??$('building-floor-filter').value;
   const floorSwitcher=createBuildingFloorSwitcher($('building-floor-switcher'),value=>{if(!floorSwitcherBuildingId)return;buildingFloorFilters.set(floorSwitcherBuildingId,value);render();});
   function syncFloorSwitcher(){
@@ -76,6 +82,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
   function selectParcel(move=true){
     selected=Number($('parcel-select').value);if(!parcels.length)selected=-1;
     displayParcels();
+    syncDrawButton();
     if(selectedParcel()){
       const area=parcelArea(selectedParcel());
       $('parcel-info').textContent=sourceName==='地圖手繪'?`手繪區域面積：${area.toFixed(1)} m²`:`${sourceName} · ${sourceCrs} · 基地估算面積 ${area.toFixed(1)} m²。保留宗地邊界，建築輪廓另行配置。`;
@@ -83,7 +90,7 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
       if(move)fit([selectedParcel()]);
     }
   }
-  function setParcels(data,name,crs){requireMap();const next=normalizeParcels(data);parcels=next.features||next;selected=0;sourceName=name;sourceCrs=crs;refreshParcelOptions();fit(parcels);}
+  function setParcels(data,name,crs){requireMap();const next=normalizeParcels(data);if(drawPoints)cancelDraw();parcels=next.features||next;selected=0;sourceName=name;sourceCrs=crs;refreshParcelOptions();fit(parcels);}
   function formConfig(){
     if(!activeId&&buildings.length>=50)throw new Error('第一版最多建立 50 棟建築，請先移除或另存既有資料。');
     const siteArea=selectedParcel()?parcelArea(selectedParcel()):0,area=siteArea;
@@ -228,16 +235,16 @@ export function mountCustomBuildings({map,setMode,getMode,showProperties,toast,c
     $('drawing-measurement').textContent=drawingAnchor?areaText:message;$('drawing-measurement').hidden=!drawPoints;positionDrawingLabel();
     if(drawPoints)$('parcel-info').textContent=message+'。可拖曳圓點調整；實心圓為起點。';
   }
-  function cancelDraw(){endVertexDrag();drawPoints=null;updateDrawing();$('finish-parcel').hidden=true;$('draw-parcel').textContent='地圖繪製基地';map.getCanvas().style.cursor='';displayParcels();}
+  function cancelDraw(){endVertexDrag();drawPoints=null;editingParcelIndex=null;updateDrawing();$('finish-parcel').hidden=true;syncDrawButton();map.getCanvas().style.cursor='';selectParcel(false);}
   if($('open-building-editor')) $('open-building-editor').onclick=open;
   $('close-building-editor').onclick=()=>{$('building-editor').hidden=true;cancelDraw();};
-  $('parcel-select').onchange=()=>selectParcel();
+  $('parcel-select').onchange=()=>{if(drawPoints)cancelDraw();selectParcel();};
   $('parcel-input').onchange=async e=>{const file=e.target.files[0];e.target.value='';if(!file)return;try{const result=await readParcelFile(file,$('parcel-crs').value);setParcels(result.data,file.name,result.crsLabel);toast('已匯入地籍範圍，請選取宗地。');}catch(error){toast(error.message);}};
   $('demo-parcel').onclick=()=>{try{setParcels({type:'Feature',properties:{name:'示意宗地（非真實地籍）'},geometry:rectangleAt([121.535,25.045],900,1.5,0)},'示意基地','WGS84 · 非真實地籍');}catch(e){toast(e.message);}};
-  $('draw-parcel').onclick=()=>{if(drawPoints){cancelDraw();return;}try{requireMap();}catch(e){toast(e.message);return;}cancelBimPicking();drawPoints=[];updateDrawing();$('draw-parcel').textContent='取消繪製';$('finish-parcel').hidden=false;map.getCanvas().style.cursor='crosshair';setMode('2d');toast('在地圖依序點選基地頂點，完成後按「完成繪製」。');};
-  $('finish-parcel').onclick=()=>{try{if(!drawPoints||drawPoints.length<3)throw new Error('至少需要三個頂點。');const coordinates=[...drawPoints,drawPoints[0]];setParcels({type:'Feature',properties:{name:'手繪基地'},geometry:{type:'Polygon',coordinates:[coordinates]}},'地圖手繪','WGS84 · 人工定義');cancelDraw();}catch(e){toast(e.message);}};
+  $('draw-parcel').onclick=()=>{if(drawPoints){cancelDraw();return;}try{requireMap();}catch(e){toast(e.message);return;}cancelBimPicking();editingParcelIndex=canEditParcel()?selected:null;drawPoints=editingParcelIndex===null?[]:structuredClone(selectedParcel().geometry.coordinates[0].slice(0,-1));updateDrawing();syncDrawButton();$('finish-parcel').hidden=false;map.getCanvas().style.cursor='crosshair';setMode('2d');toast(editingParcelIndex===null?'在地圖依序點選基地頂點，完成後按「完成繪製」。':'拖曳圓點調整基地頂點，完成後按「完成編輯」；取消可保留原範圍。');};
+  $('finish-parcel').onclick=()=>{try{if(!drawPoints||drawPoints.length<3)throw new Error('至少需要三個頂點。');const coordinates=[...drawPoints,drawPoints[0]];if(editingParcelIndex===null){setParcels({type:'Feature',properties:{name:'手繪基地'},geometry:{type:'Polygon',coordinates:[coordinates]}},'地圖手繪','WGS84 · 人工定義');}else{const parcel=structuredClone(parcels[editingParcelIndex]);parcel.geometry.coordinates[0]=coordinates;const normalized=normalizeParcels(parcel);parcels[editingParcelIndex]=(normalized.features||normalized)[0];}cancelDraw();}catch(e){toast(e.message);}};
   $('custom-building-form').onsubmit=e=>{e.preventDefault();try{requireMap();if(!selectedParcel())throw new Error('請先匯入、繪製或載入示意基地。');const config=formConfig(),parcel=structuredClone(selectedParcel()),generated=generateBuilding(config,parcel);const b={config,parcel,sourceName,sourceCrs,generated},index=buildings.findIndex(x=>x.config.id===config.id);if(index<0)buildings.push(b);else buildings[index]=b;activeId=config.id;refreshBuildings();floorOptions();$('building-floor-filter').value='above';$('building-result').textContent=resultText(b);render();setMode('3d');fit([parcel]);toast('已建立自訂建築，點選住宅可查看樓層與戶號。');}catch(error){toast(error.message);}};
-  function loadActive(){const b=buildings.find(b=>b.config.id===$('saved-building-select').value);if(!b)return;activeId=b.config.id;parcels=[structuredClone(b.parcel)];selected=0;sourceName=b.sourceName;sourceCrs=b.sourceCrs;refreshParcelOptions();const c=b.config;for(const [id,key] of [['building-name','name'],['building-floors','floors'],['building-floor-height','floorHeight'],['building-units','unitsPerFloor'],['building-basements','basementFloors'],['building-basement-height','basementHeight'],['building-rotation','rotation'],['building-layout','layout']])$(id).value=c[key];$('building-area').value=parcelArea(b.parcel).toFixed(1);$('building-common-ratio').value=(c.commonAreaRatio??0)*100;floorOptions();render();$('building-result').textContent=resultText(b);fit([b.parcel]);}
+  function loadActive(){const b=buildings.find(b=>b.config.id===$('saved-building-select').value);if(!b)return;if(drawPoints)cancelDraw();activeId=b.config.id;parcels=[structuredClone(b.parcel)];selected=0;sourceName=b.sourceName;sourceCrs=b.sourceCrs;refreshParcelOptions();const c=b.config;for(const [id,key] of [['building-name','name'],['building-floors','floors'],['building-floor-height','floorHeight'],['building-units','unitsPerFloor'],['building-basements','basementFloors'],['building-basement-height','basementHeight'],['building-rotation','rotation'],['building-layout','layout']])$(id).value=c[key];$('building-area').value=parcelArea(b.parcel).toFixed(1);$('building-common-ratio').value=(c.commonAreaRatio??0)*100;floorOptions();render();$('building-result').textContent=resultText(b);fit([b.parcel]);}
   $('saved-building-select').onchange=loadActive;
   $('building-floor-filter').onchange=()=>{buildingFloorFilters.clear();render();};$('custom-building-visible').onchange=render;
   function startNew(){

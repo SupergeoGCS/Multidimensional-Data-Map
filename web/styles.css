@@ -97,6 +97,7 @@
 .building-floor-switcher::-webkit-scrollbar-thumb{background:#b7c9cf;border-radius:8px}
 .building-floor-switcher::-webkit-scrollbar-button{display:none;width:0;height:0}
 @media(max-width:640px){.building-floor-switcher{width:58px}}
+@media(max-width:640px){.floor-switch-button:first-child{font-size:12px;white-space:nowrap;padding:0}}
 .building-floor-switcher{scrollbar-width:none;-ms-overflow-style:none}
 .building-floor-switcher::-webkit-scrollbar{display:none;width:0;height:0}
 .sidebar-collapse{position:absolute;top:94px;left:388px;z-index:5;display:grid;place-items:center;width:28px;height:40px;padding:0;border:1px solid #dbe6e9;border-left:0;border-radius:0 8px 8px 0;background:#fff;color:#527580;box-shadow:3px 2px 8px #16344012}
